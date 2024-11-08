@@ -1,10 +1,11 @@
 P8105 Final Project Proposal
 ================
+2024-11-07
 
 ## U up? The Impact of Lifestyle Habits on the Sleep Patterns of College Students
 
-Group Members: Kate Colvin (kac2301), Yuying Lu (yl5839), and Chhiring
-Lama (cyl2159)
+**Group Members**: Kate Colvin (kac2301), Yuying Lu (yl5839), and
+Chhiring Lama (cyl2159)
 
 The aim of our project is to understand how lifestyle factors of
 undergraduate university students impact their duration and quality of
@@ -39,11 +40,13 @@ principal components analysis to distinguish high and low sleep quality
 groups. We anticipate that applying such methods may be challenging, as
 it will involve learning new techniques and packages.
 
-We found our data set on Kaggle. It’s a popular synthetic data set that
-was generated using the underlying distributions of demographic,
-lifestyle, and sleep variables in college students.
+We found our data set on
+[Kaggle](https://www.kaggle.com/datasets/arsalanjamal002/student-sleep-patterns).
+It’s a popular synthetic dataset that was generated using the underlying
+distributions of demographic, lifestyle, and sleep variables in college
+students.
 
-## Timeline
+### Timeline
 
 |       Time        |                    Task                    |
 |:-----------------:|:------------------------------------------:|
