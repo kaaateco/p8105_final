@@ -6,7 +6,28 @@ output:
     toc_float: false
 ---
 
-We are all first-year PhD students in Biostatistics at the Columbia Mailman School of Public Health. Feel free to check out our other work! 
+We are all first-year PhD students in Biostatistics at the Columbia Mailman School of Public Health. Feel free to check out our other work! (She's a work in progress LOL)
 
-INSERT PICS LOL 
+```{css, echo = FALSE}
+.imageflex { display: flex; }
+.imageflexcontent { margin-left: 20px; margin-top: 0; }
+```
+
+<div class="imageflex">
+  <img src="images/IMG_9456.jpg" height="280px">
+
+  <p class="imageflexcontent">**Kate Colvin** <a href="https://github.com/kaaateco">https://github.com/kaaateco</a></p>
+</div>
+
+<div class="imageflex">
+  <img src="images/IMG_9456.jpg" height="280px">
+
+  <p class="imageflexcontent">**Kate Colvin** <a href="https://github.com/kaaateco">https://github.com/kaaateco</a></p>
+</div>
+
+<div class="imageflex">
+  <img src="images/IMG_9456.jpg" height="280px">
+
+  <p class="imageflexcontent">**Kate Colvin** <a href="https://github.com/kaaateco">https://github.com/kaaateco</a></p>
+</div>
 
