@@ -7,6 +7,8 @@ output: github_document
 
 Group Members: Kate Colvin (kac2301), Yuying Lu (yl5839), and Chhiring Lama (cyl2159)
 
+UPDATE: For the completed project, we ended up finding a dataset that contains real sleeping data and answering questions different from what is described in this proposal. 
+
 The aim of our project is to understand how lifestyle factors of undergraduate university students impact their duration and quality of sleep. As graduate students, demographic factors like age and sex, lifestyle factors such as physical activity, caffeine intake, screen time, and hours spent studying, and how they relate to sleep duration and quality can be applied to our own lifestyle decisions. 
 
 Some questions we’d like to answer through exploratory analysis are: 

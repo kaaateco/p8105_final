@@ -6,6 +6,10 @@ P8105 Final Project Proposal
 Group Members: Kate Colvin (kac2301), Yuying Lu (yl5839), and Chhiring
 Lama (cyl2159)
 
+UPDATE: For the completed project, we ended up finding a dataset that
+contains real sleeping data and answering questions different from what
+is described in this proposal.
+
 The aim of our project is to understand how lifestyle factors of
 undergraduate university students impact their duration and quality of
 sleep. As graduate students, demographic factors like age and sex,

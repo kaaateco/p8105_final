@@ -1,0 +1,10 @@
+---
+title: "PROJECT TITLE"
+output: 
+  html_document:
+    toc: false
+    toc_float: false
+---
+
+Group Members: Kate Colvin (kac2301), Yuying Lu (yl5839), and Chhiring Lama (cyl2159)
+

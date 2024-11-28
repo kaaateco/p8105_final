@@ -1,0 +1,25 @@
+name: "Sleep YML"
+output_dir: "."
+navbar:
+  title: "Home"
+  left:
+  - text: About
+    menu:
+    - text: "The Project"
+      href: report.html
+    - text: "The Data"
+      href: about_data.html
+    - text: "The Team"
+      href: team.html
+  right:
+    - text: "Students"
+      href: students.html
+    - text: "Sleeping Metrics"
+      href: sleeping.html
+    - text: "Shiny App"
+      href: NA
+    - icon: fa-github fa-lg
+      href: https://github.com/kaaateco/p8105_final.git
+output:
+  html_document:
+      theme: paper

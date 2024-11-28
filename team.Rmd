@@ -1,0 +1,12 @@
+---
+title: "Meet the Team"
+output: 
+  html_document:
+    toc: false
+    toc_float: false
+---
+
+We are all first-year PhD students in Biostatistics at the Columbia Mailman School of Public Health. Feel free to check out our other work! 
+
+INSERT PICS LOL 
+
