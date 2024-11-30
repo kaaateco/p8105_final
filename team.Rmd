@@ -9,25 +9,59 @@ output:
 We are all first-year PhD students in Biostatistics at the Columbia Mailman School of Public Health. Feel free to check out our other work!
 
 ```{css, echo = FALSE}
-.imageflex { display: flex; }
-.imageflexcontent { margin-left: 20px; margin-top: 0; }
+
+img.portrait{
+  width:52%;
+  float:right;
+}
+
 ```
 
-<div class="imageflex">
-  <img src="images/IMG_9456.jpg" height="280px">
+<table style="width:89%">
+  <tr>
+    <td><h4></h4></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><h4> Kate Colvin https://github.com/kaaateco</h4></td>
+    <td><img src="images/IMG_9456.jpg" class="portrait"></td>
+    
+  </tr>
+  <tr>
+    <td><h3></h3></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><h4> Yuying Lu https://github.com/YUYING-LU</h4></td>
+    <td><img src="images/yuying.jpg" class="portrait"></td>
+  </tr>
+  
+  <tr>
+    <td><h3></h3></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td><h4> Chhiring Lama https://github.com/Chhiring-Lama</h4></td>
+    <td><img src="images/ch.jpg" class="portrait"></td>
+  </tr>
+</table>
 
-  <p class="imageflexcontent">**Kate Colvin** <a href="https://github.com/kaaateco">https://github.com/kaaateco</a></p>
-</div>
 
-<div class="imageflex">
-  <img src="images/yuying.jpg" height="280px">
+<!-- <div class="imageflex"> -->
+<!--   <img src="images/IMG_9456.jpg" height="280px"> -->
 
-  <p class="imageflexcontent">**Kate Colvin** <a href="https://github.com/kaaateco">https://github.com/kaaateco</a></p>
-</div>
+<!--   <p class="imageflexcontent">**Kate Colvin** <a href="https://github.com/kaaateco">https://github.com/kaaateco</a></p> -->
+<!-- </div> -->
 
-<div class="imageflex">
-  <img src="images/ch.jpg" height="280px">
+<!-- <div class="imageflex"> -->
+<!--   <img src="images/yuying.jpg" height="280px"> -->
 
-  <p class="imageflexcontent">**Kate Colvin** <a href="https://github.com/kaaateco">https://github.com/kaaateco</a></p>
-</div>
+<!--   <p class="imageflexcontent">**Yuying Lu** <a href="https://github.com/kaaateco">https://github.com/kaaateco</a></p> -->
+<!-- </div> -->
+
+<!-- <div class="imageflex"> -->
+<!--   <img src="images/ch.jpg" height="280px"> -->
+
+<!--   <p class="imageflexcontent">**Chhiring Lama** <a href="https://github.com/kaaateco">https://github.com/kaaateco</a></p> -->
+<!-- </div> -->
 
