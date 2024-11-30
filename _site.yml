@@ -13,7 +13,7 @@ navbar:
     - text: "Students"
       href: students.html
     - text: "Sleeping Metrics"
-      href: sleeping.html
+      href: sleep_metrics.html
     - text: "Shiny App"
       href: NA
     - text: "Project Report"

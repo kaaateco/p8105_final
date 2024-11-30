@@ -12,16 +12,5 @@ About our project !! Image !!
 -----
 
 
-## Screen Cast
-
-
-```{r}
-
-library(readr)
-
-sleep <- read_csv("data/cmu-sleep.csv")
-
-View(sleep)
-
-```
+## Screen Cast 
 

@@ -11,7 +11,7 @@
 
 
 
-<title>about_data.knit</title>
+<title>Sleeping Metrics</title>
 
 <script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -29,6 +29,9 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
@@ -225,6 +228,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -232,6 +298,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -300,102 +376,50 @@ $(document).ready(function () {
 
 
 
+<h1 class="title toc-ignore">Sleeping Metrics</h1>
 
 </div>
 
 
-<div
-id="about-our-data-set-hey-make-sure-the-variable-descriptions-are-accurate-names-and-included-in-final-datset"
-class="section level1">
-<h1>About our Data Set HEY MAKE SURE THE VARIABLE DESCRIPTIONS ARE
-ACCURATE NAMES AND INCLUDED IN FINAL DATSET</h1>
-<p>We found our data through the <a
-href="https://cmustatistics.github.io/data-repository/">Carnegie Mellon
-University Statistics and Data Science Data Repository</a>. This data
-was collected in 2019 for a <a
-href="https://www.pnas.org/doi/10.1073/pnas.2209123120">2023 study</a>
-of sleep duration as a predictor of grade point average (GPA) of
-first-year college students.</p>
-<p>In this study, first-year students were recruited from three
-prominent American universities: Carnegie Mellon University, The
-University of Washington, and Notre Dame University. Recruited students
-at each university were given a FitBit to log their sleeping patterns
-for a month at the start of their spring semesters. GPA and demographic
-data was collected directly from the university. The final data set
-includes 634 students.</p>
-<p>More information on data collection can be found at <a
-href="https://cmustatistics.github.io/data-repository/psychology/cmu-sleep.html">this
-site</a> and the raw data can be downloaded directly from <a
-href="https://cmustatistics.github.io/data-repository/data/cmu-sleep.csv">this
-link</a>.</p>
-<hr />
-<pre class="r"><code># Data Cleaning 
-
-sleep &lt;- read_csv(&quot;data/cmu-sleep.csv&quot;) %&gt;% janitor::clean_names() 
-</code></pre>
-</div>
-<div id="variable-descriptions" class="section level1">
-<h1>Variable Descriptions</h1>
-<p>The variables included in our final dataset are described below, with
-descriptions taken directly from the CMU S&amp;DS Data Repository:</p>
+<p>This data set includes four different measures of sleep:</p>
 <ul>
-<li><code>subject_id</code>: Unique ID of the subject</li>
-<li><code>study</code>: Study number, as shown in the table above</li>
-<li><code>cohort</code>: Codename of the cohort that the subject belongs
-to</li>
-<li><code>demo_race</code>: Binary label for underrepresented and
-non-underrepresented students (underrepresented = 0, non-underpresented
-= 1). Students were considered underrepresented if either parent was
-Black, Hispanic or Latino, Native American, or Pacific Islander.
-Students were non-underrepresented if neither parent was from an
-underrepresented category (i.e., both parents had White or Asian
-ancestry).</li>
-<li><code>demo_gender</code>: Gender of the subject (male = 0, female =
-1), as reported by their institution.</li>
-<li><code>demo_firstgen</code>: First-generation status (non-first gen =
-0, first-gen = 1). Students were considered first-generation if neither
-parent completed any college (i.e., high school diploma or less)</li>
 <li><code>bedtime_mssd</code>: Mean successive squared difference of
-bedtime. This measures bedtime variability, and is calculated as the
-average of the squared difference of bedtime on consecutive nights. For
-example, if we had four successive nights of sleep, we calculated
-bedtime MSSD by computing the average of (night 2 bedtime – night 1
-bedtime)^2, (night 3 bedtime – night 2 bedtime)^2, and (night 4 bedtime
-– night 3 bedtime)^2. Times are in units of hours. Compared to
-calculating standard deviation, this looks at change from day to day,
-not change relative to an overall mean</li>
+bedtime, a measure of variability in bedtimes between consecutive
+nights</li>
 <li><code>total_sleep_time</code>: Average time in bed (the difference
 between wake time and bedtime) minus the length of total
 awake/restlessness in the main sleep episode, in minutes</li>
 <li><code>midpoint_sleep</code>: Average midpoint of bedtime and wake
 time, in minutes after 11 pm (for example, 364 is 5:04 am)</li>
-<li><code>frac_nights_with_data</code>: Fraction of nights with captured
-data for the subject. (Some students may not have worn their Fitbits
-every night, or the battery may have died.)</li>
 <li><code>daytime_sleep</code>: Average sleep time outside of the range
 of the main sleep episode, including short naps or sleep that occurred
 during the daytime, in minutes</li>
-<li><code>cum_gpa</code>: Cumulative GPA (out of 4.0), for semesters
-before the one being studied. (Since these students are first-years
-during their spring semester, this is usually just their fall GPA. UW
-has quarters, so this includes both fall and winter quarters at
-UW.)</li>
-<li><code>term_gpa</code>: End-of-term GPA (out of 4.0) for the semester
-being studied</li>
-<li><code>term_units</code>: Number of course units carried in the
-term</li>
-<li><code>zterm_units_zof_z</code>: Because each university counts units
-differently, each student’s units were Z-scored relative to the mean and
-standard deviation of all students in their study cohort. This score
-represented the student’s load relative to the average amount of units.
-The Z-scores for the cohorts were then combined and Z-scored again. 0
-represents an average load, while positive values are above-average
-loads and negative values are below average.</li>
 </ul>
+<div id="bedtime_mssd" class="section level2">
+<h2>bedtime_mssd</h2>
+<pre class="r"><code>
+sleep &lt;- read_csv(&quot;data/cmu-sleep.csv&quot;) %&gt;% janitor::clean_names() 
+
+sleep %&gt;% ggplot(aes(x = bedtime_mssd)) + geom_histogram()</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+</div>
+<div id="total_sleep_time" class="section level1">
+<h1>total_sleep_time</h1>
+<pre class="r"><code>
+sleep %&gt;% ggplot(aes(x = total_sleep_time, fill = cohort)) + geom_density(alpha = 0.5)</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="midpoint_sleep" class="section level1">
+<h1>midpoint_sleep</h1>
+</div>
+<div id="daytime_sleep" class="section level1">
+<h1>daytime_sleep</h1>
 </div>
 
 
 
+</div>
+</div>
 
 </div>
 
@@ -433,6 +457,35 @@ $(document).ready(function () {
 });
 </script>
 
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

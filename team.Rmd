@@ -11,13 +11,13 @@ We are all first-year PhD students in Biostatistics at the Columbia Mailman Scho
 ```{css, echo = FALSE}
 
 img.portrait{
-  width:52%;
+  width:50%;
   float:right;
 }
 
 ```
 
-<table style="width:89%">
+<table style="width:90%">
   <tr>
     <td><h4></h4></td>
     <td></td>

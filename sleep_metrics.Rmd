@@ -1,0 +1,55 @@
+---
+title: "Sleeping Metrics"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+```{r setup, include = FALSE, message=FALSE, warning=FALSE}
+
+knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
+library(tidyverse)
+
+```
+
+This data set includes four different measures of sleep: 
+
+* `bedtime_mssd`:	Mean successive squared difference of bedtime, a measure of variability in bedtimes between consecutive nights
+* `total_sleep_time`:	Average time in bed (the difference between wake time and bedtime) minus the length of total awake/restlessness in the main sleep episode, in minutes
+* `midpoint_sleep`:	Average midpoint of bedtime and wake time, in minutes after 11 pm (for example, 364 is 5:04 am)
+* `daytime_sleep`:	Average sleep time outside of the range of the main sleep episode, including short naps or sleep that occurred during the daytime, in minutes
+
+## bedtime_mssd
+
+```{r}
+
+sleep <- read_csv("data/cmu-sleep.csv") %>% janitor::clean_names() 
+
+sleep %>% ggplot(aes(x = bedtime_mssd)) + geom_histogram()
+
+
+```
+
+# total_sleep_time
+
+```{r}
+
+sleep %>% ggplot(aes(x = total_sleep_time, fill = cohort)) + geom_density(alpha = 0.5)
+
+```
+
+# midpoint_sleep 
+
+```{r}
+
+```
+
+# daytime_sleep
+
+```{r}
+
+
+```
+
