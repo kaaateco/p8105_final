@@ -1,9 +1,37 @@
 ---
-title: "The Data"
+title: ""
 output: 
   html_document:
     toc: false
     toc_float: false
 ---
 
-ABOUT THE DATA 
+# About our Data Set 
+
+We found our data through the [Carnegie Mellon University Statistics and Data Science Data Repository](https://cmustatistics.github.io/data-repository/). This data was collected in 2019 for a [2023 study](https://www.pnas.org/doi/10.1073/pnas.2209123120) of sleep duration as a predictor of grade point average (GPA) of first-year college students. 
+
+In this study, first-year students were recruited from three prominent American universities: Carnegie Mellon University, The University of Washington, and Notre Dame University. Recruited students at each university were given a FitBit to log their sleeping patterns for a month at the start of their spring semesters. GPA and demographic data was collected directly from the university. The final data set includes 634 students. 
+
+More information on data collection can be found at [this site](https://cmustatistics.github.io/data-repository/psychology/cmu-sleep.html) and the data can be downloaded directly from [this link](https://cmustatistics.github.io/data-repository/data/cmu-sleep.csv). 
+
+---
+
+# Variable Descriptions 
+
+The descriptions below were taken directly from the CMU S&DS Data Repository:
+
+* `subject_id`:	Unique ID of the subject
+* `study`:	Study number, as shown in the table above
+* `cohort`:	Codename of the cohort that the subject belongs to
+* `demo_race`:	Binary label for underrepresented and non-underrepresented students (underrepresented = 0, non-underpresented = 1). Students were considered underrepresented if either parent was Black, Hispanic or Latino, Native American, or Pacific Islander. Students were non-underrepresented if neither parent was from an underrepresented category (i.e., both parents had White or Asian ancestry).
+* `demo_gender`:	Gender of the subject (male = 0, female = 1), as reported by their institution.
+* `demo_firstgen`:	First-generation status (non-first gen = 0, first-gen = 1). Students were considered first-generation if neither parent completed any college (i.e., high school diploma or less)
+* `bedtime_mssd`:	Mean successive squared difference of bedtime. This measures bedtime variability, and is calculated as the average of the squared difference of bedtime on consecutive nights. For example, if we had four successive nights of sleep, we calculated bedtime MSSD by computing the average of (night 2 bedtime – night 1 bedtime)^2, (night 3 bedtime – night 2 bedtime)^2, and (night 4 bedtime – night 3 bedtime)^2. Times are in units of hours. Compared to calculating standard deviation, this looks at change from day to day, not change relative to an overall mean
+* `TotalSleepTime`:	Average time in bed (the difference between wake time and bedtime) minus the length of total awake/restlessness in the main sleep episode, in minutes
+* `midpoint_sleep`:	Average midpoint of bedtime and wake time, in minutes after 11 pm (for example, 364 is 5:04 am)
+* `frac_nights_with_data`:	Fraction of nights with captured data for the subject. (Some students may not have worn their Fitbits every night, or the battery may have died.)
+* `daytime_sleep`:	Average sleep time outside of the range of the main sleep episode, including short naps or sleep that occurred during the daytime, in minutes
+* `cum_gpa`:	Cumulative GPA (out of 4.0), for semesters before the one being studied. (Since these students are first-years during their spring semester, this is usually just their fall GPA. UW has quarters, so this includes both fall and winter quarters at UW.)
+* `term_gpa`:	End-of-term GPA (out of 4.0) for the semester being studied
+* `term_units`:	Number of course units carried in the term
+* `Zterm_units_ZofZ`:	Because each university counts units differently, each student’s units were Z-scored relative to the mean and standard deviation of all students in their study cohort. This score represented the student’s load relative to the average amount of units. The Z-scores for the cohorts were then combined and Z-scored again. 0 represents an average load, while positive values are above-average loads and negative values are below average.
