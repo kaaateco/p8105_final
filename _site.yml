@@ -22,4 +22,6 @@ navbar:
       href: https://github.com/kaaateco/p8105_final.git
 output:
   html_document:
-      theme: paper
+      theme: journal
+      css: styles.css
+    

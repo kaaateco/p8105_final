@@ -1,0 +1,85 @@
+---
+title: "EDA"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+```{r include = FALSE,message=FALSE,warning=FALSE}
+library(tidyverse)
+library(gtsummary)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+This page is designed to get an understanding of the characteristics (demographic and educational) of the 634 students who were included in this dataset. 
+```{r,message=FALSE,warning=FALSE}
+sleep <- read_csv("data/cmu-sleep.csv") |> 
+  janitor::clean_names() |> 
+  mutate(demo_race = case_when(demo_race == 0 ~ "Underrepresented", 
+                                     demo_race == 1 ~ "Non-underpresented"),
+         demo_race = fct_relevel(demo_race, "Non-underpresented"),
+         demo_gender = case_when(demo_gender == 0 ~ "Male", 
+                                     demo_gender == 1 ~ "Female"),
+         demo_gender = fct_relevel(demo_gender, "Male"), 
+         demo_firstgen = case_when(demo_firstgen == "0" ~ "Non-first gen", 
+                                   demo_firstgen == "1" ~ "First-gen", 
+                                   TRUE ~ NA),
+         demo_firstgen = fct_relevel(demo_firstgen, "No"), 
+         time_collection = case_when(cohort == "lac1" ~ "Spring, 2018", 
+                            cohort == "lac2" ~ "Spring, 2017",
+                            cohort == "nh" ~ "Spring, 2016",
+                            cohort == "uw1" ~ "Spring, 2018", 
+                            cohort == "uw2" ~ "Spring, 2019"), 
+         cohort = case_when(cohort == "lac1" ~ "Carnegie Mellon University", 
+                            cohort == "lac2" ~ "Carnegie Mellon University",
+                            cohort == "nh" ~ "Notre Dame University",
+                            cohort == "uw1" ~ "University of Washington", 
+                            cohort == "uw2" ~ "University of Washington"))
+```
+
+<div style="float: left;">
+```{r, fig.width = 3, fig.height = 6, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
+summary_tbl <- sleep |> 
+  select(demo_race, demo_gender, demo_firstgen, cohort, time_collection) |> 
+  tbl_summary(
+    by = cohort,
+    statistic = list(
+      all_continuous() ~ "{median} ({p25}, {p75})",
+      all_categorical() ~ "{n} / {N} ({p}%)"), 
+    label = list(
+      time_collection ~ "Time", 
+      `demo_gender` ~ "Gender",
+      `demo_race` ~ "Race", 
+      `demo_firstgen` ~ "First Generation")) |> 
+  add_overall() |> 
+  modify_spanning_header(c("stat_1", "stat_2", "stat_3") ~ "**Cohort**") |> 
+  bold_labels() |>
+  italicize_labels() 
+
+as_kable_extra(summary_tbl)
+```
+</div>
+
+The dataset consists of first-year students from three different kind universities: Carnegie Mellon is a STEM-focused private university, University of Washington is a large public university and Notre Dame is a private catholic university. Each cohort have students roughly 15-20% students with underrepresented racial identity. 
+
+
+

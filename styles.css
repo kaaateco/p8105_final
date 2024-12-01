@@ -1,0 +1,31 @@
+body {
+    background: linear-gradient(to bottom right, #fadfc4, #fff7e8, #fadfc4);
+    background-attachment: fixed; /*edit*/
+}
+
+div {
+  link { color: ; }
+}
+
+.home a:link {color: #081146;}
+.home a:hover {color: #70AAAA; }
+
+footer {
+    position: absolute;
+    bottom: 0px;
+    right: 50px;
+    height: 35px;
+    margin: 0px 50px 0px 0px;
+    color: darkblue;
+    text-align: right;
+    padding: 10px 30px;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  height: 5px;
+}
+tr:hover {background-color: coral;}

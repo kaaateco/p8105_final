@@ -23,7 +23,11 @@ img.portrait{
     <td></td>
   </tr>
   <tr>
-    <td><h4> Kate Colvin https://github.com/kaaateco</h4></td>
+    <td>
+    <h4> Kate Colvin<br />
+    [`r shiny::icon("github")`](https://github.com/kaaateco)
+    [`r shiny::icon("linkedin")`](https://www.linkedin.com/in/kacolvin/)
+    [`r shiny::icon("envelope")`](mailto:<kac2301@cumc.columbia.edu>)</h4></td>
     <td><img src="images/IMG_9456.jpg" class="portrait"></td>
     
   </tr>
@@ -32,7 +36,11 @@ img.portrait{
     <td></td>
   </tr>
   <tr>
-    <td><h4> Yuying Lu https://github.com/YUYING-LU</h4></td>
+    <td>
+    <h4> Yuying Lu <br />
+    [`r shiny::icon("github")`](https://github.com/YUYING-LU)
+    [`r shiny::icon("linkedin")`](https://www.linkedin.com/in/yuying-lu-584035284/?locale=en_US/)
+    [`r shiny::icon("envelope")`](mailto:<yl5839@cumc.columbia.edu>)</h4></td>
     <td><img src="images/yuying.jpg" class="portrait"></td>
   </tr>
   
@@ -41,7 +49,11 @@ img.portrait{
     <td></td>
   </tr>
   <tr>
-    <td><h4> Chhiring Lama https://github.com/Chhiring-Lama</h4></td>
+    <td>
+    <h4> Chhiring Lama <br />
+    [`r shiny::icon("github")`](https://github.com/Chhiring-Lama)
+    [`r shiny::icon("linkedin")`](https://www.linkedin.com/in/chhiring-lama/)
+    [`r shiny::icon("envelope")`](mailto:<cyl2159@cumc.columbia.com>)</h4></td>
     <td><img src="images/ch.jpg" class="portrait"></td>
   </tr>
 </table>
