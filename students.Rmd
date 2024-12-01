@@ -1,5 +1,5 @@
 ---
-title: "EDA"
+title: "Demographics: Exploratory Analysis"
 output: 
   html_document:
     toc: true
@@ -10,6 +10,7 @@ output:
 ```{r include = FALSE,message=FALSE,warning=FALSE}
 library(tidyverse)
 library(gtsummary)
+library(plotly)
 
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -32,7 +33,7 @@ scale_fill_discrete = scale_fill_viridis_d
 
 This page is designed to get an understanding of the characteristics (demographic and educational) of the 634 students who were included in this dataset. 
 ```{r,message=FALSE,warning=FALSE}
-sleep <- read_csv("data/cmu-sleep.csv") |> 
+sleep_df <- read_csv("data/cmu-sleep.csv") |> 
   janitor::clean_names() |> 
   mutate(demo_race = case_when(demo_race == 0 ~ "Underrepresented", 
                                      demo_race == 1 ~ "Non-underpresented"),
@@ -43,43 +44,105 @@ sleep <- read_csv("data/cmu-sleep.csv") |>
          demo_firstgen = case_when(demo_firstgen == "0" ~ "Non-first gen", 
                                    demo_firstgen == "1" ~ "First-gen", 
                                    TRUE ~ NA),
-         demo_firstgen = fct_relevel(demo_firstgen, "No"), 
+         demo_firstgen = fct_relevel(demo_firstgen, "Non-first gen"), 
          time_collection = case_when(cohort == "lac1" ~ "Spring, 2018", 
                             cohort == "lac2" ~ "Spring, 2017",
                             cohort == "nh" ~ "Spring, 2016",
                             cohort == "uw1" ~ "Spring, 2018", 
                             cohort == "uw2" ~ "Spring, 2019"), 
-         cohort = case_when(cohort == "lac1" ~ "Carnegie Mellon University", 
-                            cohort == "lac2" ~ "Carnegie Mellon University",
-                            cohort == "nh" ~ "Notre Dame University",
-                            cohort == "uw1" ~ "University of Washington", 
-                            cohort == "uw2" ~ "University of Washington"))
+         cohort = case_when(cohort == "lac1" ~ "CMU", 
+                            cohort == "lac2" ~ "CMU",
+                            cohort == "nh" ~ "NDU",
+                            cohort == "uw1" ~ "UW", 
+                            cohort == "uw2" ~ "UW"))
 ```
 
-<div style="float: left;">
-```{r, fig.width = 3, fig.height = 6, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
-summary_tbl <- sleep |> 
-  select(demo_race, demo_gender, demo_firstgen, cohort, time_collection) |> 
+```{css, echo = FALSE}
+tr:hover {background-color: coral;}
+th {
+  height: 5px;
+}
+```
+
+## Demographic Distribution of Observations
+```{r, fig.width = 3, fig.height = 4, out.width = "70%", dpi=600,message=FALSE,warning=FALSE}
+sleep_df <- sleep_df |> 
+  rename(`Cohort` =`cohort`, 
+         `Race` =`demo_race`, 
+         `Gender` =`demo_gender`, 
+         `First-Generation` =`demo_firstgen`, 
+         `Average time in bed`= `total_sleep_time`, 
+         `Average midpoint of bedtime and wake time` =  `midpoint_sleep`, 
+         `Day Time Sleep` = `daytime_sleep`, 
+         `MSSD in Bedtime` = `bedtime_mssd`)
+summary_tbl <- sleep_df |> 
+  select(`Cohort`, `Race`, `Gender`, `First-Generation`, time_collection) |> 
   tbl_summary(
-    by = cohort,
+    by = `Cohort`,
     statistic = list(
       all_continuous() ~ "{median} ({p25}, {p75})",
       all_categorical() ~ "{n} / {N} ({p}%)"), 
     label = list(
-      time_collection ~ "Time", 
-      `demo_gender` ~ "Gender",
-      `demo_race` ~ "Race", 
-      `demo_firstgen` ~ "First Generation")) |> 
+      time_collection ~ "Time")) |> 
   add_overall() |> 
   modify_spanning_header(c("stat_1", "stat_2", "stat_3") ~ "**Cohort**") |> 
   bold_labels() |>
-  italicize_labels() 
+  italicize_labels() |> 
+  add_p()
 
 as_kable_extra(summary_tbl)
 ```
-</div>
+</br>
+The dataset consists of first-year students from three different kind universities: Carnegie Mellon (CMU) is a STEM-focused private university, University of Washington (UW) is a large public university and Notre Dame (NDU) is a private catholic university. Each cohort have students roughly 15-20% students with underrepresented racial identity. However, the male to female ratio, and proportion of first generation students vary between the cohorts. 
 
-The dataset consists of first-year students from three different kind universities: Carnegie Mellon is a STEM-focused private university, University of Washington is a large public university and Notre Dame is a private catholic university. Each cohort have students roughly 15-20% students with underrepresented racial identity. 
+## Sleep Habits in different subgroups {.tabset}
 
+```{r, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
+plot_function <- function(demo) {
+  plot <- sleep_df |> 
+    drop_na(rlang::sym(demo)) |> 
+    pivot_longer(
+      cols = c(`Average time in bed`, `Day Time Sleep`), 
+      names_to = "sleep_type", 
+      values_to = "sleep_time"
+    ) |> 
+    mutate(sleep_time = (sleep_time/60) |> round(digits = 1)) |> 
+    ggplot(aes(x = get(demo), y = sleep_time, fill = sleep_type)) +
+    geom_violin(alpha = 0.2) + 
+    labs(y = "Sleep Time (in hrs)", 
+             x = demo, fill = "") +
+    facet_wrap(~sleep_type, ncol = 2, scales = "free")
+  plotly::ggplotly(plot) |> 
+    layout(legend = list(orientation = 'h'))
 
+}
+```
+
+### Race {.tabset}
+
+```{r}
+demo_name = "Race"
+plot_function(demo = demo_name)
+```
+
+### Gender {.tabset}
+
+```{r}
+demo_name = "Gender"
+plot_function(demo = demo_name)
+```
+
+### First-Generation {.tabset}
+
+```{r}
+demo_name = "First-Generation"
+plot_function(demo = demo_name)
+```
+
+### Cohort {.tabset}
+
+```{r}
+demo_name = "Cohort"
+plot_function(demo = demo_name)
+```
 
