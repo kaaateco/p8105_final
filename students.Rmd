@@ -37,7 +37,7 @@ This page is designed to get an understanding of the characteristics (demographi
 sleep_df <- read_csv("data/cmu-sleep.csv") |> 
   janitor::clean_names() |> 
   mutate(demo_race = case_when(demo_race == 0 ~ "Underrepresented", 
-                                     demo_race == 1 ~ "Non-underpresented"),
+                                     demo_race == 1 ~ "Non-underrepresented"),
          demo_race = fct_relevel(demo_race, "Underrepresented"),
          demo_gender = case_when(demo_gender == 0 ~ "Male", 
                                      demo_gender == 1 ~ "Female"),
@@ -51,7 +51,7 @@ sleep_df <- read_csv("data/cmu-sleep.csv") |>
                             cohort == "nh" ~ "Spring, 2016",
                             cohort == "uw1" ~ "Spring, 2018", 
                             cohort == "uw2" ~ "Spring, 2019"), 
-         cohort = case_when(cohort == "lac1" ~ "CMU", 
+         university = case_when(cohort == "lac1" ~ "CMU", 
                             cohort == "lac2" ~ "CMU",
                             cohort == "nh" ~ "NDU",
                             cohort == "uw1" ~ "UW", 

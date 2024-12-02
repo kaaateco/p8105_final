@@ -1,5 +1,5 @@
 ---
-title: "Sleeping Patterns"
+title: "Sleeping Measures"
 output: 
   html_document:
     toc: true
@@ -8,56 +8,297 @@ output:
 ---
 
 ```{r setup, include = FALSE, message=FALSE, warning=FALSE}
-
 knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
 library(tidyverse)
+library(ggradar)
+
+# remotes::install_github("ricardo-bion/ggradar")
 
 ```
 
-This data set includes four different measures of sleep: (descriptions taken directly from the CMU S&DS Data Repository)
+This data set includes four different measures of sleep: 
 
-* `bedtime_mssd`:	Mean successive squared difference of bedtime, a measure of variability in bedtimes between consecutive nights
 * `total_sleep_time`:	Average time in bed (the difference between wake time and bedtime) minus the length of total awake/restlessness in the main sleep episode, in minutes
+* `bedtime_mssd`:	Mean successive squared difference of bedtime, a measure of variability in bedtimes between consecutive nights
 * `midpoint_sleep`:	Average midpoint of bedtime and wake time, in minutes after 11 pm (for example, 364 is 5:04 am)
 * `daytime_sleep`:	Average sleep time outside of the range of the main sleep episode, including short naps or sleep that occurred during the daytime, in minutes
 
-Below is a 
+The descriptions above were taken directly from the CMU S&DS Data Repository. 
+
+## 
+
+## Overall Sleeping Patterns {.tabset}
+
+Below are plots describing the overall distributions of each of these sleep measures, broken down by university. We can observe that **COMMENTS**
 
 ```{r}
+sleep_df <- read_csv("data/cmu-sleep.csv") |> 
+  janitor::clean_names() |> 
+  mutate(demo_race = case_when(demo_race == 0 ~ "Underrepresented", 
+                                     demo_race == 1 ~ "Non-underrepresented"),
+         demo_race = fct_relevel(demo_race, "Underrepresented"),
+         demo_gender = case_when(demo_gender == 0 ~ "Male", 
+                                     demo_gender == 1 ~ "Female"),
+         demo_gender = fct_relevel(demo_gender, "Male"), 
+         demo_firstgen = case_when(demo_firstgen == "0" ~ "Non-first gen", 
+                                   demo_firstgen == "1" ~ "First-gen", 
+                                   TRUE ~ NA),
+         demo_firstgen = fct_relevel(demo_firstgen, "Non-first gen"), 
+         time_collection = case_when(cohort == "lac1" ~ "Spring, 2018", 
+                            cohort == "lac2" ~ "Spring, 2017",
+                            cohort == "nh" ~ "Spring, 2016",
+                            cohort == "uw1" ~ "Spring, 2018", 
+                            cohort == "uw2" ~ "Spring, 2019"), 
+         university = case_when(cohort == "lac1" ~ "CMU", 
+                            cohort == "lac2" ~ "CMU",
+                            cohort == "nh" ~ "NDU",
+                            cohort == "uw1" ~ "UW", 
+                            cohort == "uw2" ~ "UW"))
 
-#View(sleep_df)
+```
+
+### Total Sleep Time {.tabset}
+
+```{r}
+plot_totalsleep <- sleep_df %>%  
+  ggplot(aes(x = total_sleep_time, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Total Sleep Time (minutes)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_totalsleep    
                           
+```
+
+### Variability in Bed Times {.tabset}
+
+```{r}
+plot_bedtime2 <- sleep_df %>%  
+  ggplot(aes(x = bedtime_mssd, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Mean Successive Squared Difference", y = "Density") +
+  xlim(c(0,2.5))+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_bedtime2
 
 ```
 
+### Sleeping Midpoint {.tabset}
 
-## bedtime_mssd
+```{r}
+plot_midpoint <- sleep_df %>% 
+  ggplot(aes(x = midpoint_sleep, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Midpoint Sleep (minutes past 11 PM)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_midpoint
+
+```
+
+### Daytime Sleep {.tabset}
+
+```{r}
+plot_daysleep <- sleep_df %>% 
+  ggplot(aes(x = daytime_sleep, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Daytime Sleep (minutes)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_daysleep
+
+```
+
+##
 
 ```{r}
 
-#sleep_df %>% ggplot(aes(x = bedtime_mssd, fill = university)) + geom_histogram()
+sleep_radar_df <- sleep_df %>%
+  group_by(university) %>%
+  summarise(
+    avg_total_sleep = mean(total_sleep_time),
+    avg_mssd = mean(bedtime_mssd),
+    avg_midpoint = mean(midpoint_sleep),
+    avg_daytime_sleep = mean(daytime_sleep), 
+    avg_gpa = mean(cum_gpa)
+  ) %>%
+  ungroup()
 
+sleep_radar_df %>% ggradar()
 
 ```
 
-# total_sleep_time
+
+
+## GPA and Courseload 
 
 ```{r}
 
-#sleep_df %>% ggplot(aes(x = total_sleep_time, fill = university)) + geom_density(alpha = 0.5)
+low_gpas <- sleep_df %>% filter(cum_gpa <= 2.5)
+
+high_gpas <- sleep_df %>% filter(cum_gpa >= 3.8)
+
+
 
 ```
 
-# midpoint_sleep 
+
+
+## Underrepresented Students
+
+### Total Sleep Time {.tabset}
 
 ```{r}
+plot_totalsleep <- sleep_df %>%  
+  ggplot(aes(x = total_sleep_time, fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Total Sleep Time (minutes)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
 
+plot_totalsleep    
+                          
 ```
 
-# daytime_sleep
+### Variability in Bed Times {.tabset}
 
 ```{r}
+plot_bedtime2 <- sleep_df %>%  
+  ggplot(aes(x = bedtime_mssd, fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Mean Successive Squared Difference", y = "Density") +
+  xlim(c(0,2.5))+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
 
+plot_bedtime2
 
 ```
 
+### Sleeping Midpoint {.tabset}
+
+```{r}
+plot_midpoint <- sleep_df %>% 
+  ggplot(aes(x = midpoint_sleep, fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Midpoint Sleep (minutes past 11 PM)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_midpoint
+
+```
+
+### Daytime Sleep {.tabset}
+
+```{r}
+plot_daysleep <- sleep_df %>% 
+  ggplot(aes(x = daytime_sleep, fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Daytime Sleep (minutes)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_daysleep
+
+```
+
+## First-Generation Students
+
+### Total Sleep Time {.tabset}
+
+```{r}
+plot_totalsleep <- sleep_df %>%  
+  ggplot(aes(x = total_sleep_time, fill = demo_firstgen, color = demo_firstgen)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Total Sleep Time (minutes)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_totalsleep    
+                          
+```
+
+### Variability in Bed Times {.tabset}
+
+```{r}
+plot_bedtime2 <- sleep_df %>%  
+  ggplot(aes(x = bedtime_mssd, fill = demo_firstgen, color = demo_firstgen)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Mean Successive Squared Difference", y = "Density") +
+  xlim(c(0,2.5))+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_bedtime2
+
+```
+
+### Sleeping Midpoint {.tabset}
+
+```{r}
+plot_midpoint <- sleep_df %>% 
+  ggplot(aes(x = midpoint_sleep, fill = demo_firstgen, color = demo_firstgen)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Midpoint Sleep (minutes past 11 PM)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_midpoint
+
+```
+
+### Daytime Sleep {.tabset}
+
+```{r}
+plot_daysleep <- sleep_df %>% 
+  ggplot(aes(x = daytime_sleep, fill = demo_firstgen, color = demo_firstgen)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Daytime Sleep (minutes)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_daysleep
+
+```

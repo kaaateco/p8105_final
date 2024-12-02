@@ -11,7 +11,7 @@ We are all first-year PhD students in Biostatistics at the Columbia Mailman Scho
 ```{css, echo = FALSE}
 
 img.portrait{
-  width:50%;
+  width:45%;
   float:right;
 }
 
@@ -57,23 +57,3 @@ img.portrait{
     <td><img src="images/ch.jpg" class="portrait"></td>
   </tr>
 </table>
-
-
-<!-- <div class="imageflex"> -->
-<!--   <img src="images/IMG_9456.jpg" height="280px"> -->
-
-<!--   <p class="imageflexcontent">**Kate Colvin** <a href="https://github.com/kaaateco">https://github.com/kaaateco</a></p> -->
-<!-- </div> -->
-
-<!-- <div class="imageflex"> -->
-<!--   <img src="images/yuying.jpg" height="280px"> -->
-
-<!--   <p class="imageflexcontent">**Yuying Lu** <a href="https://github.com/kaaateco">https://github.com/kaaateco</a></p> -->
-<!-- </div> -->
-
-<!-- <div class="imageflex"> -->
-<!--   <img src="images/ch.jpg" height="280px"> -->
-
-<!--   <p class="imageflexcontent">**Chhiring Lama** <a href="https://github.com/kaaateco">https://github.com/kaaateco</a></p> -->
-<!-- </div> -->
-

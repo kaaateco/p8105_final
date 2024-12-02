@@ -1,5 +1,5 @@
 ---
-title: ""
+title: "About our Data Set"
 output: 
   html_document:
     toc: false
@@ -13,8 +13,6 @@ knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
 library(tidyverse)
 
 ```
-
-# About our Data Set
 
 We found our data through the [Carnegie Mellon University Statistics and Data Science Data Repository](https://cmustatistics.github.io/data-repository/). This data was collected in 2019 for a [2023 study](https://www.pnas.org/doi/10.1073/pnas.2209123120) of sleep duration as a predictor of grade point average (GPA) of first-year college students. 
 

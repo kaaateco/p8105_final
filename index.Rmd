@@ -1,5 +1,5 @@
 ---
-title: "U Up? The Impact of Sleeping Patterns on the Grades of College Students (TO BE EDITED)"
+title: "U Up? The Grades and Sleeping Patterns of First-Year College Students"
 output: 
   html_document:
     toc: false
