@@ -494,14 +494,33 @@ plot_daysleep</code></pre>
 </div>
 <div id="gpa-and-courseload" class="section level2">
 <h2>GPA and Courseload</h2>
+<p>everything below here is a work in progress/experimental lol</p>
+<p>maybe some sort of heat map ??</p>
 <pre class="r"><code>
-low_gpas &lt;- sleep_df %&gt;% filter(cum_gpa &lt;= 2.5)
+sleep_df &lt;- sleep_df %&gt;% 
+  mutate(gpa_group = case_when(cum_gpa &lt;= 2.8 ~ &quot;Low&quot;, 
+                               cum_gpa &gt;= 3.9 ~ &quot;High&quot;,
+                               cum_gpa &gt; 2.8 &amp; cum_gpa &lt; 3.9 ~ &quot;Middle&quot;), 
+         term_group = case_when(zterm_units_zof_z &lt;= -1 ~ &quot;Heavy&quot;, 
+                                zterm_units_zof_z &gt;= 1 ~ &quot;Light&quot;, 
+                                zterm_units_zof_z &gt; -1 &amp; zterm_units_zof_z &lt; 1 ~ &quot;Average&quot;))
 
-high_gpas &lt;- sleep_df %&gt;% filter(cum_gpa &gt;= 3.8)
-</code></pre>
+plot_totalsleep1 &lt;- sleep_df %&gt;%  
+  ggplot(aes(x = total_sleep_time, fill = gpa_group, color = gpa_group)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  facet_grid(~term_group) +
+  labs(x = &quot;Total Sleep Time (minutes)&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_totalsleep1 </code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
-<div id="underrepresented-students" class="section level2">
-<h2>Underrepresented Students</h2>
+<div id="underrepresented-students" class="section level2 tabset">
+<h2 class="tabset">Underrepresented Students</h2>
 <div id="total-sleep-time-1" class="section level3 tabset">
 <h3 class="tabset">Total Sleep Time</h3>
 <pre class="r"><code>plot_totalsleep &lt;- sleep_df %&gt;%  
@@ -578,8 +597,8 @@ plot_daysleep
 <p><img src="sleep_metrics_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 </div>
 </div>
-<div id="first-generation-students" class="section level2">
-<h2>First-Generation Students</h2>
+<div id="first-generation-students" class="section level2 tabset">
+<h2 class="tabset">First-Generation Students</h2>
 <div id="total-sleep-time-2" class="section level3 tabset">
 <h3 class="tabset">Total Sleep Time</h3>
 <pre class="r"><code>plot_totalsleep &lt;- sleep_df %&gt;%  

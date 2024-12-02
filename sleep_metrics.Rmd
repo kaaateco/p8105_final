@@ -10,9 +10,6 @@ output:
 ```{r setup, include = FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
 library(tidyverse)
-library(ggradar)
-
-# remotes::install_github("ricardo-bion/ggradar")
 
 ```
 
@@ -126,42 +123,42 @@ plot_daysleep
 
 ```
 
-##
-
-```{r}
-
-sleep_radar_df <- sleep_df %>%
-  group_by(university) %>%
-  summarise(
-    avg_total_sleep = mean(total_sleep_time),
-    avg_mssd = mean(bedtime_mssd),
-    avg_midpoint = mean(midpoint_sleep),
-    avg_daytime_sleep = mean(daytime_sleep), 
-    avg_gpa = mean(cum_gpa)
-  ) %>%
-  ungroup()
-
-sleep_radar_df %>% ggradar()
-
-```
-
-
 
 ## GPA and Courseload 
 
+everything below here is a work in progress/experimental lol
+
+maybe some sort of heat map ??
+
 ```{r}
 
-low_gpas <- sleep_df %>% filter(cum_gpa <= 2.5)
+sleep_df <- sleep_df %>% 
+  mutate(gpa_group = case_when(cum_gpa <= 2.8 ~ "Low", 
+                               cum_gpa >= 3.9 ~ "High",
+                               cum_gpa > 2.8 & cum_gpa < 3.9 ~ "Middle"), 
+         term_group = case_when(zterm_units_zof_z <= -1 ~ "Heavy", 
+                                zterm_units_zof_z >= 1 ~ "Light", 
+                                zterm_units_zof_z > -1 & zterm_units_zof_z < 1 ~ "Average"))
 
-high_gpas <- sleep_df %>% filter(cum_gpa >= 3.8)
+plot_totalsleep1 <- sleep_df %>%  
+  ggplot(aes(x = total_sleep_time, fill = gpa_group, color = gpa_group)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  facet_grid(~term_group) +
+  labs(x = "Total Sleep Time (minutes)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
 
+plot_totalsleep1 
 
 
 ```
 
 
 
-## Underrepresented Students
+## Underrepresented Students {.tabset}
 
 ### Total Sleep Time {.tabset}
 
@@ -232,7 +229,7 @@ plot_daysleep
 
 ```
 
-## First-Generation Students
+## First-Generation Students {.tabset}
 
 ### Total Sleep Time {.tabset}
 
