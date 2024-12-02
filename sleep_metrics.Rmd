@@ -132,18 +132,45 @@ maybe some sort of heat map ??
 
 ```{r}
 
-sleep_df <- sleep_df %>% 
-  mutate(gpa_group = case_when(cum_gpa <= 2.8 ~ "Low", 
-                               cum_gpa >= 3.9 ~ "High",
-                               cum_gpa > 2.8 & cum_gpa < 3.9 ~ "Middle"), 
-         term_group = case_when(zterm_units_zof_z <= -1 ~ "Heavy", 
-                                zterm_units_zof_z >= 1 ~ "Light", 
-                                zterm_units_zof_z > -1 & zterm_units_zof_z < 1 ~ "Average"))
+# sleep_df <- sleep_df %>% 
+#   mutate(gpa_group = case_when(cum_gpa <= 2.8 ~ "Low", 
+#                                cum_gpa >= 3.9 ~ "High",
+#                                cum_gpa > 2.8 & cum_gpa < 3.9 ~ "Middle"), 
+#          term_group = case_when(zterm_units_zof_z <= -1 ~ "Heavy", 
+#                                 zterm_units_zof_z >= 1 ~ "Light", 
+#                                 zterm_units_zof_z > -1 & zterm_units_zof_z < 1 ~ "Average"))
 
-plot_totalsleep1 <- sleep_df %>%  
-  ggplot(aes(x = total_sleep_time, fill = gpa_group, color = gpa_group)) +
-  geom_density(alpha = 0.3, linewidth = 1) +
-  facet_grid(~term_group) +
+
+sleep_df %>% ggplot(aes(x = cum_gpa, y = zterm_units_zof_z)) +
+  geom_density2d_filled(alpha = 0.8) +
+  labs(
+    x = "Cumulative GPA",
+    y = "Term Units (Z)"
+  ) +
+  theme_minimal()
+
+
+sleep_df %>% na.omit() %>% 
+ggplot(aes(round(cum_gpa), round(zterm_units_zof_z), fill = total_sleep_time)) + 
+  geom_tile() +
+  labs(
+    title = "Heatmap of Total Sleep Time",
+    x = "Cumulative GPA",
+    y = "Term Units (Z)",
+    fill = "Sleep Time (min)"
+  ) +
+  theme_minimal()
+
+```
+
+## Gender {.tabset}
+
+### Total Sleep Time {.tabset}
+
+```{r}
+plot_totalsleep <- sleep_df %>% filter(!is.na(demo_gender)) %>%  
+  ggplot(aes(x = total_sleep_time, fill = demo_gender, color = demo_gender)) +
+  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
   labs(x = "Total Sleep Time (minutes)", y = "Density") +
   theme_minimal() +
   theme(
@@ -151,14 +178,66 @@ plot_totalsleep1 <- sleep_df %>%
     plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
   )
 
-plot_totalsleep1 
+plot_totalsleep    
+                          
+```
 
+### Variability in Bed Times {.tabset}
+
+```{r}
+plot_bedtime2 <- sleep_df %>% filter(!is.na(demo_gender)) %>%
+  ggplot(aes(x = bedtime_mssd, fill = demo_gender, color = demo_gender)) +
+  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
+  labs(x = "Mean Successive Squared Difference", y = "Density") +
+  xlim(c(0,2.5))+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_bedtime2
+
+```
+
+### Sleeping Midpoint {.tabset}
+
+```{r}
+plot_midpoint <- sleep_df %>% filter(!is.na(demo_gender)) %>%
+  ggplot(aes(x = midpoint_sleep, fill = demo_gender, color = demo_gender)) +
+  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
+  labs(x = "Midpoint Sleep (minutes past 11 PM)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_midpoint
+
+```
+
+### Daytime Sleep {.tabset}
+
+```{r}
+plot_daysleep <- sleep_df %>% filter(!is.na(demo_gender)) %>% 
+  ggplot(aes(x = daytime_sleep, fill = demo_gender, color = demo_gender)) +
+  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
+  labs(x = "Daytime Sleep (minutes)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_daysleep
 
 ```
 
 
-
 ## Underrepresented Students {.tabset}
+
+**Comments**
 
 ### Total Sleep Time {.tabset}
 

@@ -497,18 +497,46 @@ plot_daysleep</code></pre>
 <p>everything below here is a work in progress/experimental lol</p>
 <p>maybe some sort of heat map ??</p>
 <pre class="r"><code>
-sleep_df &lt;- sleep_df %&gt;% 
-  mutate(gpa_group = case_when(cum_gpa &lt;= 2.8 ~ &quot;Low&quot;, 
-                               cum_gpa &gt;= 3.9 ~ &quot;High&quot;,
-                               cum_gpa &gt; 2.8 &amp; cum_gpa &lt; 3.9 ~ &quot;Middle&quot;), 
-         term_group = case_when(zterm_units_zof_z &lt;= -1 ~ &quot;Heavy&quot;, 
-                                zterm_units_zof_z &gt;= 1 ~ &quot;Light&quot;, 
-                                zterm_units_zof_z &gt; -1 &amp; zterm_units_zof_z &lt; 1 ~ &quot;Average&quot;))
+# sleep_df &lt;- sleep_df %&gt;% 
+#   mutate(gpa_group = case_when(cum_gpa &lt;= 2.8 ~ &quot;Low&quot;, 
+#                                cum_gpa &gt;= 3.9 ~ &quot;High&quot;,
+#                                cum_gpa &gt; 2.8 &amp; cum_gpa &lt; 3.9 ~ &quot;Middle&quot;), 
+#          term_group = case_when(zterm_units_zof_z &lt;= -1 ~ &quot;Heavy&quot;, 
+#                                 zterm_units_zof_z &gt;= 1 ~ &quot;Light&quot;, 
+#                                 zterm_units_zof_z &gt; -1 &amp; zterm_units_zof_z &lt; 1 ~ &quot;Average&quot;))
 
-plot_totalsleep1 &lt;- sleep_df %&gt;%  
-  ggplot(aes(x = total_sleep_time, fill = gpa_group, color = gpa_group)) +
-  geom_density(alpha = 0.3, linewidth = 1) +
-  facet_grid(~term_group) +
+
+sleep_df %&gt;% ggplot(aes(x = cum_gpa, y = zterm_units_zof_z)) +
+  geom_density2d_filled(alpha = 0.8) +
+  labs(
+    x = &quot;Cumulative GPA&quot;,
+    y = &quot;Term Units (Z)&quot;
+  ) +
+  theme_minimal()
+## Warning: Removed 147 rows containing non-finite outside the scale range
+## (`stat_density2d_filled()`).</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>
+
+sleep_df %&gt;% na.omit() %&gt;% 
+ggplot(aes(round(cum_gpa), round(zterm_units_zof_z), fill = total_sleep_time)) + 
+  geom_tile() +
+  labs(
+    title = &quot;Heatmap of Total Sleep Time&quot;,
+    x = &quot;Cumulative GPA&quot;,
+    y = &quot;Term Units (Z)&quot;,
+    fill = &quot;Sleep Time (min)&quot;
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+</div>
+<div id="gender" class="section level2 tabset">
+<h2 class="tabset">Gender</h2>
+<div id="total-sleep-time-1" class="section level3 tabset">
+<h3 class="tabset">Total Sleep Time</h3>
+<pre class="r"><code>plot_totalsleep &lt;- sleep_df %&gt;% filter(!is.na(demo_gender)) %&gt;%  
+  ggplot(aes(x = total_sleep_time, fill = demo_gender, color = demo_gender)) +
+  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
   labs(x = &quot;Total Sleep Time (minutes)&quot;, y = &quot;Density&quot;) +
   theme_minimal() +
   theme(
@@ -516,12 +544,62 @@ plot_totalsleep1 &lt;- sleep_df %&gt;%
     plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
   )
 
-plot_totalsleep1 </code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+plot_totalsleep    </code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="variability-in-bed-times-1" class="section level3 tabset">
+<h3 class="tabset">Variability in Bed Times</h3>
+<pre class="r"><code>plot_bedtime2 &lt;- sleep_df %&gt;% filter(!is.na(demo_gender)) %&gt;%
+  ggplot(aes(x = bedtime_mssd, fill = demo_gender, color = demo_gender)) +
+  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
+  labs(x = &quot;Mean Successive Squared Difference&quot;, y = &quot;Density&quot;) +
+  xlim(c(0,2.5))+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_bedtime2
+## Warning: Removed 15 rows containing non-finite outside the scale range
+## (`stat_density()`).</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="sleeping-midpoint-1" class="section level3 tabset">
+<h3 class="tabset">Sleeping Midpoint</h3>
+<pre class="r"><code>plot_midpoint &lt;- sleep_df %&gt;% filter(!is.na(demo_gender)) %&gt;%
+  ggplot(aes(x = midpoint_sleep, fill = demo_gender, color = demo_gender)) +
+  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
+  labs(x = &quot;Midpoint Sleep (minutes past 11 PM)&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_midpoint</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="daytime-sleep-1" class="section level3 tabset">
+<h3 class="tabset">Daytime Sleep</h3>
+<pre class="r"><code>plot_daysleep &lt;- sleep_df %&gt;% filter(!is.na(demo_gender)) %&gt;% 
+  ggplot(aes(x = daytime_sleep, fill = demo_gender, color = demo_gender)) +
+  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
+  labs(x = &quot;Daytime Sleep (minutes)&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_daysleep</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+</div>
 </div>
 <div id="underrepresented-students" class="section level2 tabset">
 <h2 class="tabset">Underrepresented Students</h2>
-<div id="total-sleep-time-1" class="section level3 tabset">
+<p><strong>Comments</strong></p>
+<div id="total-sleep-time-2" class="section level3 tabset">
 <h3 class="tabset">Total Sleep Time</h3>
 <pre class="r"><code>plot_totalsleep &lt;- sleep_df %&gt;%  
   ggplot(aes(x = total_sleep_time, fill = demo_race, color = demo_race)) +
@@ -537,9 +615,9 @@ plot_totalsleep
 ## Warning: Groups with fewer than two data points have been dropped.
 ## Warning in max(ids, na.rm = TRUE): no non-missing arguments to max; returning
 ## -Inf</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 </div>
-<div id="variability-in-bed-times-1" class="section level3 tabset">
+<div id="variability-in-bed-times-2" class="section level3 tabset">
 <h3 class="tabset">Variability in Bed Times</h3>
 <pre class="r"><code>plot_bedtime2 &lt;- sleep_df %&gt;%  
   ggplot(aes(x = bedtime_mssd, fill = demo_race, color = demo_race)) +
@@ -558,9 +636,9 @@ plot_bedtime2
 ## Warning: Groups with fewer than two data points have been dropped.
 ## Warning in max(ids, na.rm = TRUE): no non-missing arguments to max; returning
 ## -Inf</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
-<div id="sleeping-midpoint-1" class="section level3 tabset">
+<div id="sleeping-midpoint-2" class="section level3 tabset">
 <h3 class="tabset">Sleeping Midpoint</h3>
 <pre class="r"><code>plot_midpoint &lt;- sleep_df %&gt;% 
   ggplot(aes(x = midpoint_sleep, fill = demo_race, color = demo_race)) +
@@ -576,9 +654,9 @@ plot_midpoint
 ## Warning: Groups with fewer than two data points have been dropped.
 ## Warning in max(ids, na.rm = TRUE): no non-missing arguments to max; returning
 ## -Inf</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 </div>
-<div id="daytime-sleep-1" class="section level3 tabset">
+<div id="daytime-sleep-2" class="section level3 tabset">
 <h3 class="tabset">Daytime Sleep</h3>
 <pre class="r"><code>plot_daysleep &lt;- sleep_df %&gt;% 
   ggplot(aes(x = daytime_sleep, fill = demo_race, color = demo_race)) +
@@ -594,12 +672,12 @@ plot_daysleep
 ## Warning: Groups with fewer than two data points have been dropped.
 ## Warning in max(ids, na.rm = TRUE): no non-missing arguments to max; returning
 ## -Inf</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 </div>
 <div id="first-generation-students" class="section level2 tabset">
 <h2 class="tabset">First-Generation Students</h2>
-<div id="total-sleep-time-2" class="section level3 tabset">
+<div id="total-sleep-time-3" class="section level3 tabset">
 <h3 class="tabset">Total Sleep Time</h3>
 <pre class="r"><code>plot_totalsleep &lt;- sleep_df %&gt;%  
   ggplot(aes(x = total_sleep_time, fill = demo_firstgen, color = demo_firstgen)) +
@@ -612,9 +690,9 @@ plot_daysleep
   )
 
 plot_totalsleep    </code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 </div>
-<div id="variability-in-bed-times-2" class="section level3 tabset">
+<div id="variability-in-bed-times-3" class="section level3 tabset">
 <h3 class="tabset">Variability in Bed Times</h3>
 <pre class="r"><code>plot_bedtime2 &lt;- sleep_df %&gt;%  
   ggplot(aes(x = bedtime_mssd, fill = demo_firstgen, color = demo_firstgen)) +
@@ -630,9 +708,9 @@ plot_totalsleep    </code></pre>
 plot_bedtime2
 ## Warning: Removed 15 rows containing non-finite outside the scale range
 ## (`stat_density()`).</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 </div>
-<div id="sleeping-midpoint-2" class="section level3 tabset">
+<div id="sleeping-midpoint-3" class="section level3 tabset">
 <h3 class="tabset">Sleeping Midpoint</h3>
 <pre class="r"><code>plot_midpoint &lt;- sleep_df %&gt;% 
   ggplot(aes(x = midpoint_sleep, fill = demo_firstgen, color = demo_firstgen)) +
@@ -645,9 +723,9 @@ plot_bedtime2
   )
 
 plot_midpoint</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
-<div id="daytime-sleep-2" class="section level3 tabset">
+<div id="daytime-sleep-3" class="section level3 tabset">
 <h3 class="tabset">Daytime Sleep</h3>
 <pre class="r"><code>plot_daysleep &lt;- sleep_df %&gt;% 
   ggplot(aes(x = daytime_sleep, fill = demo_firstgen, color = demo_firstgen)) +
@@ -660,7 +738,7 @@ plot_midpoint</code></pre>
   )
 
 plot_daysleep</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 </div>
 </div>
 
