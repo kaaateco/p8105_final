@@ -37,7 +37,7 @@ sleep_df <- read_csv("data/cmu-sleep.csv") |>
   janitor::clean_names() |> 
   mutate(demo_race = case_when(demo_race == 0 ~ "Underrepresented", 
                                      demo_race == 1 ~ "Non-underpresented"),
-         demo_race = fct_relevel(demo_race, "Non-underpresented"),
+         demo_race = fct_relevel(demo_race, "Underrepresented"),
          demo_gender = case_when(demo_gender == 0 ~ "Male", 
                                      demo_gender == 1 ~ "Female"),
          demo_gender = fct_relevel(demo_gender, "Male"), 
@@ -65,18 +65,21 @@ th {
 ```
 
 ## Demographic Distribution of Observations
-```{r, fig.width = 3, fig.height = 4, out.width = "70%", dpi=600,message=FALSE,warning=FALSE}
+```{r, fig.width = 5, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
 sleep_df <- sleep_df |> 
   rename(`Cohort` =`cohort`, 
          `Race` =`demo_race`, 
          `Gender` =`demo_gender`, 
          `First-Generation` =`demo_firstgen`, 
-         `Average time in bed`= `total_sleep_time`, 
-         `Average midpoint of bedtime and wake time` =  `midpoint_sleep`, 
-         `Day Time Sleep` = `daytime_sleep`, 
-         `MSSD in Bedtime` = `bedtime_mssd`)
+         `Relative Course Load`= `zterm_units_zof_z`, 
+         `End-of-term GPA` =  `term_gpa`, 
+         `Cumulative GPA` = `cum_gpa`)
+
+#write_csv(sleep_df, "data/cleaned_cmu_sleep.csv")
+
 summary_tbl <- sleep_df |> 
-  select(`Cohort`, `Race`, `Gender`, `First-Generation`, time_collection) |> 
+  select(`Cohort`, `Race`, `Gender`, `First-Generation`, time_collection,
+         `Relative Course Load`, `End-of-term GPA`, `Cumulative GPA`) |> 
   tbl_summary(
     by = `Cohort`,
     statistic = list(
@@ -95,25 +98,27 @@ as_kable_extra(summary_tbl)
 </br>
 The dataset consists of first-year students from three different kind universities: Carnegie Mellon (CMU) is a STEM-focused private university, University of Washington (UW) is a large public university and Notre Dame (NDU) is a private catholic university. Each cohort have students roughly 15-20% students with underrepresented racial identity. However, the male to female ratio, and proportion of first generation students vary between the cohorts. 
 
-## Sleep Habits in different subgroups {.tabset}
+## Relative Course Load {.tabset}
 
-```{r, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
+```{r, dpi=600,message=FALSE,warning=FALSE}
 plot_function <- function(demo) {
   plot <- sleep_df |> 
     drop_na(rlang::sym(demo)) |> 
     pivot_longer(
-      cols = c(`Average time in bed`, `Day Time Sleep`), 
-      names_to = "sleep_type", 
-      values_to = "sleep_time"
+      cols = c(`Relative Course Load`, `End-of-term GPA`, `Cumulative GPA`), 
+      names_to = "academic_info", 
+      values_to = "unit"
     ) |> 
-    mutate(sleep_time = (sleep_time/60) |> round(digits = 1)) |> 
-    ggplot(aes(x = get(demo), y = sleep_time, fill = sleep_type)) +
+    mutate(academic_info = fct_relevel(academic_info, "Relative Course Load", "End-of-term GPA", "Cumulative GPA")) |> 
+    ggplot(aes(x = get(demo), y = unit, fill = academic_info)) +
     geom_violin(alpha = 0.2) + 
-    labs(y = "Sleep Time (in hrs)", 
-             x = demo, fill = "") +
-    facet_wrap(~sleep_type, ncol = 2, scales = "free")
-  plotly::ggplotly(plot) |> 
-    layout(legend = list(orientation = 'h'))
+    labs(y = "", x = "", fill = "") +
+    scale_y_continuous(expand = c(0,0)) +
+    facet_wrap(~academic_info, ncol = 3, scales = "free") +
+    theme(panel.spacing = unit(1, "lines"), 
+          axis.text.x = element_text(angle = 30))
+  ggplotly(plot) |> 
+    layout(autosize = F, width = 825, height = 350)
 
 }
 ```
@@ -145,4 +150,14 @@ plot_function(demo = demo_name)
 demo_name = "Cohort"
 plot_function(demo = demo_name)
 ```
+
+NDU does not have information related to term unit load. 
+
+### Time of Data Collection {.tabset}
+
+```{r}
+demo_name = "time_collection"
+plot_function(demo = demo_name)
+```
+
 
