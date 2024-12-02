@@ -1,5 +1,5 @@
 ---
-title: "Sleeping Metrics"
+title: "Sleeping Patterns"
 output: 
   html_document:
     toc: true
@@ -14,20 +14,28 @@ library(tidyverse)
 
 ```
 
-This data set includes four different measures of sleep: 
+This data set includes four different measures of sleep: (descriptions taken directly from the CMU S&DS Data Repository)
 
 * `bedtime_mssd`:	Mean successive squared difference of bedtime, a measure of variability in bedtimes between consecutive nights
 * `total_sleep_time`:	Average time in bed (the difference between wake time and bedtime) minus the length of total awake/restlessness in the main sleep episode, in minutes
 * `midpoint_sleep`:	Average midpoint of bedtime and wake time, in minutes after 11 pm (for example, 364 is 5:04 am)
 * `daytime_sleep`:	Average sleep time outside of the range of the main sleep episode, including short naps or sleep that occurred during the daytime, in minutes
 
+Below is a 
+
+```{r}
+
+#View(sleep_df)
+                          
+
+```
+
+
 ## bedtime_mssd
 
 ```{r}
 
-sleep <- read_csv("data/cmu-sleep.csv") %>% janitor::clean_names() 
-
-sleep %>% ggplot(aes(x = bedtime_mssd)) + geom_histogram()
+#sleep_df %>% ggplot(aes(x = bedtime_mssd, fill = university)) + geom_histogram()
 
 
 ```
@@ -36,7 +44,7 @@ sleep %>% ggplot(aes(x = bedtime_mssd)) + geom_histogram()
 
 ```{r}
 
-sleep %>% ggplot(aes(x = total_sleep_time, fill = cohort)) + geom_density(alpha = 0.5)
+#sleep_df %>% ggplot(aes(x = total_sleep_time, fill = university)) + geom_density(alpha = 0.5)
 
 ```
 

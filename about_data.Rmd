@@ -14,7 +14,7 @@ library(tidyverse)
 
 ```
 
-# About our Data Set HEY MAKE SURE THE VARIABLE DESCRIPTIONS ARE ACCURATE NAMES AND INCLUDED IN FINAL DATSET
+# About our Data Set
 
 We found our data through the [Carnegie Mellon University Statistics and Data Science Data Repository](https://cmustatistics.github.io/data-repository/). This data was collected in 2019 for a [2023 study](https://www.pnas.org/doi/10.1073/pnas.2209123120) of sleep duration as a predictor of grade point average (GPA) of first-year college students. 
 
@@ -25,26 +25,13 @@ More information on data collection can be found at [this site](https://cmustati
 ---
 
 ```{r}
-# Data Cleaning 
-
-# sleep <- read_csv("data/cmu-sleep.csv") %>% janitor::clean_names() %>% 
-#   mutate(university = 
-#            case_match(
-#              cohort, 
-#              "nh" ~ "Manhattan",
-#              "Richmond" ~ "Staten Island", 
-#              "Kings" ~ "Brooklyn",
-#              "Bronx" ~ "Bronx", 
-#              "Queens" ~ "Queens")))
-
-## I want to group by university but I can't figure out the cohort codes lol...
-
+sleep <- read_csv("data/cmu-sleep.csv") %>% janitor::clean_names() 
 
 ```
 
 # Variable Descriptions 
 
-The variables included in our final dataset are described below, with descriptions taken directly from the CMU S&DS Data Repository:
+The variables available in the dataset are described below, with descriptions taken directly from the CMU S&DS Data Repository:
 
 * `subject_id`:	Unique ID of the subject
 * `study`:	Study number, as shown in the table above

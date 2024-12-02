@@ -11,9 +11,9 @@
 
 
 
-<title>Sleeping Metrics</title>
+<title>Sleeping Patterns</title>
 
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
@@ -346,7 +346,7 @@ div.tocify {
   <a href="students.html">Students</a>
 </li>
 <li>
-  <a href="sleep_metrics.html">Sleeping Metrics</a>
+  <a href="sleep_metrics.html">Sleeping Patterns</a>
 </li>
 <li>
   <a href="NA">Shiny App</a>
@@ -377,12 +377,13 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Sleeping Metrics</h1>
+<h1 class="title toc-ignore">Sleeping Patterns</h1>
 
 </div>
 
 
-<p>This data set includes four different measures of sleep:</p>
+<p>This data set includes four different measures of sleep:
+(descriptions taken directly from the CMU S&amp;DS Data Repository)</p>
 <ul>
 <li><code>bedtime_mssd</code>: Mean successive squared difference of
 bedtime, a measure of variability in bedtimes between consecutive
@@ -396,19 +397,22 @@ time, in minutes after 11 pm (for example, 364 is 5:04 am)</li>
 of the main sleep episode, including short naps or sleep that occurred
 during the daytime, in minutes</li>
 </ul>
+<p>Below is a</p>
+<pre class="r"><code>
+#View(sleep_df)
+                          
+</code></pre>
 <div id="bedtime_mssd" class="section level2">
 <h2>bedtime_mssd</h2>
 <pre class="r"><code>
-sleep &lt;- read_csv(&quot;data/cmu-sleep.csv&quot;) %&gt;% janitor::clean_names() 
-
-sleep %&gt;% ggplot(aes(x = bedtime_mssd)) + geom_histogram()</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+#sleep_df %&gt;% ggplot(aes(x = bedtime_mssd, fill = university)) + geom_histogram()
+</code></pre>
 </div>
 <div id="total_sleep_time" class="section level1">
 <h1>total_sleep_time</h1>
 <pre class="r"><code>
-sleep %&gt;% ggplot(aes(x = total_sleep_time, fill = cohort)) + geom_density(alpha = 0.5)</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+#sleep_df %&gt;% ggplot(aes(x = total_sleep_time, fill = university)) + geom_density(alpha = 0.5)
+</code></pre>
 </div>
 <div id="midpoint_sleep" class="section level1">
 <h1>midpoint_sleep</h1>

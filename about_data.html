@@ -13,7 +13,7 @@
 
 <title>about_data.knit</title>
 
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
@@ -270,7 +270,7 @@ $(document).ready(function () {
   <a href="students.html">Students</a>
 </li>
 <li>
-  <a href="sleep_metrics.html">Sleeping Metrics</a>
+  <a href="sleep_metrics.html">Sleeping Patterns</a>
 </li>
 <li>
   <a href="NA">Shiny App</a>
@@ -305,11 +305,8 @@ $(document).ready(function () {
 </div>
 
 
-<div
-id="about-our-data-set-hey-make-sure-the-variable-descriptions-are-accurate-names-and-included-in-final-datset"
-class="section level1">
-<h1>About our Data Set HEY MAKE SURE THE VARIABLE DESCRIPTIONS ARE
-ACCURATE NAMES AND INCLUDED IN FINAL DATSET</h1>
+<div id="about-our-data-set" class="section level1">
+<h1>About our Data Set</h1>
 <p>We found our data through the <a
 href="https://cmustatistics.github.io/data-repository/">Carnegie Mellon
 University Statistics and Data Science Data Repository</a>. This data
@@ -330,24 +327,12 @@ site</a> and the raw data can be downloaded directly from <a
 href="https://cmustatistics.github.io/data-repository/data/cmu-sleep.csv">this
 link</a>.</p>
 <hr />
-<pre class="r"><code># Data Cleaning 
-
-# sleep &lt;- read_csv(&quot;data/cmu-sleep.csv&quot;) %&gt;% janitor::clean_names() %&gt;% 
-#   mutate(university = 
-#            case_match(
-#              cohort, 
-#              &quot;nh&quot; ~ &quot;Manhattan&quot;,
-#              &quot;Richmond&quot; ~ &quot;Staten Island&quot;, 
-#              &quot;Kings&quot; ~ &quot;Brooklyn&quot;,
-#              &quot;Bronx&quot; ~ &quot;Bronx&quot;, 
-#              &quot;Queens&quot; ~ &quot;Queens&quot;)))
-
-## I want to group by university but I can&#39;t figure out the cohort codes lol...
+<pre class="r"><code>sleep &lt;- read_csv(&quot;data/cmu-sleep.csv&quot;) %&gt;% janitor::clean_names() 
 </code></pre>
 </div>
 <div id="variable-descriptions" class="section level1">
 <h1>Variable Descriptions</h1>
-<p>The variables included in our final dataset are described below, with
+<p>The variables available in the dataset are described below, with
 descriptions taken directly from the CMU S&amp;DS Data Repository:</p>
 <ul>
 <li><code>subject_id</code>: Unique ID of the subject</li>
