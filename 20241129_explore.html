@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Yuying Lu" />
+
+<meta name="date" content="2024-11-28" />
+
+<title>20241129_explore</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    About
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="about_data.html">The Data</a>
+    </li>
+    <li>
+      <a href="team.html">The Team</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="students.html">Students</a>
+</li>
+<li>
+  <a href="sleep_metrics.html">Sleeping Metrics</a>
+</li>
+<li>
+  <a href="NA">Shiny App</a>
+</li>
+<li>
+  <a href="report.html">Project Report</a>
+</li>
+<li>
+  <a href="https://github.com/kaaateco/p8105_final.git">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">20241129_explore</h1>
+<h4 class="author">Yuying Lu</h4>
+<h4 class="date">2024-11-28</h4>
+
+</div>
+
+
+<pre class="r"><code>library(tidyverse)
+theme_set(theme_minimal() + theme(legend.position = &quot;bottom&quot;))</code></pre>
+<pre class="r"><code>df_cum =
+  read_csv(&quot;data/cmu-sleep.csv&quot;) |&gt; 
+  janitor::clean_names() |&gt; 
+  drop_na()
+
+df_cum</code></pre>
+<pre><code>## # A tibble: 481 × 15
+##    subject_id study cohort demo_race demo_gender demo_firstgen bedtime_mssd
+##         &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;      &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;        &lt;dbl&gt;
+##  1        185     5 lac1           1           1             0       0.117 
+##  2        158     5 lac1           0           1             0       0.142 
+##  3        209     5 lac1           1           1             0       1.53  
+##  4        102     5 lac1           0           1             1       0.130 
+##  5        174     5 lac1           1           1             0       0.130 
+##  6        184     5 lac1           1           1             0       0.209 
+##  7        255     5 lac1           1           1             0       0.675 
+##  8        265     5 lac1           1           1             0       0.130 
+##  9        343     5 lac1           1           0             0       1.48  
+## 10        137     5 lac1           1           1             0       0.0850
+## # ℹ 471 more rows
+## # ℹ 8 more variables: total_sleep_time &lt;dbl&gt;, midpoint_sleep &lt;dbl&gt;,
+## #   frac_nights_with_data &lt;dbl&gt;, daytime_sleep &lt;dbl&gt;, cum_gpa &lt;dbl&gt;,
+## #   term_gpa &lt;dbl&gt;, term_units &lt;dbl&gt;, zterm_units_zof_z &lt;dbl&gt;</code></pre>
+<pre class="r"><code>summary(df_cum)</code></pre>
+<pre><code>##    subject_id        study         cohort            demo_race    
+##  Min.   :  1.0   Min.   :1.00   Length:481         Min.   :0.000  
+##  1st Qu.:152.0   1st Qu.:2.00   Class :character   1st Qu.:1.000  
+##  Median :302.0   Median :3.00   Mode  :character   Median :1.000  
+##  Mean   :289.9   Mean   :2.94                      Mean   :0.817  
+##  3rd Qu.:418.0   3rd Qu.:5.00                      3rd Qu.:1.000  
+##  Max.   :671.0   Max.   :5.00                      Max.   :1.000  
+##   demo_gender     demo_firstgen     bedtime_mssd       total_sleep_time
+##  Min.   :0.0000   Min.   :0.0000   Min.   : 0.004505   Min.   :194.8   
+##  1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.: 0.075134   1st Qu.:370.5   
+##  Median :1.0000   Median :0.0000   Median : 0.142840   Median :402.9   
+##  Mean   :0.6133   Mean   :0.2017   Mean   : 0.478967   Mean   :400.9   
+##  3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.: 0.324523   3rd Qu.:433.1   
+##  Max.   :1.0000   Max.   :2.0000   Max.   :20.849225   Max.   :587.7   
+##  midpoint_sleep  frac_nights_with_data daytime_sleep        cum_gpa     
+##  Min.   :247.1   Min.   :0.2143        Min.   :  2.269   Min.   :1.210  
+##  1st Qu.:345.0   1st Qu.:0.7931        1st Qu.: 22.385   1st Qu.:3.160  
+##  Median :393.1   Median :0.9310        Median : 34.679   Median :3.500  
+##  Mean   :401.9   Mean   :0.8603        Mean   : 40.059   Mean   :3.413  
+##  3rd Qu.:442.7   3rd Qu.:1.0000        3rd Qu.: 50.889   3rd Qu.:3.770  
+##  Max.   :724.7   Max.   :1.0000        Max.   :292.304   Max.   :4.000  
+##     term_gpa       term_units    zterm_units_zof_z  
+##  Min.   :0.350   Min.   : 5.00   Min.   :-3.982521  
+##  1st Qu.:3.120   1st Qu.:15.00   1st Qu.:-0.604268  
+##  Median :3.500   Median :17.00   Median : 0.041207  
+##  Mean   :3.384   Mean   :29.42   Mean   :-0.000448  
+##  3rd Qu.:3.790   3rd Qu.:48.00   3rd Qu.: 0.560271  
+##  Max.   :4.000   Max.   :73.00   Max.   : 4.055295</code></pre>
+<pre class="r"><code>df_cum =  df_cum |&gt; 
+  filter(demo_firstgen!=2) 
+
+lm_fit = lm(cum_gpa ~ demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, data = df_cum)
+
+summary(lm_fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = cum_gpa ~ demo_race + demo_gender + demo_firstgen + 
+##     bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, 
+##     data = df_cum)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.23465 -0.23279  0.07746  0.31652  0.86550 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)       3.6793826  0.2660297  13.831  &lt; 2e-16 ***
+## demo_race         0.2230181  0.0542572   4.110 4.66e-05 ***
+## demo_gender       0.0196157  0.0420658   0.466 0.641208    
+## demo_firstgen    -0.0961918  0.0524848  -1.833 0.067469 .  
+## bedtime_mssd      0.0323590  0.0153668   2.106 0.035751 *  
+## total_sleep_time  0.0002729  0.0004463   0.612 0.541095    
+## midpoint_sleep   -0.0011921  0.0003078  -3.873 0.000123 ***
+## daytime_sleep    -0.0021778  0.0007927  -2.747 0.006240 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.4437 on 472 degrees of freedom
+## Multiple R-squared:  0.115,  Adjusted R-squared:  0.1019 
+## F-statistic: 8.765 on 7 and 472 DF,  p-value: 3.804e-10</code></pre>
+<pre class="r"><code>boot_straps = 
+  df_cum|&gt; 
+  modelr::bootstrap(1000) |&gt; 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(cum_gpa ~ demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, data = df)),
+    results = map(models, broom::tidy)
+  ) |&gt; 
+  select(.id, results) |&gt; 
+  unnest(results)
+
+boot_straps |&gt; 
+  group_by(term) |&gt; 
+  summarise(
+    boot_est = mean(estimate),
+    boot_se = sd(estimate),
+    boot_ci_ll = quantile(estimate, .025),
+    boot_ci_ul = quantile(estimate, .975),
+  )</code></pre>
+<pre><code>## # A tibble: 8 × 5
+##   term              boot_est  boot_se boot_ci_ll boot_ci_ul
+##   &lt;chr&gt;                &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+## 1 (Intercept)       3.67     0.261      3.16       4.17    
+## 2 bedtime_mssd      0.0303   0.0142     0.00328    0.0533  
+## 3 daytime_sleep    -0.00215  0.000694  -0.00351   -0.000816
+## 4 demo_firstgen    -0.0948   0.0499    -0.194     -0.000699
+## 5 demo_gender       0.0193   0.0423    -0.0579     0.103   
+## 6 demo_race         0.223    0.0644     0.0995     0.350   
+## 7 midpoint_sleep   -0.00118  0.000319  -0.00178   -0.000590
+## 8 total_sleep_time  0.000276 0.000447  -0.000592   0.00114</code></pre>
+<div id="visualization" class="section level1">
+<h1>Visualization</h1>
+<pre class="r"><code>library(corrplot)
+
+cor_matrix &lt;- cor(df_cum[4:14])
+
+corrplot(cor_matrix,  method = &quot;color&quot;, 
+         addCoef.col = &quot;black&quot;, 
+         tl.col = &quot;black&quot;,      
+         tl.srt = 45,
+         order = &#39;hclust&#39;,
+         diag = F)          </code></pre>
+<p><img src="20241129_explore_files/figure-html/unnamed-chunk-5-1.png" width="960" /></p>
+<pre class="r"><code>plot_df = df_cum |&gt; 
+  mutate(demo_race = case_match(demo_race,
+                                   0 ~ &quot;Underrepresented&quot;,
+                                   1~ &quot;Non-underrepresented&quot;),
+         demo_race = factor(demo_race),
+         demo_gender = case_match(demo_gender,
+                                   0 ~ &quot;Male&quot;,
+                                   1~ &quot;Female&quot;),
+         demo_gender = factor(demo_gender),
+         demo_firstgen = case_match(demo_firstgen,
+                                   0 ~ &quot;Non-firstgen&quot;,
+                                   1~ &quot;Firstgen&quot;),
+         demo_firstgen = factor(demo_firstgen)
+         ) 
+
+
+# Process data: Rename and calculate proportions
+plot_race = 
+  plot_df |&gt;  
+  group_by(demo_race) |&gt; 
+  ggplot(aes(x = demo_race, fill = demo_race, color = demo_race)) +
+  geom_bar(position = &quot;dodge&quot; ,alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Race&quot;, y = &quot;Count&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5),
+    legend.position = &quot;bottom&quot;
+  )
+
+# Process data: Rename and calculate proportions
+plot_gender = 
+  plot_df |&gt;  
+  group_by(demo_gender) |&gt; 
+  ggplot(aes(x = demo_gender, fill = demo_gender, color = demo_gender)) +
+  geom_bar(position = &quot;dodge&quot; ,alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Gender&quot;, y = &quot;Count&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5),
+    legend.position = &quot;bottom&quot;
+  )
+
+plot_firstgen = 
+  plot_df |&gt;  
+  group_by(demo_firstgen) |&gt; 
+  ggplot(aes(x = demo_firstgen, fill = demo_firstgen, color = demo_firstgen)) +
+  geom_bar(position = &quot;dodge&quot; ,alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Firstgen&quot;, y = &quot;Count&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5),
+    legend.position = &quot;bottom&quot;)
+
+library(patchwork)
+
+plot_race + plot_gender + plot_firstgen + plot_layout(nrow =1) </code></pre>
+<p><img src="20241129_explore_files/figure-html/unnamed-chunk-6-1.png" width="960" /></p>
+<pre class="r"><code># Mean successive squared difference of bedtime.
+
+plot_bedtime = plot_df |&gt; 
+  ggplot(aes(x = bedtime_mssd,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Mean Successive Squared Difference&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_bedtime2 = plot_df |&gt; 
+  ggplot(aes(x = bedtime_mssd,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Mean Successive Squared Difference&quot;, y = &quot;Density&quot;) +
+  xlim(c(0,2.5))+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_totalsleep = plot_df |&gt; 
+  ggplot(aes(x = total_sleep_time ,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Total Sleep Time&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_midpoint = plot_df |&gt; 
+  ggplot(aes(x = midpoint_sleep,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Midpoint Sleep&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_daysleep = plot_df |&gt; 
+  ggplot(aes(x = daytime_sleep,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Daytime Sleep&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_cumgpa = plot_df |&gt; 
+  ggplot(aes(x = cum_gpa,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;CUM GPA&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_termgpa = plot_df |&gt; 
+  ggplot(aes(x = term_gpa,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Term GPA&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )</code></pre>
+<pre class="r"><code>plot_bedtime + plot_totalsleep + plot_midpoint + plot_daysleep + plot_cumgpa + plot_termgpa + plot_layout(ncol = 3,guides = &quot;collect&quot;) &amp; theme(legend.position = &quot;right&quot;) </code></pre>
+<p><img src="20241129_explore_files/figure-html/unnamed-chunk-8-1.png" width="960" /></p>
+<pre class="r"><code>plot_bedtime2 + plot_totalsleep + plot_midpoint + plot_daysleep + plot_cumgpa + plot_termgpa + plot_layout(ncol = 3,guides = &quot;collect&quot; ) &amp; theme(legend.position = &quot;right&quot;)         </code></pre>
+<p><img src="20241129_explore_files/figure-html/unnamed-chunk-8-2.png" width="960" /></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

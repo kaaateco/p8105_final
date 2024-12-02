@@ -1,0 +1,248 @@
+---
+title: "20241129_explore"
+author: "Yuying Lu"
+date: "2024-11-28"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+```
+
+```{r}
+library(tidyverse)
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+```
+
+
+```{r}
+df_cum =
+  read_csv("data/cmu-sleep.csv") |> 
+  janitor::clean_names() |> 
+  drop_na()
+
+df_cum
+
+summary(df_cum)
+```
+
+
+```{r}
+
+df_cum =  df_cum |> 
+  filter(demo_firstgen!=2) 
+
+lm_fit = lm(cum_gpa ~ demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, data = df_cum)
+
+summary(lm_fit)
+
+``` 
+
+
+```{r}
+boot_straps = 
+  df_cum|> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(cum_gpa ~ demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_straps |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    boot_se = sd(estimate),
+    boot_ci_ll = quantile(estimate, .025),
+    boot_ci_ul = quantile(estimate, .975),
+  )
+```
+
+
+# Visualization
+
+
+```{r, fig.width=10, fig.height=10}
+
+library(corrplot)
+
+cor_matrix <- cor(df_cum[4:14])
+
+corrplot(cor_matrix,  method = "color", 
+         addCoef.col = "black", 
+         tl.col = "black",      
+         tl.srt = 45,
+         order = 'hclust',
+         diag = F)          
+```
+
+
+
+```{r, fig.width=10, fig.height=4}
+
+plot_df = df_cum |> 
+  mutate(demo_race = case_match(demo_race,
+                                   0 ~ "Underrepresented",
+                                   1~ "Non-underrepresented"),
+         demo_race = factor(demo_race),
+         demo_gender = case_match(demo_gender,
+                                   0 ~ "Male",
+                                   1~ "Female"),
+         demo_gender = factor(demo_gender),
+         demo_firstgen = case_match(demo_firstgen,
+                                   0 ~ "Non-firstgen",
+                                   1~ "Firstgen"),
+         demo_firstgen = factor(demo_firstgen)
+         ) 
+
+
+# Process data: Rename and calculate proportions
+plot_race = 
+  plot_df |>  
+  group_by(demo_race) |> 
+  ggplot(aes(x = demo_race, fill = demo_race, color = demo_race)) +
+  geom_bar(position = "dodge" ,alpha = 0.3, linewidth = 1) +
+  labs(x = "Race", y = "Count") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    legend.position = "bottom"
+  )
+
+# Process data: Rename and calculate proportions
+plot_gender = 
+  plot_df |>  
+  group_by(demo_gender) |> 
+  ggplot(aes(x = demo_gender, fill = demo_gender, color = demo_gender)) +
+  geom_bar(position = "dodge" ,alpha = 0.3, linewidth = 1) +
+  labs(x = "Gender", y = "Count") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    legend.position = "bottom"
+  )
+
+plot_firstgen = 
+  plot_df |>  
+  group_by(demo_firstgen) |> 
+  ggplot(aes(x = demo_firstgen, fill = demo_firstgen, color = demo_firstgen)) +
+  geom_bar(position = "dodge" ,alpha = 0.3, linewidth = 1) +
+  labs(x = "Firstgen", y = "Count") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+    legend.position = "bottom")
+
+library(patchwork)
+
+plot_race + plot_gender + plot_firstgen + plot_layout(nrow =1) 
+
+
+```
+
+
+```{r}
+
+# Mean successive squared difference of bedtime.
+
+plot_bedtime = plot_df |> 
+  ggplot(aes(x = bedtime_mssd,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Mean Successive Squared Difference", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_bedtime2 = plot_df |> 
+  ggplot(aes(x = bedtime_mssd,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Mean Successive Squared Difference", y = "Density") +
+  xlim(c(0,2.5))+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_totalsleep = plot_df |> 
+  ggplot(aes(x = total_sleep_time ,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Total Sleep Time", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_midpoint = plot_df |> 
+  ggplot(aes(x = midpoint_sleep,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Midpoint Sleep", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_daysleep = plot_df |> 
+  ggplot(aes(x = daytime_sleep,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Daytime Sleep", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_cumgpa = plot_df |> 
+  ggplot(aes(x = cum_gpa,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "CUM GPA", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_termgpa = plot_df |> 
+  ggplot(aes(x = term_gpa,fill = demo_race, color = demo_race)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Term GPA", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+```
+
+
+```{r, fig.width=10, fig.height=5}
+
+plot_bedtime + plot_totalsleep + plot_midpoint + plot_daysleep + plot_cumgpa + plot_termgpa + plot_layout(ncol = 3,guides = "collect") & theme(legend.position = "right") 
+
+
+
+plot_bedtime2 + plot_totalsleep + plot_midpoint + plot_daysleep + plot_cumgpa + plot_termgpa + plot_layout(ncol = 3,guides = "collect" ) & theme(legend.position = "right")         
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
