@@ -10,6 +10,7 @@ output:
 ```{r setup, include = FALSE, message=FALSE, warning=FALSE}
 knitr::opts_chunk$set(collapse = TRUE, message = FALSE)
 library(tidyverse)
+library(gtsummary)
 
 ```
 
@@ -29,8 +30,8 @@ The descriptions above were taken directly from the CMU S&DS Data Repository.
 Below are plots describing the overall distributions of each of these sleep measures, broken down by university. We can observe that **COMMENTS**
 
 ```{r}
-sleep_df <- read_csv("data/cmu-sleep.csv") |> 
-  janitor::clean_names() |> 
+sleep_df <- read_csv("data/cmu-sleep.csv") %>% 
+  janitor::clean_names() %>%  
   mutate(demo_race = case_when(demo_race == 0 ~ "Underrepresented", 
                                      demo_race == 1 ~ "Non-underrepresented"),
          demo_race = fct_relevel(demo_race, "Underrepresented"),
@@ -71,6 +72,14 @@ plot_totalsleep
                           
 ```
 
+```{r}
+
+summary(lm(total_sleep_time ~ university, sleep_df)) %>% broom::tidy()
+
+#boxplot(total_sleep_time ~ university, sleep_df)
+
+```
+
 ### Variability in Bed Times {.tabset}
 
 ```{r}
@@ -86,6 +95,12 @@ plot_bedtime2 <- sleep_df %>%
   )
 
 plot_bedtime2
+
+```
+
+```{r}
+
+anova(lm(bedtime_mssd ~ university, sleep_df)) %>% broom::tidy()
 
 ```
 
@@ -106,6 +121,12 @@ plot_midpoint
 
 ```
 
+```{r}
+
+mid_uni_anova <- anova(lm(midpoint_sleep ~ university, sleep_df)) %>% broom::tidy()
+
+```
+
 ### Daytime Sleep {.tabset}
 
 ```{r}
@@ -123,23 +144,35 @@ plot_daysleep
 
 ```
 
+```{r}
 
-## GPA and Courseload 
+anova(lm(daytime_sleep ~ university, sleep_df)) %>% broom::tidy()
+
+```
+
+##
+
+```{r}
+
+sleep_df %>% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_sleep, university) %>% 
+  tbl_summary(
+    by = university,
+    statistic = list(
+      all_continuous() ~ "{median} ({p25}, {p75})",
+      all_categorical() ~ "{n} / {N} ({p}%)")) %>% 
+    add_p() %>% 
+    add_overall()
+
+
+```
+
+## GPA and Courseload {.tabset}
 
 everything below here is a work in progress/experimental lol
 
 maybe some sort of heat map ??
 
 ```{r}
-
-# sleep_df <- sleep_df %>% 
-#   mutate(gpa_group = case_when(cum_gpa <= 2.8 ~ "Low", 
-#                                cum_gpa >= 3.9 ~ "High",
-#                                cum_gpa > 2.8 & cum_gpa < 3.9 ~ "Middle"), 
-#          term_group = case_when(zterm_units_zof_z <= -1 ~ "Heavy", 
-#                                 zterm_units_zof_z >= 1 ~ "Light", 
-#                                 zterm_units_zof_z > -1 & zterm_units_zof_z < 1 ~ "Average"))
-
 
 sleep_df %>% ggplot(aes(x = cum_gpa, y = zterm_units_zof_z)) +
   geom_density2d_filled(alpha = 0.8) +
@@ -149,15 +182,67 @@ sleep_df %>% ggplot(aes(x = cum_gpa, y = zterm_units_zof_z)) +
   ) +
   theme_minimal()
 
+```
 
-sleep_df %>% na.omit() %>% 
-ggplot(aes(round(cum_gpa), round(zterm_units_zof_z), fill = total_sleep_time)) + 
-  geom_tile() +
+### Total Sleep Time {.tabset}
+
+```{r}
+
+sleep_df %>% drop_na(zterm_units_zof_z) %>% 
+  ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = total_sleep_time)) + 
+  geom_tile() + scale_fill_gradient(low = "blue", high = "yellow") +
   labs(
-    title = "Heatmap of Total Sleep Time",
     x = "Cumulative GPA",
     y = "Term Units (Z)",
-    fill = "Sleep Time (min)"
+    fill = "Total Sleep Time (min)"
+  ) +
+  theme_minimal()
+
+```
+
+### Variability in Bed Times {.tabset}
+
+```{r}
+
+sleep_df %>% drop_na(zterm_units_zof_z) %>% 
+  ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = bedtime_mssd)) + 
+  geom_tile() + scale_fill_gradient(low = "blue", high = "yellow") +
+  labs(
+    x = "Cumulative GPA",
+    y = "Term Units (Z)",
+    fill = "MSSD"
+  ) +
+  theme_minimal()
+
+```
+
+### Sleeping Midpoint {.tabset}
+
+```{r}
+
+sleep_df %>% drop_na(zterm_units_zof_z) %>% 
+  ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = midpoint_sleep)) + 
+  geom_tile() + scale_fill_gradient(low = "blue", high = "yellow") +
+  labs(
+    x = "Cumulative GPA",
+    y = "Term Units (Z)",
+    fill = "Minutes past 11 PM"
+  ) +
+  theme_minimal()
+
+```
+
+### Daytime Sleep {.tabset}
+
+```{r}
+
+sleep_df %>% drop_na(zterm_units_zof_z) %>% 
+  ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = daytime_sleep)) + 
+  geom_tile() + scale_fill_gradient(low = "blue", high = "yellow") +
+  labs(
+    x = "Cumulative GPA",
+    y = "Term Units (Z)",
+    fill = "Daytime Sleep (min)"
   ) +
   theme_minimal()
 
@@ -168,15 +253,14 @@ ggplot(aes(round(cum_gpa), round(zterm_units_zof_z), fill = total_sleep_time)) +
 ### Total Sleep Time {.tabset}
 
 ```{r}
-plot_totalsleep <- sleep_df %>% filter(!is.na(demo_gender)) %>%  
+plot_totalsleep <- sleep_df %>% filter(!is.na(demo_gender)) %>% 
   ggplot(aes(x = total_sleep_time, fill = demo_gender, color = demo_gender)) +
-  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
+  geom_density(alpha = 0.3, linewidth = 1) + 
   labs(x = "Total Sleep Time (minutes)", y = "Density") +
   theme_minimal() +
   theme(
     strip.text = element_text(size = 14),
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
-  )
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
 
 plot_totalsleep    
                           
@@ -187,7 +271,7 @@ plot_totalsleep
 ```{r}
 plot_bedtime2 <- sleep_df %>% filter(!is.na(demo_gender)) %>%
   ggplot(aes(x = bedtime_mssd, fill = demo_gender, color = demo_gender)) +
-  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
+  geom_density(alpha = 0.3, linewidth = 1) + 
   labs(x = "Mean Successive Squared Difference", y = "Density") +
   xlim(c(0,2.5))+
   theme_minimal() +
@@ -205,7 +289,7 @@ plot_bedtime2
 ```{r}
 plot_midpoint <- sleep_df %>% filter(!is.na(demo_gender)) %>%
   ggplot(aes(x = midpoint_sleep, fill = demo_gender, color = demo_gender)) +
-  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
+  geom_density(alpha = 0.3, linewidth = 1) +
   labs(x = "Midpoint Sleep (minutes past 11 PM)", y = "Density") +
   theme_minimal() +
   theme(
@@ -217,12 +301,27 @@ plot_midpoint
 
 ```
 
+```{r}
+plot_midpoint1 <- sleep_df %>% filter(!is.na(demo_gender)) %>%
+  ggplot(aes(x = midpoint_sleep, fill = demo_gender, color = demo_gender)) +
+  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
+  labs(x = "Midpoint Sleep (minutes past 11 PM)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_midpoint1
+
+```
+
 ### Daytime Sleep {.tabset}
 
 ```{r}
 plot_daysleep <- sleep_df %>% filter(!is.na(demo_gender)) %>% 
   ggplot(aes(x = daytime_sleep, fill = demo_gender, color = demo_gender)) +
-  geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
+  geom_density(alpha = 0.3, linewidth = 1) +
   labs(x = "Daytime Sleep (minutes)", y = "Density") +
   theme_minimal() +
   theme(
@@ -242,7 +341,7 @@ plot_daysleep
 ### Total Sleep Time {.tabset}
 
 ```{r}
-plot_totalsleep <- sleep_df %>%  
+plot_totalsleep <- sleep_df %>% filter(!is.na(demo_race)) %>%
   ggplot(aes(x = total_sleep_time, fill = demo_race, color = demo_race)) +
   geom_density(alpha = 0.3, linewidth = 1) +
   labs(x = "Total Sleep Time (minutes)", y = "Density") +
@@ -259,7 +358,7 @@ plot_totalsleep
 ### Variability in Bed Times {.tabset}
 
 ```{r}
-plot_bedtime2 <- sleep_df %>%  
+plot_bedtime2 <- sleep_df %>%  filter(!is.na(demo_race)) %>%
   ggplot(aes(x = bedtime_mssd, fill = demo_race, color = demo_race)) +
   geom_density(alpha = 0.3, linewidth = 1) +
   labs(x = "Mean Successive Squared Difference", y = "Density") +
@@ -277,7 +376,7 @@ plot_bedtime2
 ### Sleeping Midpoint {.tabset}
 
 ```{r}
-plot_midpoint <- sleep_df %>% 
+plot_midpoint <- sleep_df %>% filter(!is.na(demo_race)) %>%
   ggplot(aes(x = midpoint_sleep, fill = demo_race, color = demo_race)) +
   geom_density(alpha = 0.3, linewidth = 1) +
   labs(x = "Midpoint Sleep (minutes past 11 PM)", y = "Density") +
@@ -294,7 +393,7 @@ plot_midpoint
 ### Daytime Sleep {.tabset}
 
 ```{r}
-plot_daysleep <- sleep_df %>% 
+plot_daysleep <- sleep_df %>% filter(!is.na(demo_race)) %>%
   ggplot(aes(x = daytime_sleep, fill = demo_race, color = demo_race)) +
   geom_density(alpha = 0.3, linewidth = 1) +
   labs(x = "Daytime Sleep (minutes)", y = "Density") +
@@ -313,7 +412,7 @@ plot_daysleep
 ### Total Sleep Time {.tabset}
 
 ```{r}
-plot_totalsleep <- sleep_df %>%  
+plot_totalsleep <- sleep_df %>% filter(!is.na(demo_firstgen)) %>%
   ggplot(aes(x = total_sleep_time, fill = demo_firstgen, color = demo_firstgen)) +
   geom_density(alpha = 0.3, linewidth = 1) +
   labs(x = "Total Sleep Time (minutes)", y = "Density") +
@@ -330,7 +429,7 @@ plot_totalsleep
 ### Variability in Bed Times {.tabset}
 
 ```{r}
-plot_bedtime2 <- sleep_df %>%  
+plot_bedtime2 <- sleep_df %>% filter(!is.na(demo_firstgen)) %>%
   ggplot(aes(x = bedtime_mssd, fill = demo_firstgen, color = demo_firstgen)) +
   geom_density(alpha = 0.3, linewidth = 1) +
   labs(x = "Mean Successive Squared Difference", y = "Density") +
@@ -348,7 +447,7 @@ plot_bedtime2
 ### Sleeping Midpoint {.tabset}
 
 ```{r}
-plot_midpoint <- sleep_df %>% 
+plot_midpoint <- sleep_df %>% filter(!is.na(demo_firstgen)) %>%
   ggplot(aes(x = midpoint_sleep, fill = demo_firstgen, color = demo_firstgen)) +
   geom_density(alpha = 0.3, linewidth = 1) +
   labs(x = "Midpoint Sleep (minutes past 11 PM)", y = "Density") +
@@ -365,7 +464,7 @@ plot_midpoint
 ### Daytime Sleep {.tabset}
 
 ```{r}
-plot_daysleep <- sleep_df %>% 
+plot_daysleep <- sleep_df %>% filter(!is.na(demo_firstgen)) %>%
   ggplot(aes(x = daytime_sleep, fill = demo_firstgen, color = demo_firstgen)) +
   geom_density(alpha = 0.3, linewidth = 1) +
   labs(x = "Daytime Sleep (minutes)", y = "Density") +
