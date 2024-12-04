@@ -13,7 +13,7 @@
 
 <title>Demographics: Exploratory Analysis</title>
 
-<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -988,6 +988,7 @@ and UW students.</p>
     stat_compare_means(method = &quot;t.test&quot;, 
                        paired = FALSE, comparisons = comp,
                        method.args = list(var.equal = var_equal), 
+                       #label = paste0(&quot;p = &quot;, after_stat(p.format)), 
                        p.adjust.method = &quot;bonferroni&quot;, 
                        label.y = y_positions) +
     stat_summary(fun = &quot;mean&quot;, fun.min = &quot;mean&quot;, color = &quot;skyblue&quot;, 
@@ -1092,7 +1093,7 @@ plot_loadgpa(demo = demo_name)</code></pre>
          statistic = round(`statistic`, digits = 3)) |&gt; 
   mutate(`p.value` = signif(`p.value`, digits = 3)) |&gt; 
   knitr::kable(digits = 170) |&gt; 
-  row_spec(2, bold = T, background = &quot;darkgrey&quot;) |&gt; 
+  row_spec(2, background = &quot;darkgrey&quot;) |&gt; 
   kable_minimal()</code></pre>
 <table class=" lightable-minimal" style="font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto;">
 <thead>
@@ -1133,19 +1134,19 @@ p.value
 </td>
 </tr>
 <tr>
-<td style="text-align:left;font-weight: bold;background-color: darkgrey !important;">
+<td style="text-align:left;background-color: darkgrey !important;">
 <code>Relative Course Load</code>
 </td>
-<td style="text-align:right;font-weight: bold;background-color: darkgrey !important;">
+<td style="text-align:right;background-color: darkgrey !important;">
 0.076
 </td>
-<td style="text-align:right;font-weight: bold;background-color: darkgrey !important;">
+<td style="text-align:right;background-color: darkgrey !important;">
 0.051
 </td>
-<td style="text-align:right;font-weight: bold;background-color: darkgrey !important;">
+<td style="text-align:right;background-color: darkgrey !important;">
 1.504
 </td>
-<td style="text-align:right;font-weight: bold;background-color: darkgrey !important;">
+<td style="text-align:right;background-color: darkgrey !important;">
 1.33e-01
 </td>
 </tr>
@@ -1730,6 +1731,10 @@ UW
 </tr>
 </tfoot>
 </table>
+<div id="different-groups-improved-this-semster-versus-last-semester"
+class="section level3">
+<h3>Different groups improved this semster versus last semester</h3>
+</div>
 </div>
 
 

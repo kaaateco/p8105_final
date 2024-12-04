@@ -53,5 +53,6 @@ Based on the textual context provided by CMU S&DS Data Repository, we further de
 * `time_collection`: It refers to the time of data collection, derived from `study` variable. The value `4` in `study` was is for `Spring 2016`, `5` for `Spring 2017`, `1`, `2` for `Spring 2018`, and `3` for `Spring 2019`. 
 
 
+#### exp: included all possible observations, for stats_modeling removed NA rows. 
 
 

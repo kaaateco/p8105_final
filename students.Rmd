@@ -219,6 +219,7 @@ plot_gpa <- function(demo, gpa, var_equal, comp) {
     stat_compare_means(method = "t.test", 
                        paired = FALSE, comparisons = comp,
                        method.args = list(var.equal = var_equal), 
+                       label = paste0("p = ", after_stat(p.format)), 
                        p.adjust.method = "bonferroni", 
                        label.y = y_positions) +
     stat_summary(fun = "mean", fun.min = "mean", color = "skyblue", 
@@ -328,7 +329,7 @@ lm(`End-of-term GPA` ~ `Relative Course Load`*Race +
          statistic = round(`statistic`, digits = 3)) |> 
   mutate(`p.value` = signif(`p.value`, digits = 3)) |> 
   knitr::kable(digits = 170) |> 
-  row_spec(2, bold = T, background = "darkgrey") |> 
+  row_spec(2, background = "darkgrey") |> 
   kable_minimal()
 ```
 \
@@ -402,7 +403,7 @@ as_kable_extra(summary_tbl_first) |>
 ```
 
 
-
+### Different groups improved this semster versus last semester
 
 
 
