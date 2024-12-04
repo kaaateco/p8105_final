@@ -390,7 +390,7 @@ this dataset.</p>
   janitor::clean_names() |&gt; 
   mutate(demo_race = case_when(demo_race == 0 ~ &quot;Underrepresented&quot;, 
                                      demo_race == 1 ~ &quot;Non-underrepresented&quot;),
-         demo_race = fct_relevel(demo_race, &quot;Underrepresented&quot;),
+         demo_race = fct_relevel(demo_race, &quot;Non-underrepresented&quot;),
          demo_gender = case_when(demo_gender == 0 ~ &quot;Male&quot;, 
                                      demo_gender == 1 ~ &quot;Female&quot;),
          demo_gender = fct_relevel(demo_gender, &quot;Male&quot;), 
@@ -416,6 +416,15 @@ th {
 </style>
 <div id="demographic-and-academic-information" class="section level2">
 <h2>Demographic and Academic Information</h2>
+<p>The dataset consists of first-year students from three different kind
+universities: Carnegie Mellon (CMU) is a STEM-focused private
+university, University of Washington (UW) is a large public university
+and Notre Dame (NDU) is a private catholic university. Each cohort have
+students roughly 15-20% students with underrepresented racial identity.
+However, the male to female ratio, and proportion of first generation
+students vary between the cohorts. There is significant difference in
+gender ratio and proportion of first generation students in different
+universities.</p>
 <pre class="r"><code>sleep_df &lt;- sleep_df |&gt; 
   rename(`Cohort` =`cohort`, 
          `University` =`university`, 
@@ -444,8 +453,9 @@ summary_tbl &lt;- sleep_df |&gt;
   italicize_labels() |&gt; 
   add_p()
 
-as_kable_extra(summary_tbl)</code></pre>
-<table style="NAborder-bottom: 0;">
+as_kable_extra(summary_tbl) |&gt; 
+  kable_minimal()</code></pre>
+<table style="NAborder-bottom: 0; font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto;" class=" lightable-minimal">
 <thead>
 <tr>
 <th style="empty-cells: hide;border-bottom:hidden;" colspan="2">
@@ -498,25 +508,6 @@ p-value
 </tr>
 <tr>
 <td style="text-align:left;padding-left: 2em;" indentlevel="1">
-Underrepresented
-</td>
-<td style="text-align:center;">
-119 / 633 (19%)
-</td>
-<td style="text-align:center;">
-31 / 208 (15%)
-</td>
-<td style="text-align:center;">
-30 / 146 (21%)
-</td>
-<td style="text-align:center;">
-58 / 279 (21%)
-</td>
-<td style="text-align:center;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;padding-left: 2em;" indentlevel="1">
 Non-underrepresented
 </td>
 <td style="text-align:center;">
@@ -530,6 +521,25 @@ Non-underrepresented
 </td>
 <td style="text-align:center;">
 221 / 279 (79%)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
+Underrepresented
+</td>
+<td style="text-align:center;">
+119 / 633 (19%)
+</td>
+<td style="text-align:center;">
+31 / 208 (15%)
+</td>
+<td style="text-align:center;">
+30 / 146 (21%)
+</td>
+<td style="text-align:center;">
+58 / 279 (21%)
 </td>
 <td style="text-align:center;">
 </td>
@@ -888,127 +898,416 @@ GPA</span>
 </tr>
 </tfoot>
 </table>
-<p></br> The dataset consists of first-year students from three
-different kind universities: Carnegie Mellon (CMU) is a STEM-focused
-private university, University of Washington (UW) is a large public
-university and Notre Dame (NDU) is a private catholic university. Each
-cohort have students roughly 15-20% students with underrepresented
-racial identity. However, the male to female ratio, and proportion of
-first generation students vary between the cohorts.</p>
 </div>
 <div id="relative-course-load" class="section level2 tabset">
 <h2 class="tabset">Relative Course Load</h2>
-<pre class="r"><code>plot_courseload &lt;- function(demo) {
+<p>To compare relative course load (<code>zterm_units_zof_z</code>)
+between different groups of each demographics, we ran t-test
+(with/without equal variance). See <a
+href="#appendix_a-section">Appendix A</a> to learn about how we
+identified an appropriate two-sample mean test. </p>
+<p>The results suggest that the different genders, races, first
+generation groups and universities do not differ significantly. This
+suggests that we can directly compare difference in GPAs between
+categories of each demographics. Since there isn’t significant
+difference in racial makeup of students from the three universities.</p>
+<pre class="r"><code>plot_courseload &lt;- function(demo, var_equal) {
   sleep_df |&gt; 
-    drop_na(rlang::sym(demo)) |&gt; 
+    drop_na(rlang::sym(demo), `Relative Course Load`) |&gt; 
     ggplot(aes(x = get(demo), y = `Relative Course Load`)) +
     geom_violin(alpha = 0.4, fill = &quot;#70BBAA&quot;) + 
     labs(y = &quot;&quot;, x = &quot;&quot;, fill = &quot;&quot;) +
-    scale_y_continuous(expand = c(0,0)) 
+    scale_y_continuous(expand = c(0,0), limits = c(-3, 5)) +
+    stat_compare_means(method = &quot;t.test&quot;, paired = FALSE, 
+                       method.args = list(var.equal = var_equal), 
+                       label.y = 4, 
+                       label.x = 1.5) +
+    stat_summary(fun = &quot;mean&quot;, fun.min = &quot;mean&quot;, color = &quot;skyblue&quot;, 
+                 fun.max= &quot;mean&quot;, size= 0.2, geom = &quot;crossbar&quot;)
+                           
 }</code></pre>
 <div id="race" class="section level3 tabset">
 <h3 class="tabset">Race</h3>
 <pre class="r"><code>demo_name = &quot;Race&quot;
-plot_courseload(demo = demo_name)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-6-1.png" width="60%" /></p>
+comp &lt;- list(c(&quot;Underrepresented&quot;, &quot;Non-underrepresented&quot;))
+plot_courseload(demo_name, TRUE)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-7-1.png" width="60%" /></p>
 </div>
 <div id="gender" class="section level3 tabset">
 <h3 class="tabset">Gender</h3>
 <pre class="r"><code>demo_name = &quot;Gender&quot;
-plot_courseload(demo = demo_name)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-7-1.png" width="60%" /></p>
+comp &lt;- list(c(&quot;Male&quot;, &quot;Female&quot;))
+plot_courseload(demo = demo_name, TRUE)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-8-1.png" width="60%" /></p>
 </div>
 <div id="first-generation" class="section level3 tabset">
 <h3 class="tabset">First-Generation</h3>
 <pre class="r"><code>demo_name = &quot;First-Generation&quot;
-plot_courseload(demo = demo_name)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-8-1.png" width="60%" /></p>
+comp &lt;- list(c(&quot;Non-first gen&quot;, &quot;First-gen&quot;))
+plot_courseload(demo = demo_name, TRUE)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-9-1.png" width="60%" /></p>
 </div>
 <div id="university" class="section level3 tabset">
 <h3 class="tabset">University</h3>
 <pre class="r"><code>demo_name = &quot;University&quot;
-plot_courseload(demo = demo_name)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-9-1.png" width="60%" />
-NDU does not have information related to term unit load.</p>
+plot_courseload(demo = demo_name, TRUE)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-10-1.png" width="60%" />
+</br> Observations from NDU do not have information related to term unit
+load.</p>
 </div>
 </div>
 <div id="grade-point-average-gpa" class="section level2 tabset">
 <h2 class="tabset">Grade Point Average (GPA)</h2>
-<pre class="r"><code>plot_gpa &lt;- function(demo) {
-  sleep_df |&gt; 
-    drop_na(rlang::sym(demo)) |&gt; 
-    pivot_longer(
-      cols = c(`End-of-term GPA`, `Cumulative GPA`), 
-      names_to = &quot;academic_info&quot;, 
-      values_to = &quot;unit&quot;
-    ) |&gt; 
-    mutate(academic_info = fct_relevel(academic_info, &quot;End-of-term GPA&quot;, &quot;Cumulative GPA&quot;)) |&gt; 
-    ggplot(aes(x = get(demo), y = unit, fill = academic_info)) +
+<p>We ran t-test (with/without equal variance, see <a
+href="#appendix_a-section">Appendix A</a>) to compare mean GPA between
+different categories. In general, students from underrepresented race
+have less GPA compared to students who are not underrepresented.
+Similarly, first generations have lower GPA than first-year students who
+are not first generation. Men and women have similar mean GPA. Between
+the three universities, students from NDU have higher mean GPA when CMU
+and UW students.</p>
+<pre class="r"><code>plot_gpa &lt;- function(demo, gpa, var_equal, comp) {
+  subset_df &lt;- sleep_df |&gt; 
+    drop_na(rlang::sym(demo), rlang::sym(gpa)) 
+  
+  max_y &lt;- max(subset_df[,gpa], na.rm = TRUE)
+  
+  y_positions &lt;- seq(max_y, by = 0.5, length.out = length(comp))
+  
+  cols &lt;- c(&quot;End-of-term GPA&quot; = &quot;#ffaaaa&quot;, 
+            &quot;Cumulative GPA&quot; = &quot;#ffddba&quot;)
+  
+  subset_df |&gt; 
+    ggplot(aes(x = get(demo), y = get(gpa), fill = gpa)) +
     geom_violin(alpha = 0.2) + 
     labs(y = &quot;&quot;, x = &quot;&quot;, fill = &quot;&quot;) +
-    scale_y_continuous(expand = c(0,0)) +
-    facet_wrap(~academic_info, ncol = 3, scales = &quot;free&quot;) +
-    theme(panel.spacing = unit(1, &quot;lines&quot;))
+    scale_y_continuous(expand = c(0,0), limits = c(min(subset_df[,gpa]), max(y_positions) + 0.5)) +
+    #facet_wrap(~academic_info, ncol = 3, scales = &quot;free&quot;) +
+    theme(panel.spacing = unit(1, &quot;lines&quot;)) +
+    scale_fill_manual(values = cols) +
+    stat_compare_means(method = &quot;t.test&quot;, 
+                       paired = FALSE, comparisons = comp,
+                       method.args = list(var.equal = var_equal), 
+                       p.adjust.method = &quot;bonferroni&quot;, 
+                       label.y = y_positions) +
+    stat_summary(fun = &quot;mean&quot;, fun.min = &quot;mean&quot;, color = &quot;skyblue&quot;, 
+                 fun.max= &quot;mean&quot;, size= 0.2, geom = &quot;crossbar&quot;) 
 }</code></pre>
 <div id="race-1" class="section level3 tabset">
 <h3 class="tabset">Race</h3>
 <pre class="r"><code>demo_name = &quot;Race&quot;
-plot_gpa(demo = demo_name)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-11-1.png" width="80%" /></p>
+comp = list(c(&quot;Underrepresented&quot;, &quot;Non-underrepresented&quot;))
+plot_gpa(demo = demo_name, &quot;End-of-term GPA&quot;, FALSE, comp) +
+  plot_gpa(demo = demo_name, &quot;Cumulative GPA&quot;, FALSE, comp)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-12-1.png" width="80%" /></p>
 </div>
 <div id="gender-1" class="section level3 tabset">
 <h3 class="tabset">Gender</h3>
 <pre class="r"><code>demo_name = &quot;Gender&quot;
-plot_gpa(demo = demo_name)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-12-1.png" width="80%" /></p>
+comp &lt;- list(c(&quot;Male&quot;, &quot;Female&quot;))
+plot_gpa(demo = demo_name, &quot;End-of-term GPA&quot;, TRUE, comp) +
+  plot_gpa(demo = demo_name, &quot;Cumulative GPA&quot;, TRUE, comp)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-13-1.png" width="80%" /></p>
 </div>
 <div id="first-generation-1" class="section level3 tabset">
 <h3 class="tabset">First-Generation</h3>
 <pre class="r"><code>demo_name = &quot;First-Generation&quot;
-plot_gpa(demo = demo_name)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-13-1.png" width="80%" /></p>
+comp &lt;- list(c(&quot;Non-first gen&quot;, &quot;First-gen&quot;))
+plot_gpa(demo = demo_name, &quot;End-of-term GPA&quot;, TRUE, comp) +
+  plot_gpa(demo = demo_name, &quot;Cumulative GPA&quot;, TRUE, comp)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-14-1.png" width="80%" /></p>
 </div>
 <div id="university-1" class="section level3 tabset">
 <h3 class="tabset">University</h3>
 <pre class="r"><code>demo_name = &quot;University&quot;
-plot_gpa(demo = demo_name)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-14-1.png" width="80%" /></p>
+comp = list(c(&quot;CMU&quot;, &quot;NDU&quot;), c(&quot;NDU&quot;, &quot;UW&quot;), c(&quot;CMU&quot;, &quot;UW&quot;))
+plot_gpa(demo = demo_name, &quot;End-of-term GPA&quot;, FALSE, comp) +
+  plot_gpa(demo = demo_name, &quot;Cumulative GPA&quot;, FALSE, comp)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-15-1.png" width="80%" /></p>
 </div>
 </div>
-<div id="appendix-apporpriate-two-sample-mean-test-identification"
-class="section level2 tabset">
-<h2 class="tabset">Appendix: Apporpriate Two-sample Mean Test
-Identification</h2>
+<div id="course-load-verus-gpa" class="section level2 tabset">
+<h2 class="tabset">Course load verus GPA</h2>
+<p>After accounting for race, gender, first-generation status and
+university, we know that course load does not have an effect on term GPA
+(See <code>Statistic</code> tab). This suggests that the difference in
+GPA that we seen between racial groups and between CMU and NDU exists,
+even after accounting for combined effect with course load difference.
+The GPA difference seen in first-generation students in two sample-mean
+test could potentially be due to difference in racial makeup and numbers
+in CMU between first-generation and non-first generation students (See
+<a href="#appendix_b-section">Appendix B</a>).</p>
+<pre class="r"><code>plot_loadgpa &lt;- function(demo) {
+  sleep_df |&gt; 
+    drop_na(rlang::sym(demo), `End-of-term GPA`, `Relative Course Load`) |&gt; 
+    ggplot(aes(y = `End-of-term GPA`, x = `Relative Course Load`)) +
+    geom_hex() +
+    labs(y = &quot;End-of-term GPA&quot;, x = &quot;Relative Course Load&quot;, color = &quot;&quot;) +
+    #geom_smooth(se = FALSE) +
+    facet_wrap(~get(demo), scales = &quot;free&quot;) +
+    theme_classic2() +
+    theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5))
+}</code></pre>
+<div id="race-2" class="section level3 tabset">
+<h3 class="tabset">Race</h3>
+<pre class="r"><code>demo_name = &quot;Race&quot;
+plot_loadgpa(demo = demo_name)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-17-1.png" width="80%" /></p>
+</div>
+<div id="gender-2" class="section level3 tabset">
+<h3 class="tabset">Gender</h3>
+<pre class="r"><code>demo_name = &quot;Gender&quot;
+plot_loadgpa(demo = demo_name)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-18-1.png" width="80%" /></p>
+</div>
+<div id="first-generation-2" class="section level3 tabset">
+<h3 class="tabset">First-Generation</h3>
+<pre class="r"><code>demo_name = &quot;First-Generation&quot;
+plot_loadgpa(demo = demo_name)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-19-1.png" width="80%" /></p>
+</div>
+<div id="university-2" class="section level3 tabset">
+<h3 class="tabset">University</h3>
+<pre class="r"><code>demo_name = &quot;University&quot;
+plot_loadgpa(demo = demo_name)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-20-1.png" width="80%" /></p>
+</div>
+<div id="statistics" class="section level3 tabset">
+<h3 class="tabset">Statistics</h3>
+<pre class="r"><code>lm(`End-of-term GPA` ~ `Relative Course Load`*Race +
+     `Relative Course Load`*`Gender` +
+     `Relative Course Load`*`First-Generation` +
+     `Relative Course Load`*`University`, 
+                data = sleep_df) |&gt; 
+  broom::tidy() |&gt; 
+  mutate(term= str_replace(term, &quot;RaceUnderrepresented&quot;, &quot;Race - Underrepresented&quot;), 
+         term= str_replace(term, &quot;GenderFemale&quot;, &quot;Gender - Female&quot;), 
+         term= str_replace(term, &quot;`First-Generation`First-gen&quot;, &quot;First-gen&quot;), 
+         term= str_replace(term, &quot;UniversityUW&quot;, &quot;University - UW&quot;)) |&gt; 
+  rename(`SE` = `std.error`) |&gt; 
+  mutate(estimate = round(`estimate`, digits = 3), 
+         `SE` = round(`SE`, digits = 3), 
+         statistic = round(`statistic`, digits = 3)) |&gt; 
+  mutate(`p.value` = signif(`p.value`, digits = 3)) |&gt; 
+  knitr::kable(digits = 170) |&gt; 
+  row_spec(2, bold = T, background = &quot;darkgrey&quot;) |&gt; 
+  kable_minimal()</code></pre>
+<table class=" lightable-minimal" style="font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+term
+</th>
+<th style="text-align:right;">
+estimate
+</th>
+<th style="text-align:right;">
+SE
+</th>
+<th style="text-align:right;">
+statistic
+</th>
+<th style="text-align:right;">
+p.value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+3.403
+</td>
+<td style="text-align:right;">
+0.049
+</td>
+<td style="text-align:right;">
+69.481
+</td>
+<td style="text-align:right;">
+0.00e+00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;background-color: darkgrey !important;">
+<code>Relative Course Load</code>
+</td>
+<td style="text-align:right;font-weight: bold;background-color: darkgrey !important;">
+0.076
+</td>
+<td style="text-align:right;font-weight: bold;background-color: darkgrey !important;">
+0.051
+</td>
+<td style="text-align:right;font-weight: bold;background-color: darkgrey !important;">
+1.504
+</td>
+<td style="text-align:right;font-weight: bold;background-color: darkgrey !important;">
+1.33e-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Race - Underrepresented
+</td>
+<td style="text-align:right;">
+-0.283
+</td>
+<td style="text-align:right;">
+0.064
+</td>
+<td style="text-align:right;">
+-4.449
+</td>
+<td style="text-align:right;">
+1.08e-05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gender - Female
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:right;">
+0.050
+</td>
+<td style="text-align:right;">
+0.006
+</td>
+<td style="text-align:right;">
+9.95e-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+First-gen
+</td>
+<td style="text-align:right;">
+-0.093
+</td>
+<td style="text-align:right;">
+0.063
+</td>
+<td style="text-align:right;">
+-1.466
+</td>
+<td style="text-align:right;">
+1.43e-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+University - UW
+</td>
+<td style="text-align:right;">
+0.093
+</td>
+<td style="text-align:right;">
+0.050
+</td>
+<td style="text-align:right;">
+1.865
+</td>
+<td style="text-align:right;">
+6.28e-02
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<code>Relative Course Load</code>:Race - Underrepresented
+</td>
+<td style="text-align:right;">
+-0.029
+</td>
+<td style="text-align:right;">
+0.061
+</td>
+<td style="text-align:right;">
+-0.474
+</td>
+<td style="text-align:right;">
+6.36e-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<code>Relative Course Load</code>:Gender - Female
+</td>
+<td style="text-align:right;">
+-0.028
+</td>
+<td style="text-align:right;">
+0.049
+</td>
+<td style="text-align:right;">
+-0.576
+</td>
+<td style="text-align:right;">
+5.65e-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<code>Relative Course Load</code>:First-gen
+</td>
+<td style="text-align:right;">
+0.043
+</td>
+<td style="text-align:right;">
+0.063
+</td>
+<td style="text-align:right;">
+0.675
+</td>
+<td style="text-align:right;">
+5.00e-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<code>Relative Course Load</code>:University - UW
+</td>
+<td style="text-align:right;">
+0.019
+</td>
+<td style="text-align:right;">
+0.051
+</td>
+<td style="text-align:right;">
+0.372
+</td>
+<td style="text-align:right;">
+7.10e-01
+</td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+</div>
+</div>
+<div id="appendix_a-section" class="section level2">
+<h2>Appendix A: Appropriate Two-Sample Mean Test Identification</h2>
+</div>
+<div id="section" class="section level2 tabset">
+<h2 class="tabset"></h2>
 <div id="normality-test" class="section level3 tabset">
 <h3 class="tabset">Normality Test</h3>
-<pre class="r"><code>long_sleep_df &lt;- sleep_df |&gt; 
-  pivot_longer(
-      cols = c(`Relative Course Load`, `End-of-term GPA`, `Cumulative GPA`), 
-      names_to = &quot;academic_info&quot;, 
-      values_to = &quot;unit&quot;
-    )
-
-shapiro_res &lt;- long_sleep_df |&gt; 
-  nest(data = -academic_info) |&gt; 
-  mutate(
-    model = map(data, \(x) shapiro.test(x$unit)), 
-    results = map(model, broom::tidy)
-  ) |&gt; 
-  select(academic_info, results) |&gt; 
-  unnest(results) |&gt; 
-  mutate_if(is.numeric, signif, 3) |&gt; 
-  mutate(academic_info = fct_relevel(academic_info, &quot;Relative Course Load&quot;, &quot;End-of-term GPA&quot;, &quot;Cumulative GPA&quot;))
-
-ggplot(long_sleep_df, aes(sample = `unit`)) +
+<pre class="r"><code>ggplot(long_sleep_df, aes(sample = `unit`)) +
   stat_qq(size = 0.4, shape = 21) +
   stat_qq_line() +
   labs(x = &quot;Theoritical Quantiles&quot;, y = &quot;Sample Quantiles&quot;, 
        title = &quot;Normal Q-Q Plot&quot;) +
   facet_wrap(~academic_info, ncol = 3)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-15-1.png" width="90%" /></p>
+<p><img src="students_files/figure-html/unnamed-chunk-22-1.png" width="90%" /></p>
 <style type="text/css">
 caption {
-      color: black;
+      color: #000022;
       font-weight: bold;
       font-size: 20px;
     }
@@ -1016,31 +1315,57 @@ caption {
 <pre class="r"><code>shapiro_res |&gt; 
   select(-method) |&gt; 
   column_to_rownames(&quot;academic_info&quot;) |&gt; 
-  knitr::kable(digits = 25, align = &quot;l&quot;, caption = &quot;Shapiro-Wilk Normality Test&quot;) </code></pre>
-<table>
-<caption>Shapiro-Wilk Normality Test</caption>
+  kable(digits = 25, align = &quot;l&quot;, caption = &quot;Shapiro-Wilk Normality Test&quot;) |&gt; 
+  kable_minimal()</code></pre>
+<table class=" lightable-minimal" style="font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto;">
+<caption>
+Shapiro-Wilk Normality Test
+</caption>
 <thead>
-<tr class="header">
-<th align="left"></th>
-<th align="left">statistic</th>
-<th align="left">p.value</th>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+statistic
+</th>
+<th style="text-align:left;">
+p.value
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">Relative Course Load</td>
-<td align="left">0.983</td>
-<td align="left">1.67e-05</td>
+<tr>
+<td style="text-align:left;">
+Relative Course Load
+</td>
+<td style="text-align:left;">
+0.983
+</td>
+<td style="text-align:left;">
+1.67e-05
+</td>
 </tr>
-<tr class="even">
-<td align="left">End-of-term GPA</td>
-<td align="left">0.860</td>
-<td align="left">2.60e-23</td>
+<tr>
+<td style="text-align:left;">
+End-of-term GPA
+</td>
+<td style="text-align:left;">
+0.860
+</td>
+<td style="text-align:left;">
+2.60e-23
+</td>
 </tr>
-<tr class="odd">
-<td align="left">Cumulative GPA</td>
-<td align="left">0.901</td>
-<td align="left">7.40e-20</td>
+<tr>
+<td style="text-align:left;">
+Cumulative GPA
+</td>
+<td style="text-align:left;">
+0.901
+</td>
+<td style="text-align:left;">
+7.40e-20
+</td>
 </tr>
 </tbody>
 </table>
@@ -1048,92 +1373,363 @@ caption {
 measures (course load, term GPA and cumulative GPA) do not follow a
 normal distribution. However, due to Central Limit Theorem, the sample
 mean will approximate normal distribution with sample size is large (n
-&gt; 30).</p>
+&gt; 30). In this case, a t-test is still feasible.</p>
 </div>
 <div id="equality-in-variance" class="section level3 tabset">
 <h3 class="tabset">Equality in Variance</h3>
-<pre class="r"><code>long_sleep_df &lt;- sleep_df |&gt; 
-  pivot_longer(
-      cols = c(`Relative Course Load`, `End-of-term GPA`, `Cumulative GPA`), 
-      names_to = &quot;academic_info&quot;, 
-      values_to = &quot;unit&quot;
-    ) 
-
-get_levene_res &lt;- function(demo){
-  res &lt;- long_sleep_df |&gt; 
-    nest(data = -academic_info) |&gt; 
-    mutate(
-    model = map(data, \(x) leveneTest(unit ~ get(demo), x)), 
-    results = map(model, broom::tidy), 
-    group = demo) |&gt; 
-    unnest(results) |&gt; 
-  mutate_if(is.numeric, signif, 3) |&gt; 
-  select(academic_info, group, statistic, `p.value`) 
-  return(res)
-}
-
-demo_list &lt;- c(&quot;University&quot;, &quot;Race&quot;, &quot;Gender&quot;, &quot;First-Generation&quot;)
-levene_res &lt;- lapply(demo_list, get_levene_res) 
-
-Reduce(rbind, levene_res) |&gt; 
-  select(-statistic) |&gt; 
-    pivot_wider(
-      names_from = group, 
-      values_from = `p.value`) |&gt; 
-  knitr::kable(digits = 25, align = &quot;l&quot;, caption = &quot;Levene&#39;s Test For Homogeneity of Variance: P-values&quot;)</code></pre>
-<table>
-<caption>Levene’s Test For Homogeneity of Variance: P-values</caption>
-<thead>
-<tr class="header">
-<th align="left">academic_info</th>
-<th align="left">University</th>
-<th align="left">Race</th>
-<th align="left">Gender</th>
-<th align="left">First-Generation</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">Relative Course Load</td>
-<td align="left">7.25e-01</td>
-<td align="left">0.36800</td>
-<td align="left">0.544</td>
-<td align="left">0.363</td>
-</tr>
-<tr class="even">
-<td align="left">End-of-term GPA</td>
-<td align="left">1.08e-07</td>
-<td align="left">0.01570</td>
-<td align="left">0.583</td>
-<td align="left">0.636</td>
-</tr>
-<tr class="odd">
-<td align="left">Cumulative GPA</td>
-<td align="left">3.62e-10</td>
-<td align="left">0.00219</td>
-<td align="left">0.154</td>
-<td align="left">0.492</td>
-</tr>
-</tbody>
-</table>
-<p>Given, the variables did not follow normal distribution, we use
+<p>Given the variables did not follow normal distribution, we use
 Levene’s test to identify if the variance in observations for the three
 quantitative measures in each demographic group is equal or not. We
 tested the following hypothesis:</p>
 <p><span class="math inline">\(H_o: \sigma_{1}^2 = \sigma_{2}^2 = ... =
 \sigma_{k}^2\)</span> where there are k groups in the particular
-demographics.<br />
-<span class="math inline">\(H_a: At\ leaset\ 2\ \sigma_{i}^2\ are\
-unequal\)</span><br />
+demographic category.<br />
+<span class="math inline">\(H_a:\)</span> At least 2 <span
+class="math inline">\(\sigma_{i}^2\)</span> are unequal<br />
 </p>
+<pre class="r"><code>Reduce(rbind, levene_res) |&gt; 
+  select(-statistic) |&gt; 
+    pivot_wider(
+      names_from = group, 
+      values_from = `p.value`) |&gt; 
+  column_to_rownames(&quot;academic_info&quot;) |&gt; 
+  kable(digits = 25, align = &quot;l&quot;, caption = &quot;Levene&#39;s Test For Homogeneity of Variance: P-values&quot;) |&gt; 
+  kable_minimal()</code></pre>
+<table class=" lightable-minimal" style="font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto;">
+<caption>
+Levene’s Test For Homogeneity of Variance: P-values
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+University
+</th>
+<th style="text-align:left;">
+Race
+</th>
+<th style="text-align:left;">
+Gender
+</th>
+<th style="text-align:left;">
+First-Generation
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Relative Course Load
+</td>
+<td style="text-align:left;">
+7.25e-01
+</td>
+<td style="text-align:left;">
+0.36800
+</td>
+<td style="text-align:left;">
+0.544
+</td>
+<td style="text-align:left;">
+0.363
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+End-of-term GPA
+</td>
+<td style="text-align:left;">
+1.08e-07
+</td>
+<td style="text-align:left;">
+0.01570
+</td>
+<td style="text-align:left;">
+0.583
+</td>
+<td style="text-align:left;">
+0.636
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Cumulative GPA
+</td>
+<td style="text-align:left;">
+3.62e-10
+</td>
+<td style="text-align:left;">
+0.00219
+</td>
+<td style="text-align:left;">
+0.154
+</td>
+<td style="text-align:left;">
+0.492
+</td>
+</tr>
+</tbody>
+</table>
 <p>Given the p-values, at 5% significance level, we can assume equal
 variance in relative course load between different group in each
 demographic category. We assume equal variance for the two GPA measures
 for different genders and category for first-generation students. For
 the aforementioned groups, we use two sample t-test with equal variance.
 For GPA measures between university groups and racial groups, we use two
-sample t-test with unequal variance.</p>
+sample t-test with unequal variance.<br />
+</p>
 </div>
+</div>
+<div id="appendix_b-section" class="section level2">
+<h2>Appendix B: First-Gen Demographic Distribution</h2>
+<pre class="r"><code>summary_tbl_first &lt;- sleep_df |&gt; 
+  select(`Race`, `Gender`, `First-Generation`, `University`) |&gt; 
+  tbl_summary(
+    by = `First-Generation`,
+    statistic = list(
+      all_categorical() ~ &quot;{n} / {N} ({p}%)&quot;)) |&gt; 
+  add_overall() |&gt; 
+  modify_spanning_header(c(&quot;stat_1&quot;, &quot;stat_2&quot;) ~ &quot;**First-Generation**&quot;) |&gt; 
+  bold_labels() |&gt;
+  italicize_labels() |&gt; 
+  add_p()
+
+as_kable_extra(summary_tbl_first) |&gt; 
+  kable_minimal()</code></pre>
+<table style="NAborder-bottom: 0; font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto;" class=" lightable-minimal">
+<thead>
+<tr>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="2">
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+First-Generation
+</div>
+</th>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+Characteristic
+</th>
+<th style="text-align:center;">
+Overall <br>N = 629
+</th>
+<th style="text-align:center;">
+Non-first gen <br>N = 526
+</th>
+<th style="text-align:center;">
+First-gen <br>N = 103
+</th>
+<th style="text-align:center;">
+p-value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<span style=" font-weight: bold; font-style: italic;   ">Race</span>
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
+Non-underrepresented
+</td>
+<td style="text-align:center;">
+510 / 628 (81%)
+</td>
+<td style="text-align:center;">
+441 / 525 (84%)
+</td>
+<td style="text-align:center;">
+69 / 103 (67%)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
+Underrepresented
+</td>
+<td style="text-align:center;">
+118 / 628 (19%)
+</td>
+<td style="text-align:center;">
+84 / 525 (16%)
+</td>
+<td style="text-align:center;">
+34 / 103 (33%)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
+Unknown
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span style=" font-weight: bold; font-style: italic;   ">Gender</span>
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+0.7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
+Male
+</td>
+<td style="text-align:center;">
+261 / 626 (42%)
+</td>
+<td style="text-align:center;">
+216 / 523 (41%)
+</td>
+<td style="text-align:center;">
+45 / 103 (44%)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
+Female
+</td>
+<td style="text-align:center;">
+365 / 626 (58%)
+</td>
+<td style="text-align:center;">
+307 / 523 (59%)
+</td>
+<td style="text-align:center;">
+58 / 103 (56%)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
+Unknown
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<span
+style=" font-weight: bold; font-style: italic;   ">University</span>
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+</td>
+<td style="text-align:center;">
+&lt;0.001
+</td>
+</tr>
+<tr>
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
+CMU
+</td>
+<td style="text-align:center;">
+208 / 629 (33%)
+</td>
+<td style="text-align:center;">
+190 / 526 (36%)
+</td>
+<td style="text-align:center;">
+18 / 103 (17%)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
+NDU
+</td>
+<td style="text-align:center;">
+146 / 629 (23%)
+</td>
+<td style="text-align:center;">
+138 / 526 (26%)
+</td>
+<td style="text-align:center;">
+8 / 103 (7.8%)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;padding-left: 2em;" indentlevel="1">
+UW
+</td>
+<td style="text-align:center;">
+275 / 629 (44%)
+</td>
+<td style="text-align:center;">
+198 / 526 (38%)
+</td>
+<td style="text-align:center;">
+77 / 103 (75%)
+</td>
+<td style="text-align:center;">
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="padding: 0; " colspan="100%">
+<sup>1</sup> n / N (%)
+</td>
+</tr>
+<tr>
+<td style="padding: 0; " colspan="100%">
+<sup>2</sup> Pearson’s Chi-squared test
+</td>
+</tr>
+</tfoot>
+</table>
 </div>
 
 
