@@ -12,14 +12,10 @@ library(tidyverse)
 library(gtsummary)
 library(plotly)
 library(knitr)
-
-knitr::opts_chunk$set(
-	echo = TRUE,
-	warning = FALSE,
-	fig.width = 8, 
-  fig.height = 6,
-  out.width = "90%"
-)
+library(ggpubr)
+library(cowplot)
+library(gridExtra)
+library(car)
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
@@ -65,10 +61,11 @@ th {
 }
 ```
 
-## Demographic Distribution of Observations
+## Demographic and Academic Information
 ```{r, fig.width = 5, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
 sleep_df <- sleep_df |> 
   rename(`Cohort` =`cohort`, 
+         `University` =`university`, 
          `Race` =`demo_race`, 
          `Gender` =`demo_gender`, 
          `First-Generation` =`demo_firstgen`, 
@@ -79,17 +76,17 @@ sleep_df <- sleep_df |>
 #write_csv(sleep_df, "data/cleaned_cmu_sleep.csv")
 
 summary_tbl <- sleep_df |> 
-  select(`Cohort`, `Race`, `Gender`, `First-Generation`, time_collection,
+  select(`University`, `Race`, `Gender`, `First-Generation`, time_collection,
          `Relative Course Load`, `End-of-term GPA`, `Cumulative GPA`) |> 
   tbl_summary(
-    by = `Cohort`,
+    by = `University`,
     statistic = list(
       all_continuous() ~ "{median} ({p25}, {p75})",
       all_categorical() ~ "{n} / {N} ({p}%)"), 
     label = list(
       time_collection ~ "Time")) |> 
   add_overall() |> 
-  modify_spanning_header(c("stat_1", "stat_2", "stat_3") ~ "**Cohort**") |> 
+  modify_spanning_header(c("stat_1", "stat_2", "stat_3") ~ "**University**") |> 
   bold_labels() |>
   italicize_labels() |> 
   add_p()
@@ -100,65 +97,188 @@ as_kable_extra(summary_tbl)
 The dataset consists of first-year students from three different kind universities: Carnegie Mellon (CMU) is a STEM-focused private university, University of Washington (UW) is a large public university and Notre Dame (NDU) is a private catholic university. Each cohort have students roughly 15-20% students with underrepresented racial identity. However, the male to female ratio, and proportion of first generation students vary between the cohorts. 
 
 ## Relative Course Load {.tabset}
-
-```{r, dpi=600,message=FALSE,warning=FALSE}
-plot_function <- function(demo) {
-  plot <- sleep_df |> 
+```{r}
+plot_courseload <- function(demo) {
+  sleep_df |> 
     drop_na(rlang::sym(demo)) |> 
-    pivot_longer(
-      cols = c(`Relative Course Load`, `End-of-term GPA`, `Cumulative GPA`), 
-      names_to = "academic_info", 
-      values_to = "unit"
-    ) |> 
-    mutate(academic_info = fct_relevel(academic_info, "Relative Course Load", "End-of-term GPA", "Cumulative GPA")) |> 
-    ggplot(aes(x = get(demo), y = unit, fill = academic_info)) +
-    geom_violin(alpha = 0.2) + 
+    ggplot(aes(x = get(demo), y = `Relative Course Load`)) +
+    geom_violin(alpha = 0.4, fill = "#70BBAA") + 
     labs(y = "", x = "", fill = "") +
-    scale_y_continuous(expand = c(0,0)) +
-    facet_wrap(~academic_info, ncol = 3, scales = "free") +
-    theme(panel.spacing = unit(1, "lines"), 
-          axis.text.x = element_text(angle = 30))
-  ggplotly(plot) |> 
-    layout(autosize = F, width = 825, height = 350)
-
+    scale_y_continuous(expand = c(0,0)) 
 }
 ```
 
 ### Race {.tabset}
 
-```{r}
+```{r, fig.width = 5, fig.height = 4, out.width = "60%", dpi=600,message=FALSE,warning=FALSE}
 demo_name = "Race"
-plot_function(demo = demo_name)
+plot_courseload(demo = demo_name)
 ```
 
 ### Gender {.tabset}
 
-```{r}
+```{r, fig.width = 5, fig.height = 4, out.width = "60%", dpi=600,message=FALSE,warning=FALSE}
 demo_name = "Gender"
-plot_function(demo = demo_name)
+plot_courseload(demo = demo_name)
 ```
 
 ### First-Generation {.tabset}
 
-```{r}
+```{r, fig.width = 5, fig.height = 4, out.width = "60%", dpi=600,message=FALSE,warning=FALSE}
 demo_name = "First-Generation"
-plot_function(demo = demo_name)
+plot_courseload(demo = demo_name)
 ```
 
-### Cohort {.tabset}
+### University {.tabset}
 
-```{r}
-demo_name = "Cohort"
-plot_function(demo = demo_name)
+```{r, fig.width = 5, fig.height = 4, out.width = "60%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "University"
+plot_courseload(demo = demo_name)
 ```
-
 NDU does not have information related to term unit load. 
 
-### Time of Data Collection {.tabset}
+
+## Grade Point Average (GPA) {.tabset}
+```{r}
+plot_gpa <- function(demo) {
+  sleep_df |> 
+    drop_na(rlang::sym(demo)) |> 
+    pivot_longer(
+      cols = c(`End-of-term GPA`, `Cumulative GPA`), 
+      names_to = "academic_info", 
+      values_to = "unit"
+    ) |> 
+    mutate(academic_info = fct_relevel(academic_info, "End-of-term GPA", "Cumulative GPA")) |> 
+    ggplot(aes(x = get(demo), y = unit, fill = academic_info)) +
+    geom_violin(alpha = 0.2) + 
+    labs(y = "", x = "", fill = "") +
+    scale_y_continuous(expand = c(0,0)) +
+    facet_wrap(~academic_info, ncol = 3, scales = "free") +
+    theme(panel.spacing = unit(1, "lines"))
+}
+```
+
+### Race {.tabset}
+
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "Race"
+plot_gpa(demo = demo_name)
+```
+
+### Gender {.tabset}
+
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "Gender"
+plot_gpa(demo = demo_name)
+```
+
+### First-Generation {.tabset}
+
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "First-Generation"
+plot_gpa(demo = demo_name)
+```
+
+### University {.tabset}
+
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "University"
+plot_gpa(demo = demo_name)
+```
+
+## Appendix: Apporpriate Two-sample Mean Test Identification {.tabset}
+
+### Normality Test {.tabset}
+```{r,  fig.width = 5, fig.height = 2, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
+long_sleep_df <- sleep_df |> 
+  pivot_longer(
+      cols = c(`Relative Course Load`, `End-of-term GPA`, `Cumulative GPA`), 
+      names_to = "academic_info", 
+      values_to = "unit"
+    )
+
+shapiro_res <- long_sleep_df |> 
+  nest(data = -academic_info) |> 
+  mutate(
+    model = map(data, \(x) shapiro.test(x$unit)), 
+    results = map(model, broom::tidy)
+  ) |> 
+  select(academic_info, results) |> 
+  unnest(results) |> 
+  mutate_if(is.numeric, signif, 3) |> 
+  mutate(academic_info = fct_relevel(academic_info, "Relative Course Load", "End-of-term GPA", "Cumulative GPA"))
+
+ggplot(long_sleep_df, aes(sample = `unit`)) +
+  stat_qq(size = 0.4, shape = 21) +
+  stat_qq_line() +
+  labs(x = "Theoritical Quantiles", y = "Sample Quantiles", 
+       title = "Normal Q-Q Plot") +
+  facet_wrap(~academic_info, ncol = 3)
+```
+
+```{css, echo = FALSE}
+caption {
+      color: black;
+      font-weight: bold;
+      font-size: 20px;
+    }
+```
 
 ```{r}
-demo_name = "time_collection"
-plot_function(demo = demo_name)
+shapiro_res |> 
+  select(-method) |> 
+  column_to_rownames("academic_info") |> 
+  knitr::kable(digits = 25, align = "l", caption = "Shapiro-Wilk Normality Test") 
 ```
+
+As shown by the QQPlot and the Shapiro-Wilk normality test, the three measures (course load, term GPA and cumulative GPA) do not follow a normal distribution. However, due to Central Limit Theorem, the sample mean will approximate normal distribution with sample size is large (n > 30). 
+
+### Equality in Variance {.tabset}
+
+```{r,  fig.width = 5, fig.height = 2, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
+long_sleep_df <- sleep_df |> 
+  pivot_longer(
+      cols = c(`Relative Course Load`, `End-of-term GPA`, `Cumulative GPA`), 
+      names_to = "academic_info", 
+      values_to = "unit"
+    ) 
+
+get_levene_res <- function(demo){
+  res <- long_sleep_df |> 
+    nest(data = -academic_info) |> 
+    mutate(
+    model = map(data, \(x) leveneTest(unit ~ get(demo), x)), 
+    results = map(model, broom::tidy), 
+    group = demo) |> 
+    unnest(results) |> 
+  mutate_if(is.numeric, signif, 3) |> 
+  select(academic_info, group, statistic, `p.value`) 
+  return(res)
+}
+
+demo_list <- c("University", "Race", "Gender", "First-Generation")
+levene_res <- lapply(demo_list, get_levene_res) 
+
+Reduce(rbind, levene_res) |> 
+  select(-statistic) |> 
+    pivot_wider(
+      names_from = group, 
+      values_from = `p.value`) |> 
+  knitr::kable(digits = 25, align = "l", caption = "Levene's Test For Homogeneity of Variance: P-values")
+```
+
+Given, the variables did not follow normal distribution, we use Levene's test to identify if the variance in observations for the three quantitative measures in each demographic group is equal or not. We tested the following hypothesis:
+
+$H_o: \sigma_{1}^2 = \sigma_{2}^2 = ... = \sigma_{k}^2$ where there are k groups in the particular demographics. \
+$H_a: At\ leaset\ 2\ \sigma_{i}^2\ are\ unequal$ \
+
+Given the p-values, at 5% significance level, we can assume equal variance in relative course load between different group in each demographic category. We assume equal variance for the two GPA measures for different genders and category for first-generation students. For the aforementioned groups, we use two sample t-test with equal variance. For GPA measures between university groups and racial groups, we use two sample t-test with unequal variance. 
+
+
+
+
+
+
+
 
 

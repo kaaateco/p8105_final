@@ -13,7 +13,7 @@
 
 <title>Sleeping Measures</title>
 
-<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -64,6 +64,7 @@ if (window.hljs) {
 
 
 
+<link rel="stylesheet" href="styles.css" type="text/css" />
 
 
 
@@ -430,6 +431,92 @@ wallis?? I guess all the variables aren’t normal…)</p>
                             cohort == &quot;uw1&quot; ~ &quot;UW&quot;, 
                             cohort == &quot;uw2&quot; ~ &quot;UW&quot;))
 
+<<<<<<< HEAD
+=======
+plot_totalsleep    </code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>
+summary(lm(total_sleep_time ~ university, sleep_df)) %&gt;% broom::tidy()
+## # A tibble: 3 × 5
+##   term          estimate std.error statistic      p.value
+##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+## 1 (Intercept)     387.        3.42   113.    0           
+## 2 universityNDU    -1.75      5.32    -0.330 0.742       
+## 3 universityUW     24.6       4.52     5.44  0.0000000750
+
+#boxplot(total_sleep_time ~ university, sleep_df)
+</code></pre>
+</div>
+<div id="variability-in-bed-times" class="section level3 tabset">
+<h3 class="tabset">Variability in Bed Times</h3>
+<pre class="r"><code>plot_bedtime2 &lt;- sleep_df %&gt;%  
+  ggplot(aes(x = bedtime_mssd, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Mean Successive Squared Difference&quot;, y = &quot;Density&quot;) +
+  xlim(c(0,2.5))+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_bedtime2
+## Warning: Removed 15 rows containing non-finite outside
+## the scale range (`stat_density()`).</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code>
+anova(lm(bedtime_mssd ~ university, sleep_df)) %&gt;% broom::tidy()
+## # A tibble: 2 × 6
+##   term          df   sumsq meansq statistic p.value
+##   &lt;chr&gt;      &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 university     2    2.85   1.42     0.732   0.481
+## 2 Residuals    631 1227.     1.94    NA      NA</code></pre>
+</div>
+<div id="sleeping-midpoint" class="section level3 tabset">
+<h3 class="tabset">Sleeping Midpoint</h3>
+<pre class="r"><code>plot_midpoint &lt;- sleep_df %&gt;% 
+  ggplot(aes(x = midpoint_sleep, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Midpoint Sleep (minutes past 11 PM)&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_midpoint</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>
+mid_uni_anova &lt;- anova(lm(midpoint_sleep ~ university, sleep_df)) %&gt;% broom::tidy()
+</code></pre>
+</div>
+<div id="daytime-sleep" class="section level3 tabset">
+<h3 class="tabset">Daytime Sleep</h3>
+<pre class="r"><code>plot_daysleep &lt;- sleep_df %&gt;% 
+  ggplot(aes(x = daytime_sleep, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Daytime Sleep (minutes)&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_daysleep</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre class="r"><code>
+anova(lm(daytime_sleep ~ university, sleep_df)) %&gt;% broom::tidy()
+## # A tibble: 2 × 6
+##   term          df   sumsq meansq statistic      p.value
+##   &lt;chr&gt;      &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+## 1 university     2  23492. 11746.      16.4  0.000000112
+## 2 Residuals    631 451372.   715.      NA   NA</code></pre>
+</div>
+</div>
+<div id="section-1" class="section level2">
+<h2></h2>
+<pre class="r"><code>
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
 sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_sleep, university) %&gt;% 
   tbl_summary(
     by = university,
@@ -438,23 +525,40 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
       all_categorical() ~ &quot;{n} / {N} ({p}%)&quot;)) %&gt;% 
     add_p() %&gt;% 
     add_overall()</code></pre>
+<<<<<<< HEAD
 <div id="iuazmotrvb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#iuazmotrvb table {
+=======
+<div id="xhkeuegybm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xhkeuegybm table {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb thead, #iuazmotrvb tbody, #iuazmotrvb tfoot, #iuazmotrvb tr, #iuazmotrvb td, #iuazmotrvb th {
   border-style: none;
 }
 
 #iuazmotrvb p {
+=======
+#xhkeuegybm thead, #xhkeuegybm tbody, #xhkeuegybm tfoot, #xhkeuegybm tr, #xhkeuegybm td, #xhkeuegybm th {
+  border-style: none;
+}
+
+#xhkeuegybm p {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   margin: 0;
   padding: 0;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_table {
+=======
+#xhkeuegybm .gt_table {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -480,12 +584,20 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-left-color: #D3D3D3;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_caption {
+=======
+#xhkeuegybm .gt_caption {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_title {
+=======
+#xhkeuegybm .gt_title {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -497,7 +609,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-bottom-width: 0;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_subtitle {
+=======
+#xhkeuegybm .gt_subtitle {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -509,7 +625,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-top-width: 0;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_heading {
+=======
+#xhkeuegybm .gt_heading {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -521,13 +641,21 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-right-color: #D3D3D3;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_bottom_border {
+=======
+#xhkeuegybm .gt_bottom_border {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_col_headings {
+=======
+#xhkeuegybm .gt_col_headings {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -542,7 +670,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-right-color: #D3D3D3;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_col_heading {
+=======
+#xhkeuegybm .gt_col_heading {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -562,7 +694,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   overflow-x: hidden;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_column_spanner_outer {
+=======
+#xhkeuegybm .gt_column_spanner_outer {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -574,6 +710,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   padding-right: 4px;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
@@ -583,6 +720,17 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
 }
 
 #iuazmotrvb .gt_column_spanner {
+=======
+#xhkeuegybm .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#xhkeuegybm .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#xhkeuegybm .gt_column_spanner {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -594,11 +742,19 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   width: 100%;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
 #iuazmotrvb .gt_group_heading {
+=======
+#xhkeuegybm .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#xhkeuegybm .gt_group_heading {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -624,7 +780,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   text-align: left;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_empty_group_heading {
+=======
+#xhkeuegybm .gt_empty_group_heading {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -639,6 +799,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   vertical-align: middle;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_from_md > :first-child {
   margin-top: 0;
 }
@@ -648,6 +809,17 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
 }
 
 #iuazmotrvb .gt_row {
+=======
+#xhkeuegybm .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#xhkeuegybm .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#xhkeuegybm .gt_row {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -666,7 +838,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   overflow-x: hidden;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_stub {
+=======
+#xhkeuegybm .gt_stub {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -679,7 +855,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   padding-right: 5px;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_stub_row_group {
+=======
+#xhkeuegybm .gt_stub_row_group {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -693,6 +873,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   vertical-align: top;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_row_group_first td {
   border-top-width: 2px;
 }
@@ -702,6 +883,17 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
 }
 
 #iuazmotrvb .gt_summary_row {
+=======
+#xhkeuegybm .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#xhkeuegybm .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#xhkeuegybm .gt_summary_row {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -711,16 +903,28 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   padding-right: 5px;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_first_summary_row {
+=======
+#xhkeuegybm .gt_first_summary_row {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
 #iuazmotrvb .gt_last_summary_row {
+=======
+#xhkeuegybm .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#xhkeuegybm .gt_last_summary_row {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -730,7 +934,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-bottom-color: #D3D3D3;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_grand_summary_row {
+=======
+#xhkeuegybm .gt_grand_summary_row {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -740,7 +948,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   padding-right: 5px;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_first_grand_summary_row {
+=======
+#xhkeuegybm .gt_first_grand_summary_row {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -750,7 +962,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-top-color: #D3D3D3;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_last_grand_summary_row_top {
+=======
+#xhkeuegybm .gt_last_grand_summary_row_top {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -760,11 +976,19 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-bottom-color: #D3D3D3;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
 #iuazmotrvb .gt_table_body {
+=======
+#xhkeuegybm .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#xhkeuegybm .gt_table_body {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -773,7 +997,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-bottom-color: #D3D3D3;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_footnotes {
+=======
+#xhkeuegybm .gt_footnotes {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -787,7 +1015,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-right-color: #D3D3D3;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_footnote {
+=======
+#xhkeuegybm .gt_footnote {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -796,7 +1028,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   padding-right: 5px;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_sourcenotes {
+=======
+#xhkeuegybm .gt_sourcenotes {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -810,7 +1046,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-right-color: #D3D3D3;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_sourcenote {
+=======
+#xhkeuegybm .gt_sourcenote {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -818,6 +1058,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   padding-right: 5px;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_left {
   text-align: left;
 }
@@ -827,10 +1068,22 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
 }
 
 #iuazmotrvb .gt_right {
+=======
+#xhkeuegybm .gt_left {
+  text-align: left;
+}
+
+#xhkeuegybm .gt_center {
+  text-align: center;
+}
+
+#xhkeuegybm .gt_right {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_font_normal {
   font-weight: normal;
 }
@@ -848,16 +1101,40 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
 }
 
 #iuazmotrvb .gt_footnote_marks {
+=======
+#xhkeuegybm .gt_font_normal {
+  font-weight: normal;
+}
+
+#xhkeuegybm .gt_font_bold {
+  font-weight: bold;
+}
+
+#xhkeuegybm .gt_font_italic {
+  font-style: italic;
+}
+
+#xhkeuegybm .gt_super {
+  font-size: 65%;
+}
+
+#xhkeuegybm .gt_footnote_marks {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_asterisk {
+=======
+#xhkeuegybm .gt_asterisk {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   font-size: 100%;
   vertical-align: 0;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb .gt_indent_1 {
   text-indent: 5px;
 }
@@ -879,11 +1156,38 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
 }
 
 #iuazmotrvb .katex-display {
+=======
+#xhkeuegybm .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#xhkeuegybm .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#xhkeuegybm .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#xhkeuegybm .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#xhkeuegybm .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#xhkeuegybm .katex-display {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
+<<<<<<< HEAD
 #iuazmotrvb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+=======
+#xhkeuegybm div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
   height: 0px !important;
 }
 </style>
@@ -1098,8 +1402,13 @@ observations.</p>
     y = &quot;Term Units (Z)&quot;
   ) +
   theme_minimal()
+<<<<<<< HEAD
 ## Warning: Removed 152 rows containing non-finite outside the scale range
 ## (`stat_density2d_filled()`).</code></pre>
+=======
+## Warning: Removed 147 rows containing non-finite outside
+## the scale range (`stat_density2d_filled()`).</code></pre>
+>>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
 <p><img src="sleep_metrics_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <p>Understanding how the distributions of GPA and course load interact
 is useful in interpreting the heat map tabs below, which describe the
@@ -1224,8 +1533,8 @@ plot_totalsleep    </code></pre>
   )
 
 plot_bedtime2
-## Warning: Removed 15 rows containing non-finite outside the scale range
-## (`stat_density()`).</code></pre>
+## Warning: Removed 15 rows containing non-finite outside
+## the scale range (`stat_density()`).</code></pre>
 <p><img src="sleep_metrics_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 <hr />
 </div>
@@ -1310,8 +1619,8 @@ plot_totalsleep    </code></pre>
   )
 
 plot_bedtime2
-## Warning: Removed 15 rows containing non-finite outside the scale range
-## (`stat_density()`).</code></pre>
+## Warning: Removed 15 rows containing non-finite outside
+## the scale range (`stat_density()`).</code></pre>
 <p><img src="sleep_metrics_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
 <hr />
 </div>
@@ -1380,8 +1689,8 @@ plot_totalsleep    </code></pre>
   )
 
 plot_bedtime2
-## Warning: Removed 15 rows containing non-finite outside the scale range
-## (`stat_density()`).</code></pre>
+## Warning: Removed 15 rows containing non-finite outside
+## the scale range (`stat_density()`).</code></pre>
 <p><img src="sleep_metrics_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
 <hr />
 </div>
