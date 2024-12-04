@@ -219,7 +219,7 @@ plot_gpa <- function(demo, gpa, var_equal, comp) {
     stat_compare_means(method = "t.test", 
                        paired = FALSE, comparisons = comp,
                        method.args = list(var.equal = var_equal), 
-                       label = paste0("p = ", after_stat(p.format)), 
+                       #label = paste0("p = ", after_stat(p.format)), 
                        p.adjust.method = "bonferroni", 
                        label.y = y_positions) +
     stat_summary(fun = "mean", fun.min = "mean", color = "skyblue", 
