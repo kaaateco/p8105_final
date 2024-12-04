@@ -13,7 +13,7 @@
 
 <title>Sleeping Measures</title>
 
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -429,23 +429,22 @@ wallis?? I guess all the variables aren’t normal…)</p>
                             cohort == &quot;lac2&quot; ~ &quot;CMU&quot;,
                             cohort == &quot;nh&quot; ~ &quot;NDU&quot;,
                             cohort == &quot;uw1&quot; ~ &quot;UW&quot;, 
-                            cohort == &quot;uw2&quot; ~ &quot;UW&quot;))
+                            cohort == &quot;uw2&quot; ~ &quot;UW&quot;))</code></pre>
+<div id="total-sleep-time" class="section level3 tabset">
+<h3 class="tabset">Total Sleep Time</h3>
+<pre class="r"><code>plot_totalsleep &lt;- sleep_df %&gt;%  
+  ggplot(aes(x = total_sleep_time, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Total Sleep Time (minutes)&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
 
-<<<<<<< HEAD
-=======
 plot_totalsleep    </code></pre>
 <p><img src="sleep_metrics_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<pre class="r"><code>
-summary(lm(total_sleep_time ~ university, sleep_df)) %&gt;% broom::tidy()
-## # A tibble: 3 × 5
-##   term          estimate std.error statistic      p.value
-##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
-## 1 (Intercept)     387.        3.42   113.    0           
-## 2 universityNDU    -1.75      5.32    -0.330 0.742       
-## 3 universityUW     24.6       4.52     5.44  0.0000000750
-
-#boxplot(total_sleep_time ~ university, sleep_df)
-</code></pre>
+<hr />
 </div>
 <div id="variability-in-bed-times" class="section level3 tabset">
 <h3 class="tabset">Variability in Bed Times</h3>
@@ -461,16 +460,10 @@ summary(lm(total_sleep_time ~ university, sleep_df)) %&gt;% broom::tidy()
   )
 
 plot_bedtime2
-## Warning: Removed 15 rows containing non-finite outside
-## the scale range (`stat_density()`).</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<pre class="r"><code>
-anova(lm(bedtime_mssd ~ university, sleep_df)) %&gt;% broom::tidy()
-## # A tibble: 2 × 6
-##   term          df   sumsq meansq statistic p.value
-##   &lt;chr&gt;      &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
-## 1 university     2    2.85   1.42     0.732   0.481
-## 2 Residuals    631 1227.     1.94    NA      NA</code></pre>
+## Warning: Removed 15 rows containing non-finite outside the scale range
+## (`stat_density()`).</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<hr />
 </div>
 <div id="sleeping-midpoint" class="section level3 tabset">
 <h3 class="tabset">Sleeping Midpoint</h3>
@@ -485,10 +478,8 @@ anova(lm(bedtime_mssd ~ university, sleep_df)) %&gt;% broom::tidy()
   )
 
 plot_midpoint</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<pre class="r"><code>
-mid_uni_anova &lt;- anova(lm(midpoint_sleep ~ university, sleep_df)) %&gt;% broom::tidy()
-</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<hr />
 </div>
 <div id="daytime-sleep" class="section level3 tabset">
 <h3 class="tabset">Daytime Sleep</h3>
@@ -503,21 +494,13 @@ mid_uni_anova &lt;- anova(lm(midpoint_sleep ~ university, sleep_df)) %&gt;% broo
   )
 
 plot_daysleep</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<pre class="r"><code>
-anova(lm(daytime_sleep ~ university, sleep_df)) %&gt;% broom::tidy()
-## # A tibble: 2 × 6
-##   term          df   sumsq meansq statistic      p.value
-##   &lt;chr&gt;      &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
-## 1 university     2  23492. 11746.      16.4  0.000000112
-## 2 Residuals    631 451372.   715.      NA   NA</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<hr />
 </div>
-</div>
-<div id="section-1" class="section level2">
-<h2></h2>
-<pre class="r"><code>
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
-sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_sleep, university) %&gt;% 
+<div id="statistics" class="section level3 tabset">
+<h3 class="tabset">Statistics</h3>
+<pre class="r"><code>sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, 
+                    midpoint_sleep, daytime_sleep, university) %&gt;% 
   tbl_summary(
     by = university,
     statistic = list(
@@ -525,40 +508,23 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
       all_categorical() ~ &quot;{n} / {N} ({p}%)&quot;)) %&gt;% 
     add_p() %&gt;% 
     add_overall()</code></pre>
-<<<<<<< HEAD
-<div id="iuazmotrvb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#iuazmotrvb table {
-=======
-<div id="xhkeuegybm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#xhkeuegybm table {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+<div id="wpzxhcfhft" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wpzxhcfhft table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb thead, #iuazmotrvb tbody, #iuazmotrvb tfoot, #iuazmotrvb tr, #iuazmotrvb td, #iuazmotrvb th {
+#wpzxhcfhft thead, #wpzxhcfhft tbody, #wpzxhcfhft tfoot, #wpzxhcfhft tr, #wpzxhcfhft td, #wpzxhcfhft th {
   border-style: none;
 }
 
-#iuazmotrvb p {
-=======
-#xhkeuegybm thead, #xhkeuegybm tbody, #xhkeuegybm tfoot, #xhkeuegybm tr, #xhkeuegybm td, #xhkeuegybm th {
-  border-style: none;
-}
-
-#xhkeuegybm p {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft p {
   margin: 0;
   padding: 0;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_table {
-=======
-#xhkeuegybm .gt_table {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -584,20 +550,12 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-left-color: #D3D3D3;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_caption {
-=======
-#xhkeuegybm .gt_caption {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_title {
-=======
-#xhkeuegybm .gt_title {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -609,11 +567,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-bottom-width: 0;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_subtitle {
-=======
-#xhkeuegybm .gt_subtitle {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -625,11 +579,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-top-width: 0;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_heading {
-=======
-#xhkeuegybm .gt_heading {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -641,21 +591,13 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-right-color: #D3D3D3;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_bottom_border {
-=======
-#xhkeuegybm .gt_bottom_border {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_col_headings {
-=======
-#xhkeuegybm .gt_col_headings {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -670,11 +612,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-right-color: #D3D3D3;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_col_heading {
-=======
-#xhkeuegybm .gt_col_heading {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -694,11 +632,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   overflow-x: hidden;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_column_spanner_outer {
-=======
-#xhkeuegybm .gt_column_spanner_outer {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -710,27 +644,15 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   padding-right: 4px;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_column_spanner_outer:first-child {
+#wpzxhcfhft .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#iuazmotrvb .gt_column_spanner_outer:last-child {
+#wpzxhcfhft .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#iuazmotrvb .gt_column_spanner {
-=======
-#xhkeuegybm .gt_column_spanner_outer:first-child {
-  padding-left: 0;
-}
-
-#xhkeuegybm .gt_column_spanner_outer:last-child {
-  padding-right: 0;
-}
-
-#xhkeuegybm .gt_column_spanner {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -742,19 +664,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   width: 100%;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_spanner_row {
+#wpzxhcfhft .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#iuazmotrvb .gt_group_heading {
-=======
-#xhkeuegybm .gt_spanner_row {
-  border-bottom-style: hidden;
-}
-
-#xhkeuegybm .gt_group_heading {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -780,11 +694,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   text-align: left;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_empty_group_heading {
-=======
-#xhkeuegybm .gt_empty_group_heading {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -799,27 +709,15 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   vertical-align: middle;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_from_md > :first-child {
+#wpzxhcfhft .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#iuazmotrvb .gt_from_md > :last-child {
+#wpzxhcfhft .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#iuazmotrvb .gt_row {
-=======
-#xhkeuegybm .gt_from_md > :first-child {
-  margin-top: 0;
-}
-
-#xhkeuegybm .gt_from_md > :last-child {
-  margin-bottom: 0;
-}
-
-#xhkeuegybm .gt_row {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -838,11 +736,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   overflow-x: hidden;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_stub {
-=======
-#xhkeuegybm .gt_stub {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -855,11 +749,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   padding-right: 5px;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_stub_row_group {
-=======
-#xhkeuegybm .gt_stub_row_group {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -873,27 +763,15 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   vertical-align: top;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_row_group_first td {
+#wpzxhcfhft .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#iuazmotrvb .gt_row_group_first th {
+#wpzxhcfhft .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#iuazmotrvb .gt_summary_row {
-=======
-#xhkeuegybm .gt_row_group_first td {
-  border-top-width: 2px;
-}
-
-#xhkeuegybm .gt_row_group_first th {
-  border-top-width: 2px;
-}
-
-#xhkeuegybm .gt_summary_row {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -903,28 +781,16 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   padding-right: 5px;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_first_summary_row {
-=======
-#xhkeuegybm .gt_first_summary_row {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_first_summary_row.thick {
+#wpzxhcfhft .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#iuazmotrvb .gt_last_summary_row {
-=======
-#xhkeuegybm .gt_first_summary_row.thick {
-  border-top-width: 2px;
-}
-
-#xhkeuegybm .gt_last_summary_row {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -934,11 +800,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-bottom-color: #D3D3D3;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_grand_summary_row {
-=======
-#xhkeuegybm .gt_grand_summary_row {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -948,11 +810,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   padding-right: 5px;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_first_grand_summary_row {
-=======
-#xhkeuegybm .gt_first_grand_summary_row {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -962,11 +820,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-top-color: #D3D3D3;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_last_grand_summary_row_top {
-=======
-#xhkeuegybm .gt_last_grand_summary_row_top {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -976,19 +830,11 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-bottom-color: #D3D3D3;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_striped {
+#wpzxhcfhft .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#iuazmotrvb .gt_table_body {
-=======
-#xhkeuegybm .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#xhkeuegybm .gt_table_body {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -997,11 +843,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-bottom-color: #D3D3D3;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_footnotes {
-=======
-#xhkeuegybm .gt_footnotes {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1015,11 +857,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-right-color: #D3D3D3;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_footnote {
-=======
-#xhkeuegybm .gt_footnote {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1028,11 +866,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   padding-right: 5px;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_sourcenotes {
-=======
-#xhkeuegybm .gt_sourcenotes {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1046,11 +880,7 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   border-right-color: #D3D3D3;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_sourcenote {
-=======
-#xhkeuegybm .gt_sourcenote {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1058,136 +888,72 @@ sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_s
   padding-right: 5px;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_left {
+#wpzxhcfhft .gt_left {
   text-align: left;
 }
 
-#iuazmotrvb .gt_center {
+#wpzxhcfhft .gt_center {
   text-align: center;
 }
 
-#iuazmotrvb .gt_right {
-=======
-#xhkeuegybm .gt_left {
-  text-align: left;
-}
-
-#xhkeuegybm .gt_center {
-  text-align: center;
-}
-
-#xhkeuegybm .gt_right {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_font_normal {
+#wpzxhcfhft .gt_font_normal {
   font-weight: normal;
 }
 
-#iuazmotrvb .gt_font_bold {
+#wpzxhcfhft .gt_font_bold {
   font-weight: bold;
 }
 
-#iuazmotrvb .gt_font_italic {
+#wpzxhcfhft .gt_font_italic {
   font-style: italic;
 }
 
-#iuazmotrvb .gt_super {
+#wpzxhcfhft .gt_super {
   font-size: 65%;
 }
 
-#iuazmotrvb .gt_footnote_marks {
-=======
-#xhkeuegybm .gt_font_normal {
-  font-weight: normal;
-}
-
-#xhkeuegybm .gt_font_bold {
-  font-weight: bold;
-}
-
-#xhkeuegybm .gt_font_italic {
-  font-style: italic;
-}
-
-#xhkeuegybm .gt_super {
-  font-size: 65%;
-}
-
-#xhkeuegybm .gt_footnote_marks {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_asterisk {
-=======
-#xhkeuegybm .gt_asterisk {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb .gt_indent_1 {
+#wpzxhcfhft .gt_indent_1 {
   text-indent: 5px;
 }
 
-#iuazmotrvb .gt_indent_2 {
+#wpzxhcfhft .gt_indent_2 {
   text-indent: 10px;
 }
 
-#iuazmotrvb .gt_indent_3 {
+#wpzxhcfhft .gt_indent_3 {
   text-indent: 15px;
 }
 
-#iuazmotrvb .gt_indent_4 {
+#wpzxhcfhft .gt_indent_4 {
   text-indent: 20px;
 }
 
-#iuazmotrvb .gt_indent_5 {
+#wpzxhcfhft .gt_indent_5 {
   text-indent: 25px;
 }
 
-#iuazmotrvb .katex-display {
-=======
-#xhkeuegybm .gt_indent_1 {
-  text-indent: 5px;
-}
-
-#xhkeuegybm .gt_indent_2 {
-  text-indent: 10px;
-}
-
-#xhkeuegybm .gt_indent_3 {
-  text-indent: 15px;
-}
-
-#xhkeuegybm .gt_indent_4 {
-  text-indent: 20px;
-}
-
-#xhkeuegybm .gt_indent_5 {
-  text-indent: 25px;
-}
-
-#xhkeuegybm .katex-display {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-<<<<<<< HEAD
-#iuazmotrvb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
-=======
-#xhkeuegybm div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
+#wpzxhcfhft div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1243,115 +1009,21 @@ N = 279</span><span class="gt_footnote_marks" style="white-space:nowrap;font-sty
   </tfoot>
 </table>
 </div>
-<div id="total-sleep-time" class="section level3 tabset">
-<h3 class="tabset">Total Sleep Time</h3>
-<pre class="r"><code>plot_totalsleep &lt;- sleep_df %&gt;%  
-  ggplot(aes(x = total_sleep_time, fill = university, color = university)) +
-  geom_density(alpha = 0.3, linewidth = 1) +
-  labs(x = &quot;Total Sleep Time (minutes)&quot;, y = &quot;Density&quot;) +
-  theme_minimal() +
-  theme(
-    strip.text = element_text(size = 14),
-    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
-  )
-
-plot_totalsleep    </code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<pre class="r"><code>
-summary(lm(total_sleep_time ~ university, sleep_df)) %&gt;% broom::tidy()
-## # A tibble: 3 × 5
-##   term          estimate std.error statistic      p.value
-##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
-## 1 (Intercept)     387.        3.42   113.    0           
-## 2 universityNDU    -1.75      5.32    -0.330 0.742       
-## 3 universityUW     24.6       4.52     5.44  0.0000000750
-
-#boxplot(total_sleep_time ~ university, sleep_df)
-</code></pre>
-<hr />
-</div>
-<div id="variability-in-bed-times" class="section level3 tabset">
-<h3 class="tabset">Variability in Bed Times</h3>
-<pre class="r"><code>plot_bedtime2 &lt;- sleep_df %&gt;%  
-  ggplot(aes(x = bedtime_mssd, fill = university, color = university)) +
-  geom_density(alpha = 0.3, linewidth = 1) +
-  labs(x = &quot;Mean Successive Squared Difference&quot;, y = &quot;Density&quot;) +
-  xlim(c(0,2.5))+
-  theme_minimal() +
-  theme(
-    strip.text = element_text(size = 14),
-    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
-  )
-
-plot_bedtime2
-## Warning: Removed 15 rows containing non-finite outside the scale range
-## (`stat_density()`).</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<pre class="r"><code>
-anova(lm(bedtime_mssd ~ university, sleep_df)) %&gt;% broom::tidy()
-## # A tibble: 2 × 6
-##   term          df   sumsq meansq statistic p.value
-##   &lt;chr&gt;      &lt;int&gt;   &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
-## 1 university     2    2.85   1.42     0.732   0.481
-## 2 Residuals    631 1227.     1.94    NA      NA</code></pre>
-<hr />
-</div>
-<div id="sleeping-midpoint" class="section level3 tabset">
-<h3 class="tabset">Sleeping Midpoint</h3>
-<pre class="r"><code>plot_midpoint &lt;- sleep_df %&gt;% 
-  ggplot(aes(x = midpoint_sleep, fill = university, color = university)) +
-  geom_density(alpha = 0.3, linewidth = 1) +
-  labs(x = &quot;Midpoint Sleep (minutes past 11 PM)&quot;, y = &quot;Density&quot;) +
-  theme_minimal() +
-  theme(
-    strip.text = element_text(size = 14),
-    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
-  )
-
-plot_midpoint</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<pre class="r"><code>
-mid_uni_anova &lt;- anova(lm(midpoint_sleep ~ university, sleep_df)) %&gt;% broom::tidy()
-</code></pre>
-<hr />
-</div>
-<div id="daytime-sleep" class="section level3 tabset">
-<h3 class="tabset">Daytime Sleep</h3>
-<pre class="r"><code>plot_daysleep &lt;- sleep_df %&gt;% 
-  ggplot(aes(x = daytime_sleep, fill = university, color = university)) +
-  geom_density(alpha = 0.3, linewidth = 1) +
-  labs(x = &quot;Daytime Sleep (minutes)&quot;, y = &quot;Density&quot;) +
-  theme_minimal() +
-  theme(
-    strip.text = element_text(size = 14),
-    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
-  )
-
-plot_daysleep</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<pre class="r"><code>
-anova(lm(midpoint_sleep ~ university, sleep_df)) %&gt;% broom::tidy()
-## # A tibble: 2 × 6
-##   term          df    sumsq  meansq statistic   p.value
-##   &lt;chr&gt;      &lt;int&gt;    &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-## 1 university     2  259008. 129504.      26.5  9.17e-12
-## 2 Residuals    631 3087588.   4893.      NA   NA</code></pre>
 <hr />
 </div>
 </div>
-<div id="measure-correlations" class="section level2">
-<h2>Measure Correlations</h2>
-<p>As would be expected, our different measures of sleep behavior are
-not independent of each other. The Pearson correlation coefficients
-calculated in the matrix below indicate that several of the variables
-are considerably correlated with each other.</p>
+<div id="correlation-table" class="section level2">
+<h2>Correlation Table</h2>
+<p>The Pearson correlation coefficients calculated in the matrix below
+indicate that several of the sleep behavior variables are correlated
+with each other.</p>
 <p>Total Sleep Time is moderately negatively correlated with Daytime
 Sleep (-0.29) and Sleeping Midpoint (-0.33). This makes sense, as we
 would expect that as the amount of sleep someone gets at night
 increases, they would spend less time sleeping during the day and are
 probably going to bed earlier. Sleeping Midpoint and Bedtime Variability
-are quite positively correlated (0.41), which also makes sense, since
-more sporadic sleeping schedules are typically explained by staying up
+are positively correlated (0.41), which also makes sense, since more
+sporadic sleeping schedules are typically explained by staying up
 late.</p>
 <p>The relationships between these metrics will be important to consider
 when constructing a model that uses these sleep variables as
@@ -1370,7 +1042,7 @@ corrplot(cor_matrix,  method = &quot;color&quot;,
          tl.srt = 45,
          order = &#39;hclust&#39;,
          diag = F)</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <pre class="r"><code>
 # cor.test(sleep_df$bedtime_mssd, sleep_df$daytime_sleep)
 # is there a way to include this in the correlation matrix lol
@@ -1382,14 +1054,10 @@ corrplot(cor_matrix,  method = &quot;color&quot;,
 <p>The plot below describes the density of students at different
 cumulative GPA and course load levels. The most dense single section of
 the heat map shows that many students have about a 3.75 GPA and a
-slightly above average amount of course units. Most of the plot shows a
-steady decrease in density centered and skewed left around this
-peak.</p>
-<p>Interestingly, there is also one additional (and much shorter) peak
-on the plot, which is of students with roughly 3.75 GPAs, but taking an
-amount of units that is roughly 1.5 standard deviations above average.
-This indicates that there is a moderately-sized group of over-achieving
-students, with very high GPAs and course loads.</p>
+slightly above average amount of course units. Interestingly, there is
+also one additional, shorter peak on the plot that indicates that there
+is a moderately-sized group of students with both very high GPAs and
+course loads.</p>
 <p>Note that we are missing course unit amounts for the students
 recruited from Notre Dame, which make up 147 of our 634 total
 observations.</p>
@@ -1402,14 +1070,9 @@ observations.</p>
     y = &quot;Term Units (Z)&quot;
   ) +
   theme_minimal()
-<<<<<<< HEAD
 ## Warning: Removed 152 rows containing non-finite outside the scale range
 ## (`stat_density2d_filled()`).</code></pre>
-=======
-## Warning: Removed 147 rows containing non-finite outside
-## the scale range (`stat_density2d_filled()`).</code></pre>
->>>>>>> cba6846c4d8b3419c1ef5904c77dcf9281789000
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>Understanding how the distributions of GPA and course load interact
 is useful in interpreting the heat map tabs below, which describe the
 sleeping behavior of different sub-groups of GPA and unit amounts.</p>
@@ -1417,7 +1080,7 @@ sleeping behavior of different sub-groups of GPA and unit amounts.</p>
 <h3 class="tabset">Total Sleep Time</h3>
 <p>The group getting the least amount of sleep seem to be the 1.5-2.0
 GPA students. Starting at the bottom left of the heat map and moving to
-the upper right, the total sleep time of students seems to increase.</p>
+the upper right, the total sleep time of students increases.</p>
 <p>It’s interesting that students with lower GPAs seem to be getting
 less sleep, since I would’ve thought that students getting less sleep
 are spending more time studying, and so would have higher GPAs or
@@ -1434,15 +1097,14 @@ sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;%
     fill = &quot;Total Sleep Time (min)&quot;
   ) +
   theme_minimal()</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="variability-in-bed-times-1" class="section level3 tabset">
 <h3 class="tabset">Variability in Bed Times</h3>
 <p>Variability in bed times are relatively even across all GPA and term
 unit groups. For the lower GPA students (less than 3.0) with roughly
-average course loads, there seems to be slightly greater
-variability.</p>
+average course loads, there is slightly greater variability.</p>
 <pre class="r"><code>
 sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;% 
   ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = bedtime_mssd)) + 
@@ -1453,17 +1115,16 @@ sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;%
     fill = &quot;Bedtime Variability&quot;
   ) +
   theme_minimal()</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="sleeping-midpoint-1" class="section level3 tabset">
 <h3 class="tabset">Sleeping Midpoint*</h3>
-<p>In the map below, it’s obvious that students with greater GPAs
-(3.5-4.0) and heavier course loads (greater than 1 SD above average)
-have sleeping midpoints that are mostly within 6 hours of 11 PM. As we
-move from the upper-right to the lower-left of the plot, we can clearly
-see that the sleeping midpoint times gradually become later in the
-night.</p>
+<p>The map below shows that students with greater GPAs (3.5-4.0) and
+heavier course loads (greater than 1 SD above average) have sleeping
+midpoints that are mostly within 6 hours of 11 PM. As we move from the
+upper-right to the lower-left of the plot, we can clearly see that the
+sleeping midpoint times gradually become later in the night.</p>
 <p>This trend implies that higher-GPA and higher-unit students are going
 to sleep earlier/waking up earlier than their peers.</p>
 <pre class="r"><code>
@@ -1476,15 +1137,15 @@ sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;%
     fill = &quot;Minutes past 11 PM&quot;
   ) +
   theme_minimal()</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="daytime-sleep-1" class="section level3 tabset">
 <h3 class="tabset">Daytime Sleep</h3>
 <p>There isn’t much of a distinct trend in daytime sleep between GPA and
 course unit groups. Overall, time spent sleeping during the day is
-relatively low, with students with average course loads and lower GPAs
-napping slightly more than others.</p>
+relatively low, with students with average course loads and GPAs having
+more daytime sleep.</p>
 <pre class="r"><code>
 sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;% 
   ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = daytime_sleep)) + 
@@ -1495,7 +1156,7 @@ sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;%
     fill = &quot;Daytime Sleep (min)&quot;
   ) +
   theme_minimal()</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <hr />
 </div>
 </div>
@@ -1516,7 +1177,7 @@ Midpoint.</p>
     plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5))
 
 plot_totalsleep    </code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="variability-in-bed-times-2" class="section level3 tabset">
@@ -1533,16 +1194,22 @@ plot_totalsleep    </code></pre>
   )
 
 plot_bedtime2
-## Warning: Removed 15 rows containing non-finite outside
-## the scale range (`stat_density()`).</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+## Warning: Removed 15 rows containing non-finite outside the scale range
+## (`stat_density()`).</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="sleeping-midpoint-2" class="section level3 tabset">
 <h3 class="tabset">Sleeping Midpoint*</h3>
-<p>We can clearly see that the male and female students have distinct
+<p>The plot below shows that the male and female students have distinct
 peaks in their distributions of sleeping midpoint, with the majority of
-men having a midpoint at ~250 minutes past 11 PM ()</p>
+women having a midpoint at ~350 minutes past 11 PM (slightly before 5
+AM), and most men having a midpoint ~30 minutes later. This implies that
+women are going to sleep slightly earlier/waking up earlier than
+men.</p>
+<p>Looking at the second plot below, we can see that this trend of women
+having earlier midpoints of sleep during the night is consistent across
+the three universities.</p>
 <pre class="r"><code>plot_midpoint &lt;- sleep_df %&gt;% filter(!is.na(demo_gender)) %&gt;%
   ggplot(aes(x = midpoint_sleep, fill = demo_gender, color = demo_gender)) +
   geom_density(alpha = 0.3, linewidth = 1) +
@@ -1554,7 +1221,7 @@ men having a midpoint at ~250 minutes past 11 PM ()</p>
   )
 
 plot_midpoint</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
 <pre class="r"><code>plot_midpoint1 &lt;- sleep_df %&gt;% filter(!is.na(demo_gender)) %&gt;%
   ggplot(aes(x = midpoint_sleep, fill = demo_gender, color = demo_gender)) +
   geom_density(alpha = 0.3, linewidth = 1) + facet_grid(~university) +
@@ -1566,7 +1233,7 @@ plot_midpoint</code></pre>
   )
 
 plot_midpoint1</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="daytime-sleep-2" class="section level3 tabset">
@@ -1582,7 +1249,515 @@ plot_midpoint1</code></pre>
   )
 
 plot_daysleep</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="statistics-1" class="section level3 tabset">
+<h3 class="tabset">Statistics</h3>
+<pre class="r"><code>sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, 
+                    midpoint_sleep, daytime_sleep, demo_gender) %&gt;% 
+  tbl_summary(
+    by = demo_gender,
+    statistic = list(
+      all_continuous() ~ &quot;{median} ({p25}, {p75})&quot;,
+      all_categorical() ~ &quot;{n} / {N} ({p}%)&quot;)) %&gt;% 
+    add_p() %&gt;% 
+    add_overall()</code></pre>
+<div id="algnejpyxe" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#algnejpyxe table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#algnejpyxe thead, #algnejpyxe tbody, #algnejpyxe tfoot, #algnejpyxe tr, #algnejpyxe td, #algnejpyxe th {
+  border-style: none;
+}
+
+#algnejpyxe p {
+  margin: 0;
+  padding: 0;
+}
+
+#algnejpyxe .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#algnejpyxe .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#algnejpyxe .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#algnejpyxe .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#algnejpyxe .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#algnejpyxe .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#algnejpyxe .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#algnejpyxe .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#algnejpyxe .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#algnejpyxe .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#algnejpyxe .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#algnejpyxe .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#algnejpyxe .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#algnejpyxe .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#algnejpyxe .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#algnejpyxe .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#algnejpyxe .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#algnejpyxe .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#algnejpyxe .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#algnejpyxe .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#algnejpyxe .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#algnejpyxe .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#algnejpyxe .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#algnejpyxe .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#algnejpyxe .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#algnejpyxe .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#algnejpyxe .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#algnejpyxe .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#algnejpyxe .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#algnejpyxe .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#algnejpyxe .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#algnejpyxe .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#algnejpyxe .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#algnejpyxe .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#algnejpyxe .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#algnejpyxe .gt_left {
+  text-align: left;
+}
+
+#algnejpyxe .gt_center {
+  text-align: center;
+}
+
+#algnejpyxe .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#algnejpyxe .gt_font_normal {
+  font-weight: normal;
+}
+
+#algnejpyxe .gt_font_bold {
+  font-weight: bold;
+}
+
+#algnejpyxe .gt_font_italic {
+  font-style: italic;
+}
+
+#algnejpyxe .gt_super {
+  font-size: 65%;
+}
+
+#algnejpyxe .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#algnejpyxe .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#algnejpyxe .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#algnejpyxe .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#algnejpyxe .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#algnejpyxe .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#algnejpyxe .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#algnejpyxe .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#algnejpyxe div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="label"><span class='gt_from_md'><strong>Characteristic</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_0"><span class='gt_from_md'><strong>Overall</strong><br />
+N = 631</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_1"><span class='gt_from_md'><strong>Male</strong><br />
+N = 263</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_2"><span class='gt_from_md'><strong>Female</strong><br />
+N = 368</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="p.value"><span class='gt_from_md'><strong>p-value</strong></span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>2</sup></span></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="label" class="gt_row gt_left">total_sleep_time</td>
+<td headers="stat_0" class="gt_row gt_center">401 (367, 430)</td>
+<td headers="stat_1" class="gt_row gt_center">399 (366, 429)</td>
+<td headers="stat_2" class="gt_row gt_center">403 (368, 432)</td>
+<td headers="p.value" class="gt_row gt_center">0.4</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">bedtime_mssd</td>
+<td headers="stat_0" class="gt_row gt_center">0.13 (0.07, 0.29)</td>
+<td headers="stat_1" class="gt_row gt_center">0.14 (0.08, 0.29)</td>
+<td headers="stat_2" class="gt_row gt_center">0.13 (0.07, 0.29)</td>
+<td headers="p.value" class="gt_row gt_center">0.8</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">midpoint_sleep</td>
+<td headers="stat_0" class="gt_row gt_center">387 (345, 438)</td>
+<td headers="stat_1" class="gt_row gt_center">399 (356, 444)</td>
+<td headers="stat_2" class="gt_row gt_center">377 (342, 433)</td>
+<td headers="p.value" class="gt_row gt_center">0.011</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">daytime_sleep</td>
+<td headers="stat_0" class="gt_row gt_center">35 (23, 52)</td>
+<td headers="stat_1" class="gt_row gt_center">36 (25, 54)</td>
+<td headers="stat_2" class="gt_row gt_center">35 (22, 50)</td>
+<td headers="p.value" class="gt_row gt_center">0.012</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="5"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span> <span class='gt_from_md'>Median (Q1, Q3)</span></td>
+    </tr>
+    <tr>
+      <td class="gt_footnote" colspan="5"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>2</sup></span> <span class='gt_from_md'>Wilcoxon rank sum test</span></td>
+    </tr>
+  </tfoot>
+</table>
+</div>
 <hr />
 </div>
 </div>
@@ -1602,7 +1777,7 @@ plot_daysleep</code></pre>
   )
 
 plot_totalsleep    </code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="variability-in-bed-times-3" class="section level3 tabset">
@@ -1619,9 +1794,9 @@ plot_totalsleep    </code></pre>
   )
 
 plot_bedtime2
-## Warning: Removed 15 rows containing non-finite outside
-## the scale range (`stat_density()`).</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+## Warning: Removed 15 rows containing non-finite outside the scale range
+## (`stat_density()`).</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="sleeping-midpoint-3" class="section level3 tabset">
@@ -1637,7 +1812,7 @@ plot_bedtime2
   )
 
 plot_midpoint</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="daytime-sleep-3" class="section level3 tabset">
@@ -1653,7 +1828,515 @@ plot_midpoint</code></pre>
   )
 
 plot_daysleep</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="statistics-2" class="section level3 tabset">
+<h3 class="tabset">Statistics</h3>
+<pre class="r"><code>sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, 
+                    midpoint_sleep, daytime_sleep, demo_race) %&gt;% 
+  tbl_summary(
+    by = demo_race,
+    statistic = list(
+      all_continuous() ~ &quot;{median} ({p25}, {p75})&quot;,
+      all_categorical() ~ &quot;{n} / {N} ({p}%)&quot;)) %&gt;% 
+    add_p() %&gt;% 
+    add_overall()</code></pre>
+<div id="xlkzpdeicu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#xlkzpdeicu table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#xlkzpdeicu thead, #xlkzpdeicu tbody, #xlkzpdeicu tfoot, #xlkzpdeicu tr, #xlkzpdeicu td, #xlkzpdeicu th {
+  border-style: none;
+}
+
+#xlkzpdeicu p {
+  margin: 0;
+  padding: 0;
+}
+
+#xlkzpdeicu .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#xlkzpdeicu .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#xlkzpdeicu .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#xlkzpdeicu .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#xlkzpdeicu .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xlkzpdeicu .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xlkzpdeicu .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xlkzpdeicu .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#xlkzpdeicu .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#xlkzpdeicu .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#xlkzpdeicu .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#xlkzpdeicu .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#xlkzpdeicu .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#xlkzpdeicu .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#xlkzpdeicu .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xlkzpdeicu .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#xlkzpdeicu .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#xlkzpdeicu .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#xlkzpdeicu .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xlkzpdeicu .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#xlkzpdeicu .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#xlkzpdeicu .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#xlkzpdeicu .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xlkzpdeicu .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#xlkzpdeicu .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#xlkzpdeicu .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xlkzpdeicu .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xlkzpdeicu .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#xlkzpdeicu .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xlkzpdeicu .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#xlkzpdeicu .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xlkzpdeicu .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xlkzpdeicu .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xlkzpdeicu .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xlkzpdeicu .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xlkzpdeicu .gt_left {
+  text-align: left;
+}
+
+#xlkzpdeicu .gt_center {
+  text-align: center;
+}
+
+#xlkzpdeicu .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#xlkzpdeicu .gt_font_normal {
+  font-weight: normal;
+}
+
+#xlkzpdeicu .gt_font_bold {
+  font-weight: bold;
+}
+
+#xlkzpdeicu .gt_font_italic {
+  font-style: italic;
+}
+
+#xlkzpdeicu .gt_super {
+  font-size: 65%;
+}
+
+#xlkzpdeicu .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#xlkzpdeicu .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#xlkzpdeicu .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#xlkzpdeicu .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#xlkzpdeicu .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#xlkzpdeicu .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#xlkzpdeicu .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#xlkzpdeicu .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#xlkzpdeicu div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="label"><span class='gt_from_md'><strong>Characteristic</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_0"><span class='gt_from_md'><strong>Overall</strong><br />
+N = 633</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_1"><span class='gt_from_md'><strong>Underrepresented</strong><br />
+N = 119</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_2"><span class='gt_from_md'><strong>Non-underrepresented</strong><br />
+N = 514</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="p.value"><span class='gt_from_md'><strong>p-value</strong></span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>2</sup></span></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="label" class="gt_row gt_left">total_sleep_time</td>
+<td headers="stat_0" class="gt_row gt_center">401 (367, 430)</td>
+<td headers="stat_1" class="gt_row gt_center">402 (362, 430)</td>
+<td headers="stat_2" class="gt_row gt_center">400 (368, 430)</td>
+<td headers="p.value" class="gt_row gt_center">0.6</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">bedtime_mssd</td>
+<td headers="stat_0" class="gt_row gt_center">0.13 (0.07, 0.29)</td>
+<td headers="stat_1" class="gt_row gt_center">0.14 (0.08, 0.43)</td>
+<td headers="stat_2" class="gt_row gt_center">0.13 (0.07, 0.26)</td>
+<td headers="p.value" class="gt_row gt_center">0.2</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">midpoint_sleep</td>
+<td headers="stat_0" class="gt_row gt_center">387 (345, 438)</td>
+<td headers="stat_1" class="gt_row gt_center">396 (349, 450)</td>
+<td headers="stat_2" class="gt_row gt_center">387 (344, 435)</td>
+<td headers="p.value" class="gt_row gt_center">0.2</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">daytime_sleep</td>
+<td headers="stat_0" class="gt_row gt_center">35 (23, 51)</td>
+<td headers="stat_1" class="gt_row gt_center">42 (26, 61)</td>
+<td headers="stat_2" class="gt_row gt_center">34 (22, 50)</td>
+<td headers="p.value" class="gt_row gt_center">0.005</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="5"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span> <span class='gt_from_md'>Median (Q1, Q3)</span></td>
+    </tr>
+    <tr>
+      <td class="gt_footnote" colspan="5"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>2</sup></span> <span class='gt_from_md'>Wilcoxon rank sum test</span></td>
+    </tr>
+  </tfoot>
+</table>
+</div>
 <hr />
 </div>
 </div>
@@ -1672,7 +2355,7 @@ plot_daysleep</code></pre>
   )
 
 plot_totalsleep    </code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="variability-in-bed-times-4" class="section level3 tabset">
@@ -1689,9 +2372,9 @@ plot_totalsleep    </code></pre>
   )
 
 plot_bedtime2
-## Warning: Removed 15 rows containing non-finite outside
-## the scale range (`stat_density()`).</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+## Warning: Removed 15 rows containing non-finite outside the scale range
+## (`stat_density()`).</code></pre>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="sleeping-midpoint-4" class="section level3 tabset">
@@ -1707,7 +2390,7 @@ plot_bedtime2
   )
 
 plot_midpoint</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="daytime-sleep-4" class="section level3 tabset">
@@ -1723,7 +2406,515 @@ plot_midpoint</code></pre>
   )
 
 plot_daysleep</code></pre>
-<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
+<p><img src="sleep_metrics_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="statistics-3" class="section level3 tabset">
+<h3 class="tabset">Statistics</h3>
+<pre class="r"><code>sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, 
+                    midpoint_sleep, daytime_sleep, demo_firstgen) %&gt;% 
+  tbl_summary(
+    by = demo_firstgen,
+    statistic = list(
+      all_continuous() ~ &quot;{median} ({p25}, {p75})&quot;,
+      all_categorical() ~ &quot;{n} / {N} ({p}%)&quot;)) %&gt;% 
+    add_p() %&gt;% 
+    add_overall()</code></pre>
+<div id="oegvwxaqhx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#oegvwxaqhx table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#oegvwxaqhx thead, #oegvwxaqhx tbody, #oegvwxaqhx tfoot, #oegvwxaqhx tr, #oegvwxaqhx td, #oegvwxaqhx th {
+  border-style: none;
+}
+
+#oegvwxaqhx p {
+  margin: 0;
+  padding: 0;
+}
+
+#oegvwxaqhx .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#oegvwxaqhx .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#oegvwxaqhx .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#oegvwxaqhx .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#oegvwxaqhx .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#oegvwxaqhx .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#oegvwxaqhx .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#oegvwxaqhx .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#oegvwxaqhx .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#oegvwxaqhx .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#oegvwxaqhx .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#oegvwxaqhx .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#oegvwxaqhx .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#oegvwxaqhx .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#oegvwxaqhx .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#oegvwxaqhx .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#oegvwxaqhx .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#oegvwxaqhx .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#oegvwxaqhx .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#oegvwxaqhx .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#oegvwxaqhx .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#oegvwxaqhx .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#oegvwxaqhx .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#oegvwxaqhx .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#oegvwxaqhx .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#oegvwxaqhx .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#oegvwxaqhx .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#oegvwxaqhx .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#oegvwxaqhx .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#oegvwxaqhx .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#oegvwxaqhx .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#oegvwxaqhx .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#oegvwxaqhx .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#oegvwxaqhx .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#oegvwxaqhx .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#oegvwxaqhx .gt_left {
+  text-align: left;
+}
+
+#oegvwxaqhx .gt_center {
+  text-align: center;
+}
+
+#oegvwxaqhx .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#oegvwxaqhx .gt_font_normal {
+  font-weight: normal;
+}
+
+#oegvwxaqhx .gt_font_bold {
+  font-weight: bold;
+}
+
+#oegvwxaqhx .gt_font_italic {
+  font-style: italic;
+}
+
+#oegvwxaqhx .gt_super {
+  font-size: 65%;
+}
+
+#oegvwxaqhx .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#oegvwxaqhx .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#oegvwxaqhx .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#oegvwxaqhx .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#oegvwxaqhx .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#oegvwxaqhx .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#oegvwxaqhx .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#oegvwxaqhx .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#oegvwxaqhx div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="label"><span class='gt_from_md'><strong>Characteristic</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_0"><span class='gt_from_md'><strong>Overall</strong><br />
+N = 629</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_1"><span class='gt_from_md'><strong>Non-first gen</strong><br />
+N = 526</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_2"><span class='gt_from_md'><strong>First-gen</strong><br />
+N = 103</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="p.value"><span class='gt_from_md'><strong>p-value</strong></span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>2</sup></span></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="label" class="gt_row gt_left">total_sleep_time</td>
+<td headers="stat_0" class="gt_row gt_center">400 (367, 430)</td>
+<td headers="stat_1" class="gt_row gt_center">400 (366, 431)</td>
+<td headers="stat_2" class="gt_row gt_center">403 (368, 429)</td>
+<td headers="p.value" class="gt_row gt_center">>0.9</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">bedtime_mssd</td>
+<td headers="stat_0" class="gt_row gt_center">0.14 (0.08, 0.29)</td>
+<td headers="stat_1" class="gt_row gt_center">0.14 (0.08, 0.30)</td>
+<td headers="stat_2" class="gt_row gt_center">0.13 (0.07, 0.24)</td>
+<td headers="p.value" class="gt_row gt_center">0.3</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">midpoint_sleep</td>
+<td headers="stat_0" class="gt_row gt_center">389 (346, 437)</td>
+<td headers="stat_1" class="gt_row gt_center">393 (347, 440)</td>
+<td headers="stat_2" class="gt_row gt_center">379 (342, 419)</td>
+<td headers="p.value" class="gt_row gt_center">0.10</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">daytime_sleep</td>
+<td headers="stat_0" class="gt_row gt_center">35 (23, 51)</td>
+<td headers="stat_1" class="gt_row gt_center">35 (22, 50)</td>
+<td headers="stat_2" class="gt_row gt_center">41 (27, 61)</td>
+<td headers="p.value" class="gt_row gt_center">0.009</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="5"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span> <span class='gt_from_md'>Median (Q1, Q3)</span></td>
+    </tr>
+    <tr>
+      <td class="gt_footnote" colspan="5"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>2</sup></span> <span class='gt_from_md'>Wilcoxon rank sum test</span></td>
+    </tr>
+  </tfoot>
+</table>
+</div>
 <hr />
 </div>
 </div>

@@ -57,15 +57,6 @@ sleep_df <- read_csv("data/cmu-sleep.csv") %>%
                             cohort == "nh" ~ "NDU",
                             cohort == "uw1" ~ "UW", 
                             cohort == "uw2" ~ "UW"))
-
-sleep_df %>% select(total_sleep_time, bedtime_mssd, midpoint_sleep, daytime_sleep, university) %>% 
-  tbl_summary(
-    by = university,
-    statistic = list(
-      all_continuous() ~ "{median} ({p25}, {p75})",
-      all_categorical() ~ "{n} / {N} ({p}%)")) %>% 
-    add_p() %>% 
-    add_overall()
 ```
 
 ### Total Sleep Time {.tabset}
@@ -83,14 +74,6 @@ plot_totalsleep <- sleep_df %>%
 
 plot_totalsleep    
                           
-```
-
-```{r}
-
-summary(lm(total_sleep_time ~ university, sleep_df)) %>% broom::tidy()
-
-#boxplot(total_sleep_time ~ university, sleep_df)
-
 ```
 
 --- 
@@ -113,12 +96,6 @@ plot_bedtime2
 
 ```
 
-```{r}
-
-anova(lm(bedtime_mssd ~ university, sleep_df)) %>% broom::tidy()
-
-```
-
 --- 
 
 ### Sleeping Midpoint {.tabset}
@@ -135,12 +112,6 @@ plot_midpoint <- sleep_df %>%
   )
 
 plot_midpoint
-
-```
-
-```{r}
-
-mid_uni_anova <- anova(lm(midpoint_sleep ~ university, sleep_df)) %>% broom::tidy()
 
 ```
 
@@ -163,19 +134,29 @@ plot_daysleep
 
 ```
 
+---
+
+### Statistics {.tabset}
+
 ```{r}
-
-anova(lm(midpoint_sleep ~ university, sleep_df)) %>% broom::tidy()
-
+sleep_df %>% select(total_sleep_time, bedtime_mssd, 
+                    midpoint_sleep, daytime_sleep, university) %>% 
+  tbl_summary(
+    by = university,
+    statistic = list(
+      all_continuous() ~ "{median} ({p25}, {p75})",
+      all_categorical() ~ "{n} / {N} ({p}%)")) %>% 
+    add_p() %>% 
+    add_overall()
 ```
 
 ---
 
-## Measure Correlations 
+## Correlation Table 
 
-As would be expected, our different measures of sleep behavior are not independent of each other. The Pearson correlation coefficients calculated in the matrix below indicate that several of the variables are considerably correlated with each other. 
+The Pearson correlation coefficients calculated in the matrix below indicate that several of the sleep behavior variables are correlated with each other. 
 
-Total Sleep Time is moderately negatively correlated with Daytime Sleep (-0.29) and Sleeping Midpoint (-0.33). This makes sense, as we would expect that as the amount of sleep someone gets at night increases, they would spend less time sleeping during the day and are probably going to bed earlier. Sleeping Midpoint and Bedtime Variability are quite positively correlated (0.41), which also makes sense, since more sporadic sleeping schedules are typically explained by staying up late.
+Total Sleep Time is moderately negatively correlated with Daytime Sleep (-0.29) and Sleeping Midpoint (-0.33). This makes sense, as we would expect that as the amount of sleep someone gets at night increases, they would spend less time sleeping during the day and are probably going to bed earlier. Sleeping Midpoint and Bedtime Variability are positively correlated (0.41), which also makes sense, since more sporadic sleeping schedules are typically explained by staying up late.
 
 The relationships between these metrics will be important to consider when constructing a model that uses these sleep variables as predictors. 
 
@@ -204,9 +185,7 @@ corrplot(cor_matrix,  method = "color",
 
 ## GPA and Course Units {.tabset}
 
-The plot below describes the density of students at different cumulative GPA and course load levels. The most dense single section of the heat map shows that many students have about a 3.75 GPA and a slightly above average amount of course units. Most of the plot shows a steady decrease in density centered and skewed left around this peak. 
-
-Interestingly, there is also one additional (and much shorter) peak on the plot, which is of students with roughly 3.75 GPAs, but taking an amount of units that is roughly 1.5 standard deviations above average. This indicates that there is a moderately-sized group of over-achieving students, with very high GPAs and course loads. 
+The plot below describes the density of students at different cumulative GPA and course load levels. The most dense single section of the heat map shows that many students have about a 3.75 GPA and a slightly above average amount of course units. Interestingly, there is also one additional, shorter peak on the plot that indicates that there is a moderately-sized group of students with both very high GPAs and course loads. 
 
 Note that we are missing course unit amounts for the students recruited from Notre Dame, which make up 147 of our 634 total observations. 
 
@@ -227,7 +206,7 @@ Understanding how the distributions of GPA and course load interact is useful in
 
 ### Total Sleep Time {.tabset}
 
-The group getting the least amount of sleep seem to be the 1.5-2.0 GPA students. Starting at the bottom left of the heat map and moving to the upper right, the total sleep time of students seems to increase. 
+The group getting the least amount of sleep seem to be the 1.5-2.0 GPA students. Starting at the bottom left of the heat map and moving to the upper right, the total sleep time of students increases. 
 
 It's interesting that students with lower GPAs seem to be getting less sleep, since I would've thought that students getting less sleep are spending more time studying, and so would have higher GPAs or heavier course loads. If students are missing out on sleep for other reasons, it would make sense that getting less sleep would make it harder to perform well in school. 
 
@@ -250,7 +229,7 @@ sleep_df %>% drop_na(zterm_units_zof_z) %>%
 
 ### Variability in Bed Times {.tabset}
 
-Variability in bed times are relatively even across all GPA and term unit groups. For the lower GPA students (less than 3.0) with roughly average course loads, there seems to be slightly greater variability. 
+Variability in bed times are relatively even across all GPA and term unit groups. For the lower GPA students (less than 3.0) with roughly average course loads, there is slightly greater variability. 
 
 ```{r}
 
@@ -270,7 +249,7 @@ sleep_df %>% drop_na(zterm_units_zof_z) %>%
 
 ### Sleeping Midpoint* {.tabset}
 
-In the map below, it's obvious that students with greater GPAs (3.5-4.0) and heavier course loads (greater than 1 SD above average) have sleeping midpoints that are mostly within 6 hours of 11 PM. As we move from the upper-right to the lower-left of the plot, we can clearly see that the sleeping midpoint times gradually become later in the night. 
+The map below shows that students with greater GPAs (3.5-4.0) and heavier course loads (greater than 1 SD above average) have sleeping midpoints that are mostly within 6 hours of 11 PM. As we move from the upper-right to the lower-left of the plot, we can clearly see that the sleeping midpoint times gradually become later in the night. 
 
 This trend implies that higher-GPA and higher-unit students are going to sleep earlier/waking up earlier than their peers. 
 
@@ -292,7 +271,7 @@ sleep_df %>% drop_na(zterm_units_zof_z) %>%
 
 ### Daytime Sleep {.tabset}
 
-There isn't much of a distinct trend in daytime sleep between GPA and course unit groups. Overall, time spent sleeping during the day is relatively low, with students with average course loads and lower GPAs napping slightly more than others. 
+There isn't much of a distinct trend in daytime sleep between GPA and course unit groups. Overall, time spent sleeping during the day is relatively low, with students with average course loads and GPAs having more daytime sleep. 
 
 ```{r}
 
@@ -354,7 +333,9 @@ plot_bedtime2
 
 ### Sleeping Midpoint* {.tabset}
 
-We can clearly see that the male and female students have distinct peaks in their distributions of sleeping midpoint, with the majority of men having a midpoint at ~250 minutes past 11 PM ()
+The plot below shows that the male and female students have distinct peaks in their distributions of sleeping midpoint, with the majority of women having a midpoint at ~350 minutes past 11 PM (slightly before 5 AM), and most men having a midpoint ~30 minutes later. This implies that women are going to sleep slightly earlier/waking up earlier than men. 
+
+Looking at the second plot below, we can see that this trend of women having earlier midpoints of sleep during the night is consistent across the three universities. 
 
 ```{r}
 plot_midpoint <- sleep_df %>% filter(!is.na(demo_gender)) %>%
@@ -403,6 +384,22 @@ plot_daysleep <- sleep_df %>% filter(!is.na(demo_gender)) %>%
 
 plot_daysleep
 
+```
+
+---
+
+### Statistics {.tabset}
+
+```{r}
+sleep_df %>% select(total_sleep_time, bedtime_mssd, 
+                    midpoint_sleep, daytime_sleep, demo_gender) %>% 
+  tbl_summary(
+    by = demo_gender,
+    statistic = list(
+      all_continuous() ~ "{median} ({p25}, {p75})",
+      all_categorical() ~ "{n} / {N} ({p}%)")) %>% 
+    add_p() %>% 
+    add_overall()
 ```
 
 ---
@@ -488,6 +485,22 @@ plot_daysleep
 
 ---
 
+### Statistics {.tabset}
+
+```{r}
+sleep_df %>% select(total_sleep_time, bedtime_mssd, 
+                    midpoint_sleep, daytime_sleep, demo_race) %>% 
+  tbl_summary(
+    by = demo_race,
+    statistic = list(
+      all_continuous() ~ "{median} ({p25}, {p75})",
+      all_categorical() ~ "{n} / {N} ({p}%)")) %>% 
+    add_p() %>% 
+    add_overall()
+```
+
+---
+
 ## First-Generation Students {.tabset}
 
 ### Total Sleep Time {.tabset}
@@ -566,3 +579,19 @@ plot_daysleep
 ```
 
 --- 
+
+### Statistics {.tabset}
+
+```{r}
+sleep_df %>% select(total_sleep_time, bedtime_mssd, 
+                    midpoint_sleep, daytime_sleep, demo_firstgen) %>% 
+  tbl_summary(
+    by = demo_firstgen,
+    statistic = list(
+      all_continuous() ~ "{median} ({p25}, {p75})",
+      all_categorical() ~ "{n} / {N} ({p}%)")) %>% 
+    add_p() %>% 
+    add_overall()
+```
+
+---
