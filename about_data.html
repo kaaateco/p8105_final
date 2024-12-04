@@ -13,7 +13,7 @@
 
 <title>About our Data Set</title>
 
-<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -61,6 +61,7 @@ if (window.hljs) {
 
 
 
+<link rel="stylesheet" href="styles.css" type="text/css" />
 
 
 
@@ -386,6 +387,25 @@ represented the student’s load relative to the average amount of units.
 The Z-scores for the cohorts were then combined and Z-scored again. 0
 represents an average load, while positive values are above-average
 loads and negative values are below average.</li>
+</ul>
+<p>Based on the textual context provided by CMU S&amp;DS Data
+Repository, we further derived the following variables to better
+separate variables with more than one type of information:</p>
+<ul>
+<li><code>University</code>: Out of the three
+university,<code>NDU = Notre Dame University</code>,
+<code>CMU = Carnegie Mellon University</code> and
+<code>UW = University of Washington</code>. This variable is derived
+from <code>study</code> variable as <code>1</code> and <code>5</code>
+were from Carnegie Mellon University, <code>2</code> and <code>3</code>
+from University of Washington, and <code>4</code> from Notre Dame
+University.</li>
+<li><code>time_collection</code>: It refers to the time of data
+collection, derived from <code>study</code> variable. The value
+<code>4</code> in <code>study</code> was is for
+<code>Spring 2016</code>, <code>5</code> for <code>Spring 2017</code>,
+<code>1</code>, <code>2</code> for <code>Spring 2018</code>, and
+<code>3</code> for <code>Spring 2019</code>.</li>
 </ul>
 </div>
 
