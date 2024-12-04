@@ -190,12 +190,12 @@ The plot below describes the density of students at different cumulative GPA and
 Note that we are missing course unit amounts for the students recruited from Notre Dame, which make up 147 of our 634 total observations. 
 
 ```{r}
-sleep_df %>% ggplot(aes(x = cum_gpa, y = zterm_units_zof_z)) +
+sleep_df %>% ggplot(aes(x = term_gpa, y = zterm_units_zof_z)) +
   geom_density2d_filled(alpha = 0.8) + 
   xlim(c(1.5, 4)) +
   ylim(c(-3, 3)) +
   labs(
-    x = "Cumulative GPA",
+    x = "Term GPA",
     y = "Term Units (Z)"
   ) +
   theme_minimal()
