@@ -1,25 +1,38 @@
 ---
-title: "U Up? Sleep and GPAs of First-Year College Students"
+title: "U Up? Sleep and GPA of First-Year College Students"
 output: 
   html_document:
     toc: false
     toc_float: false
 ---
 
-Poor sleep practices are detrimental to human health and performance in all aspects of life. Unusual sleeping patterns are particularly common amongst college students, especially first-year students, who are adjusting to being independent adults for the first time. At the same time, these new college students are taking challenging coursework, on which success or failure is highly consequential for their future. Therefore, understanding which sleeping habits are correlated with student academic success can be very useful in guiding student behavior. Additionally, it is important to know how sleeping behavior is correlated with demographic factors such as gender, race, and first-generation status. 
+---
 
-In this project, we used a data set from 
+Poor sleep practices are detrimental to human health and performance in all aspects of life. Unusual sleeping patterns are particularly common amongst college students, especially first-year students, who are adjusting to being independent adults for the first time. At the same time, these new college students are taking challenging coursework, on which their success or failure is highly consequential for their future. Therefore, understanding which sleeping habits are correlated with student academic success can be very useful in guiding student behavior. Additionally, it is important to know how sleeping behavior is correlated with demographic factors such as gender, race, and first-generation status, which could help inform university decision-making and resource allocation. 
 
+<div style="text-align: center;">
+<img width="500" src="images/sleeping_istock.jpg">
+</div>
 
-
-We want to address the following research questions among first-year college students:
+We wanted to address the following research questions among first-year college students:
 
 * How are course load and GPA distributed in different gender, race, educational background and colleges?
 * What are the main sleeping patterns seen in students over multiple measures of sleeping behavior? 
 * What can we learn about the relationship between academic performance, demographic characteristics, and sleeping habits in first-year college students? Can academic performance be predicted using these variables?
 
+---
+
+To read more about our data set or the team behind this project, please see our [About the Data](about_data.html) or [About the Team](team.html) pages. 
+
+To check out our exploratory analyses of student demographics and academic information, please see our [Students](students.html) page. To further understand our measures of sleeping behavior and how they are distributed in our student population, check out our [Sleeping Patterns](sleep_metrics.html) page. 
+
+To review our statistical modeling approach and the variables we found important for GPA prediction, check out our [Statistical Analysis](statistic_analysis.html). Input your own data into our [Shiny App](NEED LINK) to predict your own first-year GPA!
+
+Finally, read more about our project in our [Project Report](report.html). Thanks!
+
 -----
 
-
 ## Screen Cast 
+
+For a brief overview of our project site, watch the video below!
 
