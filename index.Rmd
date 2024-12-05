@@ -2,8 +2,8 @@
 title: "U Up? Sleep and GPA of First-Year College Students"
 output: 
   html_document:
-    toc: false
-    toc_float: false
+    toc: true
+    toc_float: true
 ---
 
 ---
@@ -22,6 +22,8 @@ We wanted to address the following research questions among first-year college s
 
 ---
 
+## Navigating our Project
+
 To read more about our data set or the team behind this project, please see our [About the Data](about_data.html) or [About the Team](team.html) pages. 
 
 To check out our exploratory analyses of student demographics and academic information, please see our [Students](students.html) page. To further understand our measures of sleeping behavior and how they are distributed in our student population, check out our [Sleeping Patterns](sleep_metrics.html) page. 
@@ -32,7 +34,7 @@ Finally, read more about our project in our [Project Report](report.html). Thank
 
 -----
 
-## Screen Cast 
+## Screencast 
 
 For a brief overview of our project site, watch the video below!
 

@@ -14,7 +14,7 @@ library(tidyverse)
 
 ```
 
-We found our data through the [Carnegie Mellon University Statistics and Data Science Data Repository](https://cmustatistics.github.io/data-repository/). This data was collected in 2019 for a [2023 study](https://www.pnas.org/doi/10.1073/pnas.2209123120) of sleep duration as a predictor of grade point average (GPA) of first-year college students. 
+We found our data through the [Carnegie Mellon University Statistics and Data Science Data Repository](https://cmustatistics.github.io/data-repository/). This data was collected from 2016-2019 for a [2023 study](https://www.pnas.org/doi/10.1073/pnas.2209123120) of sleep duration as a predictor of grade point average (GPA) of first-year college students. 
 
 In this study, first-year students were recruited from three prominent American universities: Carnegie Mellon University, The University of Washington, and Notre Dame University. Recruited students at each university were given a FitBit to log their sleeping patterns for a month at the start of their spring semesters. GPA and demographic data was collected directly from the university. The final data set includes 634 students. 
 

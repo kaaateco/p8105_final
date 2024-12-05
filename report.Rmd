@@ -4,25 +4,36 @@ output:
   html_document:
     toc: true
     toc_float: true
+    code_folding: hide
 ---
 
 Group Members: Kate Colvin (kac2301), Yuying Lu (yl5839), and Chhiring Lama (cyl2159)
 
 --- 
 
+```{r, echo=FALSE, include=FALSE}
+library(tidyverse)
+library(gtsummary)
+```
+
+
 ## Motivation
 
 Student lack of success and under-performance in college is a large waste of human capital and money. It is widely known that student academic success depends on a number of factors, including regular sleep habits. Our goal in this study is to better understand how first-year GPA is impacted by sleeping behavior, while controlling for multiple demographic factors across three distinct universities. Additionally, understanding how demographic factors are related to sleeping behavior can provide guidance to universities on how to allocate resources to student behavioral health initiatives to best improve student success. 
 
-Finally, as previous undergraduates, current graduate students, and potentially future educators, understanding how sleeping behavior impacts academic performance is a personally compelling topic. 
+Finally, as previous undergraduates, current graduate students, and potentially future educators, understanding how sleeping behavior impacts academic performance is a personally compelling topic.
 
-## Related work
+---
+
+## Related Work
 
 The data for our project came from a 2023 study, ["Nightly sleep duration predicts grade point average in the first year of college" ](https://www.pnas.org/doi/10.1073/pnas.2209123120), by JD Creswell et al. In this study, they found that term GPA and total sleep time were positively associated. Their multiple regression analysis controlled for daytime sleep, demographic variables, and standardized course load. All previous studies on this topic relied on self-reported recollections of total sleep time, which is prone to recall bias, and excludes other potentially important measures of sleep behavior. 
 
 Our project aimed to expand upon the study conducted by JD Creswell et al in several ways: to further explore the distributions of and correlations between the demographic, academic, and sleep behavior variables they collected; improve upon the models they used to predict GPA; and to create an interactive Shiny app to predict GPA based on users-inputted demographic factors and sleep behavior. 
 
-## Initial questions
+---
+
+## Initial Questions
 
 Initially, our proposed project was to study how the lifestyle habits of college students impacted their duration and quality of sleep. As we researched further into this topic, we found a greater amount of real-world data available covering sleeping behavior and academic performance, which pushed us to instead look at sleeping behavior as a predictor of GPA. 
 
@@ -38,17 +49,169 @@ As we explored the data further, several additional questions came up regarding 
 * How are different sleeping behaviors related to each other? How will this inform our regression models? 
 * How important are the characteristic differences of the three universities recruited in this study (Carnegie Mellon, Notre Dame, and University of Washington)? Will this change what demographic and sleeping variables are most predictive of GPA?
 
-## Data
-Source, scraping method, cleaning, etc.
+---
 
-## Exploratory analysis
+## Data
+
+We found our data from the [Carnegie Mellon University Statistics and Data Science Data Repository](https://cmustatistics.github.io/data-repository/). This data was originally collected from 2016-2019 for the [2023 study](https://www.pnas.org/doi/10.1073/pnas.2209123120) described in our "Related Work" section above. For this study, they recruited first-year students from three distinct American universities, Carnegie Mellon University, The University of Washington, and Notre Dame University. Data on sleeping behavior was collected from FitBits that were given to recruited students, and demographic and academic data was collected directly from the universities. More information on how data collection was conducted and the final data set itself can be found on [this page](https://cmustatistics.github.io/data-repository/psychology/cmu-sleep.html). 
+
+```{r, message=FALSE}
+sleep_df <- read_csv("data/cmu-sleep.csv") %>% 
+  janitor::clean_names() %>%  
+  mutate(demo_race = case_when(demo_race == 0 ~ "Underrepresented", 
+                                     demo_race == 1 ~ "Non-underrepresented"),
+         demo_race = fct_relevel(demo_race, "Underrepresented"),
+         demo_gender = case_when(demo_gender == 0 ~ "Male", 
+                                     demo_gender == 1 ~ "Female"),
+         demo_gender = fct_relevel(demo_gender, "Male"), 
+         demo_firstgen = case_when(demo_firstgen == "0" ~ "Non-first gen", 
+                                   demo_firstgen == "1" ~ "First-gen", 
+                                   TRUE ~ NA),
+         demo_firstgen = fct_relevel(demo_firstgen, "Non-first gen"), 
+         time_collection = case_when(cohort == "lac1" ~ "Spring, 2018", 
+                            cohort == "lac2" ~ "Spring, 2017",
+                            cohort == "nh" ~ "Spring, 2016",
+                            cohort == "uw1" ~ "Spring, 2018", 
+                            cohort == "uw2" ~ "Spring, 2019"), 
+         university = case_when(cohort == "lac1" ~ "CMU", 
+                            cohort == "lac2" ~ "CMU",
+                            cohort == "nh" ~ "NDU",
+                            cohort == "uw1" ~ "UW", 
+                            cohort == "uw2" ~ "UW"))
+
+```
+
+For the exploratory analyses, we utilized the full data set, which contains 634 students. Cleaning the data involved several steps. First, all demographic variables (race, gender, and first-generation status) were encoded in 0s and 1s, so we used the data dictionary to replace the values in these columns with the correct labels. Next, we created two new variables to help us explore different sub-groups of the data set: 
+
+* `university`:	Out of the three university,`NDU = Notre Dame University`, `CMU = Carnegie Mellon University` and `UW = University of Washington`. This variable is derived from `study` variable as `1` and `5` were from Carnegie Mellon University, `2` and `3` from University of Washington, and `4` from Notre Dame University. 
+* `time_collection`: It refers to the time of data collection, derived from `study` variable. The value `4` in `study` was is for `Spring 2016`, `5` for `Spring 2017`, `1`, `2` for `Spring 2018`, and `3` for `Spring 2019`.
+
+We also noticed that there were several variables with a handful of missing values. There are less than 5 missing entries for each of our demographic variables, but notably, we are missing all course load information (`term_units`, `zterm_units_zof_z`) for students recruited from Notre Dame, which make up 147 of our 634 total observations. Rows with these missing values were removed when required for our exploratory analyses, and course load information variables were not included in our regression models. **IS THIS RIGHT LOL??**
+
+---
+
+## Exploratory Analysis: Students 
 Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
 
-Our exploratory analysis is broken into two main sections: [student data](students.html) and [sleeping behavior](sleep_metrics.html). 
+Our exploratory analysis is broken into two main sections: [student data](students.html) and [sleeping patterns](sleep_metrics.html). 
 
+*Chhiring's section*
 
-## Additional analysis
+All of the graphs and analyses mentioned in this segment can be found on our [Students](students.html) page. 
+
+---
+
+## Exploratory Analysis: Sleeping {.tabset}
+
+All of the graphs mentioned in this segment and further in-depth explanations can be found on our [Sleeping Patterns](sleep_metrics.html) page.
+
+At the bottom of this section are plots of the overall distributions of each of the four sleep metrics, stratified by university. Two of the metrics, "Total Sleep Time" and "Sleeping Midpoint", are roughly normally distributed. The two other metrics, "Variability in Sleep Time" and "Daytime Sleep" are both very right skewed distributions. For all metrics, distributions are very similar between each university, but for each metric, at least one university is statistically significantly distinct from the others (see the "Statistics" tab below).
+
+To look at the relationships between these metrics, we constructed a Pearson correlation coefficient table that indicates that several of the sleep behavior variables are correlated with each other. First, sleeping midpoint and bedtime variability are positively correlated (0.41), which makes sense, since more sporadic sleeping schedules are commonly explained by staying up late. Additionally, total sleep time has a moderate negative correlation with daytime sleep (-0.29) and sleeping midpoint (-0.33). This also makes sense, as we would expect that longer nighttime sleep would lead to less time sleeping during the day and likely an earlier bedtime. These relationships helped informed our regression analyses, which is discussed below in the "Additional Analysis" portion. 
+
+Interesting patterns were also found between these metrics and the demographic and academic variables included in this data set. On a heat map of GPA and course load, we found that "Total Sleep Time" increased with greater GPAs and decreased with greater course loads, and that "Sleeping Midpoint" became earlier as GPA increased. These were not entirely expected results, as we initially thought that less sleep and later sleeping midpoints may be correlated with a higher GPA, and that students may be staying up late to study. Since this is not the case, it appears that getting less sleep and sleeping later may instead be interfering with student academic performance. 
+
+Between different gender, race, and first-generation statuses, minimal differences were found between sleeping behaviors. "Sleeping Midpoint" and "Daytime Sleep" were the only variables with statistically significantly different medians. For gender, we found that men tended to have later sleeping midpoints (a pattern found within each of the three universities individually), and that students of underrepresented races or who were first-generation tended to have greater daytime sleep. 
+
+Again, please see the [Sleeping Patterns](sleep_metrics.html) page for all of the data visualizations that go along with these results. 
+
+### Total Sleep Time {.tabset}
+
+```{r}
+plot_totalsleep <- sleep_df %>%  
+  ggplot(aes(x = total_sleep_time, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Total Sleep Time (minutes)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_totalsleep    
+                          
+```
+
+---
+
+### Variability in Bed Times {.tabset}
+
+```{r, warning=FALSE}
+plot_bedtime2 <- sleep_df %>%  
+  ggplot(aes(x = bedtime_mssd, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Mean Successive Squared Difference", y = "Density") +
+  xlim(c(0,2.5))+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_bedtime2
+
+```
+
+--- 
+
+### Sleeping Midpoint {.tabset}
+
+```{r}
+plot_midpoint <- sleep_df %>% 
+  ggplot(aes(x = midpoint_sleep, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Midpoint Sleep (minutes past 11 PM)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_midpoint
+
+```
+
+--- 
+
+### Daytime Sleep {.tabset}
+
+```{r}
+plot_daysleep <- sleep_df %>% 
+  ggplot(aes(x = daytime_sleep, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Daytime Sleep (minutes)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_daysleep
+
+```
+
+---
+
+### Statistics {.tabset}
+
+```{r}
+sleep_df %>% select(total_sleep_time, bedtime_mssd, 
+                    midpoint_sleep, daytime_sleep, university) %>% 
+  tbl_summary(
+    by = university,
+    statistic = list(
+      all_continuous() ~ "{median} ({p25}, {p75})",
+      all_categorical() ~ "{n} / {N} ({p}%)")) %>% 
+    add_p() %>% 
+    add_overall()
+```
+
+---
+
+## Additional Analysis
 If you undertake formal statistical analyses, describe these in detail
+
+---
 
 ## Discussion 
 What were your findings? Are they what you expect? What insights into the data can you make?

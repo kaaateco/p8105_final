@@ -33,6 +33,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
@@ -221,6 +222,9 @@ $(document).ready(function () {
 </style>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
 
 
 
@@ -365,6 +369,14 @@ div.tocify {
 
 <div id="header">
 
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">U Up? Sleep and GPA of First-Year College
@@ -391,9 +403,10 @@ success.</p>
 <p>Finally, as previous undergraduates, current graduate students, and
 potentially future educators, understanding how sleeping behavior
 impacts academic performance is a personally compelling topic.</p>
+<hr />
 </div>
 <div id="related-work" class="section level2">
-<h2>Related work</h2>
+<h2>Related Work</h2>
 <p>The data for our project came from a 2023 study, <a
 href="https://www.pnas.org/doi/10.1073/pnas.2209123120">“Nightly sleep
 duration predicts grade point average in the first year of college”</a>,
@@ -410,9 +423,10 @@ correlations between the demographic, academic, and sleep behavior
 variables they collected; improve upon the models they used to predict
 GPA; and to create an interactive Shiny app to predict GPA based on
 users-inputted demographic factors and sleep behavior.</p>
+<hr />
 </div>
 <div id="initial-questions" class="section level2">
-<h2>Initial questions</h2>
+<h2>Initial Questions</h2>
 <p>Initially, our proposed project was to study how the lifestyle habits
 of college students impacted their duration and quality of sleep. As we
 researched further into this topic, we found a greater amount of
@@ -443,24 +457,724 @@ universities recruited in this study (Carnegie Mellon, Notre Dame, and
 University of Washington)? Will this change what demographic and
 sleeping variables are most predictive of GPA?</li>
 </ul>
+<hr />
 </div>
 <div id="data" class="section level2">
 <h2>Data</h2>
-<p>Source, scraping method, cleaning, etc.</p>
+<p>We found our data from the <a
+href="https://cmustatistics.github.io/data-repository/">Carnegie Mellon
+University Statistics and Data Science Data Repository</a>. This data
+was originally collected from 2016-2019 for the <a
+href="https://www.pnas.org/doi/10.1073/pnas.2209123120">2023 study</a>
+described in our “Related Work” section above. For this study, they
+recruited first-year students from three distinct American universities,
+Carnegie Mellon University, The University of Washington, and Notre Dame
+University. Data on sleeping behavior was collected from FitBits that
+were given to recruited students, and demographic and academic data was
+collected directly from the universities. More information on how data
+collection was conducted and the final data set itself can be found on
+<a
+href="https://cmustatistics.github.io/data-repository/psychology/cmu-sleep.html">this
+page</a>.</p>
+<pre class="r"><code>sleep_df &lt;- read_csv(&quot;data/cmu-sleep.csv&quot;) %&gt;% 
+  janitor::clean_names() %&gt;%  
+  mutate(demo_race = case_when(demo_race == 0 ~ &quot;Underrepresented&quot;, 
+                                     demo_race == 1 ~ &quot;Non-underrepresented&quot;),
+         demo_race = fct_relevel(demo_race, &quot;Underrepresented&quot;),
+         demo_gender = case_when(demo_gender == 0 ~ &quot;Male&quot;, 
+                                     demo_gender == 1 ~ &quot;Female&quot;),
+         demo_gender = fct_relevel(demo_gender, &quot;Male&quot;), 
+         demo_firstgen = case_when(demo_firstgen == &quot;0&quot; ~ &quot;Non-first gen&quot;, 
+                                   demo_firstgen == &quot;1&quot; ~ &quot;First-gen&quot;, 
+                                   TRUE ~ NA),
+         demo_firstgen = fct_relevel(demo_firstgen, &quot;Non-first gen&quot;), 
+         time_collection = case_when(cohort == &quot;lac1&quot; ~ &quot;Spring, 2018&quot;, 
+                            cohort == &quot;lac2&quot; ~ &quot;Spring, 2017&quot;,
+                            cohort == &quot;nh&quot; ~ &quot;Spring, 2016&quot;,
+                            cohort == &quot;uw1&quot; ~ &quot;Spring, 2018&quot;, 
+                            cohort == &quot;uw2&quot; ~ &quot;Spring, 2019&quot;), 
+         university = case_when(cohort == &quot;lac1&quot; ~ &quot;CMU&quot;, 
+                            cohort == &quot;lac2&quot; ~ &quot;CMU&quot;,
+                            cohort == &quot;nh&quot; ~ &quot;NDU&quot;,
+                            cohort == &quot;uw1&quot; ~ &quot;UW&quot;, 
+                            cohort == &quot;uw2&quot; ~ &quot;UW&quot;))</code></pre>
+<p>For the exploratory analyses, we utilized the full data set, which
+contains 634 students. Cleaning the data involved several steps. First,
+all demographic variables (race, gender, and first-generation status)
+were encoded in 0s and 1s, so we used the data dictionary to replace the
+values in these columns with the correct labels. Next, we created two
+new variables to help us explore different sub-groups of the data
+set:</p>
+<ul>
+<li><code>university</code>: Out of the three
+university,<code>NDU = Notre Dame University</code>,
+<code>CMU = Carnegie Mellon University</code> and
+<code>UW = University of Washington</code>. This variable is derived
+from <code>study</code> variable as <code>1</code> and <code>5</code>
+were from Carnegie Mellon University, <code>2</code> and <code>3</code>
+from University of Washington, and <code>4</code> from Notre Dame
+University.</li>
+<li><code>time_collection</code>: It refers to the time of data
+collection, derived from <code>study</code> variable. The value
+<code>4</code> in <code>study</code> was is for
+<code>Spring 2016</code>, <code>5</code> for <code>Spring 2017</code>,
+<code>1</code>, <code>2</code> for <code>Spring 2018</code>, and
+<code>3</code> for <code>Spring 2019</code>.</li>
+</ul>
+<p>We also noticed that there were several variables with a handful of
+missing values. There are less than 5 missing entries for each of our
+demographic variables, but notably, we are missing all course load
+information (<code>term_units</code>, <code>zterm_units_zof_z</code>)
+for students recruited from Notre Dame, which make up 147 of our 634
+total observations. Rows with these missing values were removed when
+required for our exploratory analyses, and course load information
+variables were not included in our regression models. <strong>IS THIS
+RIGHT LOL??</strong></p>
+<hr />
 </div>
-<div id="exploratory-analysis" class="section level2">
-<h2>Exploratory analysis</h2>
+<div id="exploratory-analysis-students" class="section level2">
+<h2>Exploratory Analysis: Students</h2>
 <p>Visualizations, summaries, and exploratory statistical analyses.
 Justify the steps you took, and show any major changes to your
 ideas.</p>
 <p>Our exploratory analysis is broken into two main sections: <a
 href="students.html">student data</a> and <a
-href="sleep_metrics.html">sleeping behavior</a>.</p>
+href="sleep_metrics.html">sleeping patterns</a>.</p>
+<p><em>Chhiring’s section</em></p>
+<p>All of the graphs and analyses mentioned in this segment can be found
+on our <a href="students.html">Students</a> page.</p>
+<hr />
+</div>
+<div id="exploratory-analysis-sleeping" class="section level2 tabset">
+<h2 class="tabset">Exploratory Analysis: Sleeping</h2>
+<p>All of the graphs mentioned in this segment and further in-depth
+explanations can be found on our <a href="sleep_metrics.html">Sleeping
+Patterns</a> page.</p>
+<p>At the bottom of this section are plots of the overall distributions
+of each of the four sleep metrics, stratified by university. Two of the
+metrics, “Total Sleep Time” and “Sleeping Midpoint”, are roughly
+normally distributed. The two other metrics, “Variability in Sleep Time”
+and “Daytime Sleep” are both very right skewed distributions. For all
+metrics, distributions are very similar between each university, but for
+each metric, at least one university is statistically significantly
+distinct from the others (see the “Statistics” tab below).</p>
+<p>To look at the relationships between these metrics, we constructed a
+Pearson correlation coefficient table that indicates that several of the
+sleep behavior variables are correlated with each other. First, sleeping
+midpoint and bedtime variability are positively correlated (0.41), which
+makes sense, since more sporadic sleeping schedules are commonly
+explained by staying up late. Additionally, total sleep time has a
+moderate negative correlation with daytime sleep (-0.29) and sleeping
+midpoint (-0.33). This also makes sense, as we would expect that longer
+nighttime sleep would lead to less time sleeping during the day and
+likely an earlier bedtime. These relationships helped informed our
+regression analyses, which is discussed below in the “Additional
+Analysis” portion.</p>
+<p>Interesting patterns were also found between these metrics and the
+demographic and academic variables included in this data set. On a heat
+map of GPA and course load, we found that “Total Sleep Time” increased
+with greater GPAs and decreased with greater course loads, and that
+“Sleeping Midpoint” became earlier as GPA increased. These were not
+entirely expected results, as we initially thought that less sleep and
+later sleeping midpoints may be correlated with a higher GPA, and that
+students may be staying up late to study. Since this is not the case, it
+appears that getting less sleep and sleeping later may instead be
+interfering with student academic performance.</p>
+<p>Between different gender, race, and first-generation statuses,
+minimal differences were found between sleeping behaviors. “Sleeping
+Midpoint” and “Daytime Sleep” were the only variables with statistically
+significantly different medians. For gender, we found that men tended to
+have later sleeping midpoints (a pattern found within each of the three
+universities individually), and that students of underrepresented races
+or who were first-generation tended to have greater daytime sleep.</p>
+<p>Again, please see the <a href="sleep_metrics.html">Sleeping
+Patterns</a> page for all of the data visualizations that go along with
+these results.</p>
+<div id="total-sleep-time" class="section level3 tabset">
+<h3 class="tabset">Total Sleep Time</h3>
+<pre class="r"><code>plot_totalsleep &lt;- sleep_df %&gt;%  
+  ggplot(aes(x = total_sleep_time, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Total Sleep Time (minutes)&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_totalsleep    </code></pre>
+<p><img src="report_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="variability-in-bed-times" class="section level3 tabset">
+<h3 class="tabset">Variability in Bed Times</h3>
+<pre class="r"><code>plot_bedtime2 &lt;- sleep_df %&gt;%  
+  ggplot(aes(x = bedtime_mssd, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Mean Successive Squared Difference&quot;, y = &quot;Density&quot;) +
+  xlim(c(0,2.5))+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_bedtime2</code></pre>
+<p><img src="report_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="sleeping-midpoint" class="section level3 tabset">
+<h3 class="tabset">Sleeping Midpoint</h3>
+<pre class="r"><code>plot_midpoint &lt;- sleep_df %&gt;% 
+  ggplot(aes(x = midpoint_sleep, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Midpoint Sleep (minutes past 11 PM)&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_midpoint</code></pre>
+<p><img src="report_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="daytime-sleep" class="section level3 tabset">
+<h3 class="tabset">Daytime Sleep</h3>
+<pre class="r"><code>plot_daysleep &lt;- sleep_df %&gt;% 
+  ggplot(aes(x = daytime_sleep, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = &quot;Daytime Sleep (minutes)&quot;, y = &quot;Density&quot;) +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = &quot;bold&quot;, hjust = 0.5)
+  )
+
+plot_daysleep</code></pre>
+<p><img src="report_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="statistics" class="section level3 tabset">
+<h3 class="tabset">Statistics</h3>
+<pre class="r"><code>sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, 
+                    midpoint_sleep, daytime_sleep, university) %&gt;% 
+  tbl_summary(
+    by = university,
+    statistic = list(
+      all_continuous() ~ &quot;{median} ({p25}, {p75})&quot;,
+      all_categorical() ~ &quot;{n} / {N} ({p}%)&quot;)) %&gt;% 
+    add_p() %&gt;% 
+    add_overall()</code></pre>
+<div id="ckucchmkpu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ckucchmkpu table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ckucchmkpu thead, #ckucchmkpu tbody, #ckucchmkpu tfoot, #ckucchmkpu tr, #ckucchmkpu td, #ckucchmkpu th {
+  border-style: none;
+}
+
+#ckucchmkpu p {
+  margin: 0;
+  padding: 0;
+}
+
+#ckucchmkpu .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ckucchmkpu .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ckucchmkpu .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ckucchmkpu .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ckucchmkpu .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ckucchmkpu .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ckucchmkpu .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ckucchmkpu .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ckucchmkpu .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ckucchmkpu .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ckucchmkpu .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ckucchmkpu .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ckucchmkpu .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ckucchmkpu .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ckucchmkpu .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ckucchmkpu .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ckucchmkpu .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ckucchmkpu .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ckucchmkpu .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckucchmkpu .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ckucchmkpu .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ckucchmkpu .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ckucchmkpu .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckucchmkpu .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ckucchmkpu .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ckucchmkpu .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ckucchmkpu .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckucchmkpu .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ckucchmkpu .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ckucchmkpu .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ckucchmkpu .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ckucchmkpu .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ckucchmkpu .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckucchmkpu .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ckucchmkpu .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ckucchmkpu .gt_left {
+  text-align: left;
+}
+
+#ckucchmkpu .gt_center {
+  text-align: center;
+}
+
+#ckucchmkpu .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ckucchmkpu .gt_font_normal {
+  font-weight: normal;
+}
+
+#ckucchmkpu .gt_font_bold {
+  font-weight: bold;
+}
+
+#ckucchmkpu .gt_font_italic {
+  font-style: italic;
+}
+
+#ckucchmkpu .gt_super {
+  font-size: 65%;
+}
+
+#ckucchmkpu .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ckucchmkpu .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ckucchmkpu .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ckucchmkpu .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ckucchmkpu .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ckucchmkpu .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ckucchmkpu .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#ckucchmkpu .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#ckucchmkpu div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="label"><span class='gt_from_md'><strong>Characteristic</strong></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_0"><span class='gt_from_md'><strong>Overall</strong><br />
+N = 634</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_1"><span class='gt_from_md'><strong>CMU</strong><br />
+N = 208</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_2"><span class='gt_from_md'><strong>NDU</strong><br />
+N = 147</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="stat_3"><span class='gt_from_md'><strong>UW</strong><br />
+N = 279</span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="p.value"><span class='gt_from_md'><strong>p-value</strong></span><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>2</sup></span></th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="label" class="gt_row gt_left">total_sleep_time</td>
+<td headers="stat_0" class="gt_row gt_center">400 (367, 430)</td>
+<td headers="stat_1" class="gt_row gt_center">394 (359, 422)</td>
+<td headers="stat_2" class="gt_row gt_center">384 (351, 420)</td>
+<td headers="stat_3" class="gt_row gt_center">409 (385, 439)</td>
+<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">bedtime_mssd</td>
+<td headers="stat_0" class="gt_row gt_center">0.14 (0.07, 0.29)</td>
+<td headers="stat_1" class="gt_row gt_center">0.17 (0.10, 0.39)</td>
+<td headers="stat_2" class="gt_row gt_center">0.12 (0.07, 0.22)</td>
+<td headers="stat_3" class="gt_row gt_center">0.13 (0.06, 0.28)</td>
+<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">midpoint_sleep</td>
+<td headers="stat_0" class="gt_row gt_center">388 (345, 438)</td>
+<td headers="stat_1" class="gt_row gt_center">421 (372, 468)</td>
+<td headers="stat_2" class="gt_row gt_center">381 (346, 414)</td>
+<td headers="stat_3" class="gt_row gt_center">371 (327, 423)</td>
+<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
+    <tr><td headers="label" class="gt_row gt_left">daytime_sleep</td>
+<td headers="stat_0" class="gt_row gt_center">35 (23, 51)</td>
+<td headers="stat_1" class="gt_row gt_center">25 (18, 40)</td>
+<td headers="stat_2" class="gt_row gt_center">40 (26, 54)</td>
+<td headers="stat_3" class="gt_row gt_center">40 (27, 58)</td>
+<td headers="p.value" class="gt_row gt_center"><0.001</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="6"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>1</sup></span> <span class='gt_from_md'>Median (Q1, Q3)</span></td>
+    </tr>
+    <tr>
+      <td class="gt_footnote" colspan="6"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;line-height:0;"><sup>2</sup></span> <span class='gt_from_md'>Kruskal-Wallis rank sum test</span></td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+<hr />
+</div>
 </div>
 <div id="additional-analysis" class="section level2">
-<h2>Additional analysis</h2>
+<h2>Additional Analysis</h2>
 <p>If you undertake formal statistical analyses, describe these in
 detail</p>
+<hr />
 </div>
 <div id="discussion" class="section level2">
 <h2>Discussion</h2>
@@ -503,6 +1217,11 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 <script>
 $(document).ready(function ()  {
