@@ -14,10 +14,9 @@ In this project, we used a data set from
 
 We want to address the following research questions among first-year college students:
 
-* How are course load and GPAs distributed in different gender, race, educational background and colleges?
-* How is course load related to GPAs overall, and in various groups?
-* What are key sleeping patterns seen in students?
-* What can we learn about the relationship between academic performance and different demographic characteristics and sleeping habits?
+* How are course load and GPA distributed in different gender, race, educational background and colleges?
+* What are the main sleeping patterns seen in students over multiple measures of sleeping behavior? 
+* What can we learn about the relationship between academic performance, demographic characteristics, and sleeping habits in first-year college students? Can academic performance be predicted using these variables?
 
 -----
 

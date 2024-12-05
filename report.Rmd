@@ -23,7 +23,20 @@ The data for our project came from a 2023 study, ["Nightly sleep duration predic
 Our project aimed to expand upon the study conducted by JD Creswell et al in several ways: to further explore the distributions of and correlations between the demographic, academic, and sleep behavior variables they collected; improve upon the models they used to predict GPA; and to create an interactive Shiny app to predict GPA based on users-inputted demographic factors and sleep behavior. 
 
 ## Initial questions
-What questions are you trying to answer? How did these questions evolve over the course of the project? What new questions did you consider in the course of your analysis?
+
+Initially, our proposed project was to study how the lifestyle habits of college students impacted their duration and quality of sleep. As we researched further into this topic, we found a greater amount of real-world data available covering sleeping behavior and academic performance, which pushed us to instead look at sleeping behavior as a predictor of GPA. 
+
+Our primary questions heading into this project were: 
+
+* How are course load and GPA distributed in different gender, race, educational background and colleges?
+* What are the main sleeping patterns seen in students over multiple measures of sleeping behavior? 
+* What can we learn about the relationship between academic performance, demographic characteristics, and sleeping habits in first-year college students? Can academic performance be predicted using these variables?
+
+As we explored the data further, several additional questions came up regarding the variables relationships with each other and how the structure of the study may impact our results: 
+
+* How is course load related to GPA overall, and in various demographic sub-groups?
+* How are different sleeping behaviors related to each other? How will this inform our regression models? 
+* How important are the characteristic differences of the three universities recruited in this study (Carnegie Mellon, Notre Dame, and University of Washington)? Will this change what demographic and sleeping variables are most predictive of GPA?
 
 ## Data
 Source, scraping method, cleaning, etc.
