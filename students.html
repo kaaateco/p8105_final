@@ -985,10 +985,9 @@ and UW students.</p>
     #facet_wrap(~academic_info, ncol = 3, scales = &quot;free&quot;) +
     theme(panel.spacing = unit(1, &quot;lines&quot;)) +
     scale_fill_manual(values = cols) +
-    stat_compare_means(method = &quot;t.test&quot;, 
+    stat_compare_means(aes(label = paste0(&quot;p = &quot;, p.format)), method = &quot;t.test&quot;, 
                        paired = FALSE, comparisons = comp,
                        method.args = list(var.equal = var_equal), 
-                       #label = paste0(&quot;p = &quot;, after_stat(p.format)), 
                        p.adjust.method = &quot;bonferroni&quot;, 
                        label.y = y_positions) +
     stat_summary(fun = &quot;mean&quot;, fun.min = &quot;mean&quot;, color = &quot;skyblue&quot;, 
@@ -1032,12 +1031,12 @@ plot_gpa(demo = demo_name, &quot;End-of-term GPA&quot;, FALSE, comp) +
 <p>After accounting for race, gender, first-generation status and
 university, we know that course load does not have an effect on term GPA
 (See <code>Statistic</code> tab). This suggests that the difference in
-GPA that we seen between racial groups and between CMU and NDU exists,
-even after accounting for combined effect with course load difference.
-The GPA difference seen in first-generation students in two sample-mean
-test could potentially be due to difference in racial makeup and numbers
-in CMU between first-generation and non-first generation students (See
-<a href="#appendix_b-section">Appendix B</a>).</p>
+GPA that we have seen between racial groups exists, even after
+accounting for combined effect with course load difference. The GPA
+difference seen in first-generation students in two sample-mean test
+could potentially be due to difference in racial makeup and student
+number in CMU between first-generation and non-first generation students
+(See <a href="#appendix_b-section">Appendix B</a>).</p>
 <pre class="r"><code>plot_loadgpa &lt;- function(demo) {
   sleep_df |&gt; 
     drop_na(rlang::sym(demo), `End-of-term GPA`, `Relative Course Load`) |&gt; 
@@ -1055,25 +1054,25 @@ in CMU between first-generation and non-first generation students (See
 <h3 class="tabset">Race</h3>
 <pre class="r"><code>demo_name = &quot;Race&quot;
 plot_loadgpa(demo = demo_name)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-17-1.png" width="80%" /></p>
+<p><img src="students_files/figure-html/unnamed-chunk-17-1.png" width="90%" /></p>
 </div>
 <div id="gender-2" class="section level3 tabset">
 <h3 class="tabset">Gender</h3>
 <pre class="r"><code>demo_name = &quot;Gender&quot;
 plot_loadgpa(demo = demo_name)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-18-1.png" width="80%" /></p>
+<p><img src="students_files/figure-html/unnamed-chunk-18-1.png" width="90%" /></p>
 </div>
 <div id="first-generation-2" class="section level3 tabset">
 <h3 class="tabset">First-Generation</h3>
 <pre class="r"><code>demo_name = &quot;First-Generation&quot;
 plot_loadgpa(demo = demo_name)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-19-1.png" width="80%" /></p>
+<p><img src="students_files/figure-html/unnamed-chunk-19-1.png" width="90%" /></p>
 </div>
 <div id="university-2" class="section level3 tabset">
 <h3 class="tabset">University</h3>
 <pre class="r"><code>demo_name = &quot;University&quot;
 plot_loadgpa(demo = demo_name)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-20-1.png" width="80%" /></p>
+<p><img src="students_files/figure-html/unnamed-chunk-20-1.png" width="90%" /></p>
 </div>
 <div id="statistics" class="section level3 tabset">
 <h3 class="tabset">Statistics</h3>
@@ -1288,7 +1287,63 @@ University - UW
 </tr>
 </tbody>
 </table>
-<p><br />
+</div>
+</div>
+<div id="improvement-in-gpa" class="section level2 tabset">
+<h2 class="tabset">Improvement in GPA</h2>
+<p>Utilizing paired t-test, we compared average cumulative GPA before
+term start and the term GPA in each demographic group. GPA within each
+group of the demographics did not improve significantly during the
+semester. We can explore them individually as shown below.</p>
+<pre class="r"><code>cols &lt;- c(&quot;End-of-term GPA&quot; = &quot;#ffaaaa&quot;, 
+            &quot;Cumulative GPA&quot; = &quot;#ffddba&quot;)
+
+plot_improv &lt;- function(demo, comp) {
+  subset_df &lt;- sleep_df |&gt; 
+    drop_na(rlang::sym(demo), `End-of-term GPA`, `Cumulative GPA`) |&gt; 
+    pivot_longer(
+      cols = c(`End-of-term GPA`, `Cumulative GPA`), 
+      names_to = &quot;gpa&quot;, 
+      values_to = &quot;unit&quot;
+    ) |&gt; 
+    mutate(demo_gpa = paste(get(demo), gpa, sep = &quot;_&quot;))
+  
+  max_y &lt;- max(subset_df[,&quot;unit&quot;], na.rm = TRUE)
+  
+  subset_df |&gt; 
+    ggplot(aes(x = get(demo), fill = gpa, y = unit)) +
+    geom_boxplot(alpha = 0.5) + 
+    labs(y = &quot;&quot;, x = &quot;&quot;, fill = &quot;&quot;) +
+    scale_y_continuous(expand = c(0,0), limits = c(min(subset_df[,&quot;unit&quot;]), max_y + 0.5)) +
+    scale_fill_manual(values = cols) +
+    stat_compare_means(method = &quot;t.test&quot;, 
+                       paired = TRUE, 
+                       p.adjust.method = &quot;bonferroni&quot;, 
+                       label.y = max_y)
+}</code></pre>
+<div id="race-3" class="section level3 tabset">
+<h3 class="tabset">Race</h3>
+<pre class="r"><code>demo_name = &quot;Race&quot;
+plot_improv(demo = demo_name, comp)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-23-1.png" width="80%" /></p>
+</div>
+<div id="gender-3" class="section level3 tabset">
+<h3 class="tabset">Gender</h3>
+<pre class="r"><code>demo_name = &quot;Gender&quot;
+plot_improv(demo = demo_name, comp)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-24-1.png" width="80%" /></p>
+</div>
+<div id="first-generation-3" class="section level3 tabset">
+<h3 class="tabset">First-Generation</h3>
+<pre class="r"><code>demo_name = &quot;First-Generation&quot;
+plot_improv(demo = demo_name, comp)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-25-1.png" width="80%" /></p>
+</div>
+<div id="university-3" class="section level3 tabset">
+<h3 class="tabset">University</h3>
+<pre class="r"><code>demo_name = &quot;University&quot;
+plot_improv(demo = demo_name, comp)</code></pre>
+<p><img src="students_files/figure-html/unnamed-chunk-26-1.png" width="80%" /><br />
 </p>
 </div>
 </div>
@@ -1305,7 +1360,7 @@ University - UW
   labs(x = &quot;Theoritical Quantiles&quot;, y = &quot;Sample Quantiles&quot;, 
        title = &quot;Normal Q-Q Plot&quot;) +
   facet_wrap(~academic_info, ncol = 3)</code></pre>
-<p><img src="students_files/figure-html/unnamed-chunk-22-1.png" width="90%" /></p>
+<p><img src="students_files/figure-html/unnamed-chunk-27-1.png" width="90%" /></p>
 <style type="text/css">
 caption {
       color: #000022;
@@ -1731,10 +1786,6 @@ UW
 </tr>
 </tfoot>
 </table>
-<div id="different-groups-improved-this-semster-versus-last-semester"
-class="section level3">
-<h3>Different groups improved this semster versus last semester</h3>
-</div>
 </div>
 
 

@@ -54,6 +54,7 @@ sleep_df <- read_csv("data/cmu-sleep.csv") |>
                             cohort == "nh" ~ "NDU",
                             cohort == "uw1" ~ "UW", 
                             cohort == "uw2" ~ "UW"))
+
 ```
 
 ```{css, echo = FALSE}
@@ -216,10 +217,9 @@ plot_gpa <- function(demo, gpa, var_equal, comp) {
     #facet_wrap(~academic_info, ncol = 3, scales = "free") +
     theme(panel.spacing = unit(1, "lines")) +
     scale_fill_manual(values = cols) +
-    stat_compare_means(method = "t.test", 
+    stat_compare_means(aes(label = paste0("p = ", p.format)), method = "t.test", 
                        paired = FALSE, comparisons = comp,
                        method.args = list(var.equal = var_equal), 
-                       #label = paste0("p = ", after_stat(p.format)), 
                        p.adjust.method = "bonferroni", 
                        label.y = y_positions) +
     stat_summary(fun = "mean", fun.min = "mean", color = "skyblue", 
@@ -265,7 +265,7 @@ plot_gpa(demo = demo_name, "End-of-term GPA", FALSE, comp) +
 
 ## Course load verus GPA {.tabset}
 
-After accounting for race, gender, first-generation status and university, we know that course load does not have an effect on term GPA (See `Statistic` tab). This suggests that the difference in GPA that we seen between racial groups and between CMU and NDU exists, even after accounting for combined effect with course load difference. The GPA difference seen in first-generation students in two sample-mean test could potentially be due to difference in racial makeup and numbers in CMU between first-generation and non-first generation students (See [Appendix B](#appendix_b-section)). 
+After accounting for race, gender, first-generation status and university, we know that course load does not have an effect on term GPA (See `Statistic` tab). This suggests that the difference in GPA that we have seen between racial groups exists, even after accounting for combined effect with course load difference. The GPA difference seen in first-generation students in two sample-mean test could potentially be due to difference in racial makeup and student number in CMU between first-generation and non-first generation students (See [Appendix B](#appendix_b-section)). 
 
 ```{r}
 plot_loadgpa <- function(demo) {
@@ -285,28 +285,28 @@ plot_loadgpa <- function(demo) {
 
 ### Race {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+```{r, fig.width = 7, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
 demo_name = "Race"
 plot_loadgpa(demo = demo_name)
 ```
 
 ### Gender {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+```{r, fig.width = 7, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
 demo_name = "Gender"
 plot_loadgpa(demo = demo_name)
 ```
 
 ### First-Generation {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+```{r, fig.width = 7, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
 demo_name = "First-Generation"
 plot_loadgpa(demo = demo_name)
 ```
 
 ### University {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+```{r, fig.width = 7, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
 demo_name = "University"
 plot_loadgpa(demo = demo_name)
 ```
@@ -331,6 +331,67 @@ lm(`End-of-term GPA` ~ `Relative Course Load`*Race +
   knitr::kable(digits = 170) |> 
   row_spec(2, background = "darkgrey") |> 
   kable_minimal()
+```
+
+## Improvement in GPA {.tabset}
+
+Utilizing paired t-test, we compared average cumulative GPA before term start and the term GPA in each demographic group. GPA within each group of the demographics did not improve significantly during the semester. We can explore them individually as shown below. 
+
+```{r}
+cols <- c("End-of-term GPA" = "#ffaaaa", 
+            "Cumulative GPA" = "#ffddba")
+
+plot_improv <- function(demo, comp) {
+  subset_df <- sleep_df |> 
+    drop_na(rlang::sym(demo), `End-of-term GPA`, `Cumulative GPA`) |> 
+    pivot_longer(
+      cols = c(`End-of-term GPA`, `Cumulative GPA`), 
+      names_to = "gpa", 
+      values_to = "unit"
+    ) |> 
+    mutate(demo_gpa = paste(get(demo), gpa, sep = "_"))
+  
+  max_y <- max(subset_df[,"unit"], na.rm = TRUE)
+  
+  subset_df |> 
+    ggplot(aes(x = get(demo), fill = gpa, y = unit)) +
+    geom_boxplot(alpha = 0.5) + 
+    labs(y = "", x = "", fill = "") +
+    scale_y_continuous(expand = c(0,0), limits = c(min(subset_df[,"unit"]), max_y + 0.5)) +
+    scale_fill_manual(values = cols) +
+    stat_compare_means(method = "t.test", 
+                       paired = TRUE, 
+                       p.adjust.method = "bonferroni", 
+                       label.y = max_y)
+}
+```
+
+### Race {.tabset}
+
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "Race"
+plot_improv(demo = demo_name, comp)
+```
+
+### Gender {.tabset}
+
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "Gender"
+plot_improv(demo = demo_name, comp)
+```
+
+### First-Generation {.tabset}
+
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "First-Generation"
+plot_improv(demo = demo_name, comp)
+```
+
+### University {.tabset}
+
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "University"
+plot_improv(demo = demo_name, comp)
 ```
 \
 
@@ -402,8 +463,6 @@ as_kable_extra(summary_tbl_first) |>
   kable_minimal()
 ```
 
-
-### Different groups improved this semster versus last semester
 
 
 

@@ -13,7 +13,7 @@
 
 <title>About our Data Set</title>
 
-<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -387,6 +387,8 @@ The Z-scores for the cohorts were then combined and Z-scored again. 0
 represents an average load, while positive values are above-average
 loads and negative values are below average.</li>
 </ul>
+<div id="additional-variables" class="section level2">
+<h2>Additional Variables</h2>
 <p>Based on the textual context provided by CMU S&amp;DS Data
 Repository, we further derived the following variables to better
 separate variables with more than one type of information:</p>
@@ -406,6 +408,12 @@ collection, derived from <code>study</code> variable. The value
 <code>1</code>, <code>2</code> for <code>Spring 2018</code>, and
 <code>3</code> for <code>Spring 2019</code>.</li>
 </ul>
+<p><strong>Note</strong>: Because Notre Dame University is missing
+<code>term_units</code> and <code>zterm_units_zof_z</code> observations,
+we excluded NDU from the final statistical modelling. For exploratory
+analysis looking at student demogrpahics and sleeping patterns, we
+included all possible observations.</p>
+</div>
 </div>
 
 
