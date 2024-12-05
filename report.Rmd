@@ -103,7 +103,7 @@ All of the graphs and analyses mentioned in this segment can be found on our [St
 
 ---
 
-## Exploratory Analysis: Sleeping {.tabset}
+## Exploratory Analysis: Sleep {.tabset}
 
 All of the graphs mentioned in this segment and further in-depth explanations can be found on our [Sleeping Patterns](sleep_metrics.html) page.
 
