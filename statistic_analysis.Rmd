@@ -1,0 +1,288 @@
+---
+title: "Statistic Analysis"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+library(tidyverse)
+library(plotly)
+library(ggplot2)
+library(broom)
+library(gtsummary)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_colour_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+In this page, we use some typical statistic models to further explore the impact of students' sleeping patterns on their GPA. 
+
+---
+
+## Simple Linear Regression 
+
+To begin with, fit simple linear regression model to demonstrate the individual impact of each sleeping measure on students' GPA. Each time we use one sleeping measure as the predictor to predict the `term_gpa`.
+
+Below are plots and statistics of the simple linear regression models. 
+
+ **COMMENTS**
+
+```{r, include=FALSE}
+sleep_df <- read_csv("data/cmu-sleep.csv") %>% 
+  janitor::clean_names() %>%  
+  mutate(demo_race = case_when(demo_race == 0 ~ "Underrepresented", 
+                                     demo_race == 1 ~ "Non-underrepresented"),
+         demo_race = fct_relevel(demo_race, "Underrepresented"),
+         demo_gender = case_when(demo_gender == 0 ~ "Male", 
+                                     demo_gender == 1 ~ "Female"),
+         demo_gender = fct_relevel(demo_gender, "Male"), 
+         demo_firstgen = case_when(demo_firstgen == "0" ~ "Non-first gen", 
+                                   demo_firstgen == "1" ~ "First-gen", 
+                                   TRUE ~ NA),
+         demo_firstgen = fct_relevel(demo_firstgen, "Non-first gen"), 
+         time_collection = case_when(cohort == "lac1" ~ "Spring, 2018", 
+                            cohort == "lac2" ~ "Spring, 2017",
+                            cohort == "nh" ~ "Spring, 2016",
+                            cohort == "uw1" ~ "Spring, 2018", 
+                            cohort == "uw2" ~ "Spring, 2019"), 
+         university = case_when(cohort == "lac1" ~ "CMU", 
+                            cohort == "lac2" ~ "CMU",
+                            cohort == "nh" ~ "NDU",
+                            cohort == "uw1" ~ "UW", 
+                            cohort == "uw2" ~ "UW"))
+
+
+```
+
+
+
+### Total Sleep Time {.tabset}
+
+```{r}
+ggplot(data = sleep_df, aes(x = total_sleep_time, y = term_gpa)) +
+  geom_point(color = "#664785", alpha = 0.5) +                               
+  geom_smooth(method = "lm", se = TRUE, color = '#F2A354') +  
+  labs(  
+    x = "Total Sleep Time (min)",
+    y = "Term GPA"
+  ) +
+  theme_minimal()
+
+```
+
+
+
+```{r}
+
+sp_total_sleep = lm(term_gpa ~ total_sleep_time, data = sleep_df)
+tidy_lm <- broom::tidy(sp_total_sleep,conf.int = TRUE)
+# Filter out intercept
+tidy_lm <- tidy_lm %>%
+  filter(term != "(Intercept)") 
+
+```
+
+--- 
+
+### Variability in Bed Times {.tabset}
+
+```{r}
+plot_bedtime2 <- sleep_df %>%  
+  ggplot(aes(x = bedtime_mssd, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Mean Successive Squared Difference", y = "Density") +
+  xlim(c(0,2.5))+
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_bedtime2
+
+```
+
+--- 
+
+### Sleeping Midpoint {.tabset}
+
+```{r}
+plot_midpoint <- sleep_df %>% 
+  ggplot(aes(x = midpoint_sleep, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Midpoint Sleep (minutes past 11 PM)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_midpoint
+
+```
+
+--- 
+
+### Daytime Sleep {.tabset}
+
+```{r}
+plot_daysleep <- sleep_df %>% 
+  ggplot(aes(x = daytime_sleep, fill = university, color = university)) +
+  geom_density(alpha = 0.3, linewidth = 1) +
+  labs(x = "Daytime Sleep (minutes)", y = "Density") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(size = 14),
+    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
+  )
+
+plot_daysleep
+
+```
+
+---
+
+### Statistics {.tabset}
+
+```{r}
+sleep_df %>% select(total_sleep_time, bedtime_mssd, 
+                    midpoint_sleep, daytime_sleep, university) %>% 
+  tbl_summary(
+    by = university,
+    statistic = list(
+      all_continuous() ~ "{median} ({p25}, {p75})",
+      all_categorical() ~ "{n} / {N} ({p}%)")) %>% 
+    add_p() %>% 
+    add_overall()
+```
+
+---
+
+
+
+
+```{r}
+lm_fit = lm(term_gpa ~ university + demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = sleep_df)
+
+# Tidy the regression results
+tidy_lm <- broom::tidy(lm_fit)
+
+# Filter out intercept
+tidy_lm <- tidy_lm %>%
+  filter(term != "(Intercept)")
+
+# Plot coefficients
+ggplot(tidy_lm, aes(x = reorder(term, estimate), y = estimate)) +
+  geom_point(fill = "steelblue") +
+  geom_errorbar(aes(ymin = estimate - std.error, ymax = estimate + std.error), width = 0.2) +
+  coord_flip() +
+  labs(
+    title = "Effect Sizes of Predictors on Cumulative GPA",
+    x = "Predictors",
+    y = "Coefficient Estimate"
+  ) +
+  theme_minimal()
+
+```
+
+
+
+```{r}
+ ggplot(sleep_df, aes(x = total_sleep_time, y = cum_gpa)) +
+  geom_point(alpha = 0.6, color = '#554637') +
+  geom_smooth(method = "lm", se = FALSE, aes(color = cohort)) +
+  labs(
+    title = "Relationship Between Total Sleep Time and Cumulative GPA",
+    x = "Total Sleep Time (Hours)",
+    y = "Cumulative GPA"
+  ) +
+  theme_minimal()
+
+```
+
+
+```{r}
+ggplot(sleep_df, aes(x = factor(demo_gender), y = cum_gpa, fill = factor(demo_gender))) +
+  geom_boxplot() +
+  labs(
+    title = "GPA Differences by Gender",
+    x = "Gender",
+    y = "Cumulative GPA",
+    fill = "Gender"
+  ) +
+  theme_minimal()
+
+```
+
+
+## Bootstrapping Part
+
+
+```{r}
+set.seed(111)
+boot_straps = 
+  sleep_df|> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ university + demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result = 
+  boot_straps |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    boot_se = sd(estimate),
+    boot_ci_ll = quantile(estimate, .025),
+    boot_ci_ul = quantile(estimate, .975),
+  )
+
+boot_result
+```
+
+
+```{r}
+# Tidy the regression results
+
+boot_result |> 
+  filter(term != "(Intercept)") |> 
+  ggplot(aes(x = reorder(term, boot_est), y = boot_est)) +
+  geom_point(fill = "steelblue") +
+  geom_errorbar(aes(ymin = boot_ci_ll, ymax = boot_ci_ul), width = 0.2) +
+  coord_flip() +
+  labs(
+    title = "Effect Sizes of Predictors on Cumulative GPA",
+    x = "Predictors",
+    y = "Coefficient Estimate"
+  ) +
+  theme_minimal()
+
+```
+
+
+
+
+## University Specific Model
+
+
