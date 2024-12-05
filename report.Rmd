@@ -53,7 +53,9 @@ As we explored the data further, several additional questions came up regarding 
 
 ## Data
 
-We found our data from the [Carnegie Mellon University Statistics and Data Science Data Repository](https://cmustatistics.github.io/data-repository/). This data was originally collected from 2016-2019 for the [2023 study](https://www.pnas.org/doi/10.1073/pnas.2209123120) described in our "Related Work" section above. For this study, they recruited first-year students from three distinct American universities, Carnegie Mellon University, The University of Washington, and Notre Dame University. Data on sleeping behavior was collected from FitBits that were given to recruited students, and demographic and academic data was collected directly from the universities. More information on how data collection was conducted and the final data set itself can be found on [this page](https://cmustatistics.github.io/data-repository/psychology/cmu-sleep.html). 
+We found our data from the [Carnegie Mellon University Statistics and Data Science Data Repository](https://cmustatistics.github.io/data-repository/). This data was originally collected from 2016-2019 for the [2023 study](https://www.pnas.org/doi/10.1073/pnas.2209123120) described in our "Related Work" section above. For this study, they recruited first-year students from three distinct American universities, Carnegie Mellon University, The University of Washington, and Notre Dame University. Data on sleeping behavior was collected from FitBits that were given to recruited students, and demographic and academic data was collected directly from the universities. 
+
+More information on how data collection was conducted and the final data set itself can be found on [this page](https://cmustatistics.github.io/data-repository/psychology/cmu-sleep.html). 
 
 ```{r, message=FALSE}
 sleep_df <- read_csv("data/cmu-sleep.csv") %>% 
