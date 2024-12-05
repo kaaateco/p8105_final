@@ -229,7 +229,7 @@ sleep_df %>% drop_na(zterm_units_zof_z) %>%
 
 ### Variability in Bed Times {.tabset}
 
-Variability in bed times are relatively even across all GPA and term unit groups. For the lower GPA students (less than 3.0) with slightly average course loads, there is slightly greater variability. 
+Variability in bed times are relatively even across all GPA and term unit groups. For the lower GPA students (less than 3.0) with slightly above average course loads, there is slightly greater variability. 
 
 ```{r}
 

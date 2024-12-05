@@ -14,7 +14,7 @@ Group Members: Kate Colvin (kac2301), Yuying Lu (yl5839), and Chhiring Lama (cyl
 
 Student lack of success and under-performance in college is a large waste of human capital and money. It is widely known that student academic success depends on a number of factors, including regular sleep habits. Our goal in this study is to better understand how first-year GPA is impacted by sleeping behavior, while controlling for multiple demographic factors across three distinct universities. Additionally, understanding how demographic factors are related to sleeping behavior can provide guidance to universities on how to allocate resources to student behavioral health initiatives to best improve student success. 
 
-Finally, as previous undergraduates, current graduate students, and potentially future educators, understanding how sleep behavior impacts academic performance is a personally compelling topic. 
+Finally, as previous undergraduates, current graduate students, and potentially future educators, understanding how sleeping behavior impacts academic performance is a personally compelling topic. 
 
 ## Related work
 

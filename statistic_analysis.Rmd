@@ -1,5 +1,5 @@
 ---
-title: "Statistic Analysis"
+title: "Statistical Analysis"
 output:
   html_document:
     toc: true
@@ -32,7 +32,7 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-In this page, we use some typical statistic models to further explore the impact of students' sleeping patterns on their GPA. 
+In this page, we use some typical statistical models to further explore the impact of students' sleeping patterns on their GPA. 
 
 ---
 

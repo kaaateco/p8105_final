@@ -14,7 +14,7 @@ navbar:
       href: students.html
     - text: "Sleeping Patterns"
       href: sleep_metrics.html
-    - text: "Statistic Analysis"
+    - text: "Statistical Analysis"
       href: statistic_analysis.html
     - text: "Shiny App"
       href: NA
