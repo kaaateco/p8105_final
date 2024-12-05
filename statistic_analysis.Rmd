@@ -1,5 +1,5 @@
 ---
-title: "Statistical Analysis"
+title: "Statistic Analysis"
 output:
   html_document:
     toc: true
@@ -14,6 +14,9 @@ library(plotly)
 library(ggplot2)
 library(broom)
 library(gtsummary)
+library(knitr)
+library(patchwork)
+library(kableExtra)
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -32,17 +35,16 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-In this page, we use some typical statistical models to further explore the impact of students' sleeping patterns on their GPA. 
+In this page, we use some typical statistic models to further explore the impact of students' sleeping patterns on their GPA. 
 
 ---
 
-## Simple Linear Regression 
+## Simple Linear Regression {.tabset}
 
 To begin with, fit simple linear regression model to demonstrate the individual impact of each sleeping measure on students' GPA. Each time we use one sleeping measure as the predictor to predict the `term_gpa`.
 
 Below are plots and statistics of the simple linear regression models. 
 
- **COMMENTS**
 
 ```{r, include=FALSE}
 sleep_df <- read_csv("data/cmu-sleep.csv") %>% 
@@ -68,129 +70,261 @@ sleep_df <- read_csv("data/cmu-sleep.csv") %>%
                             cohort == "uw1" ~ "UW", 
                             cohort == "uw2" ~ "UW"))
 
-
 ```
 
 
 
 ### Total Sleep Time {.tabset}
 
+**Numerical Result**
+
 ```{r}
-ggplot(data = sleep_df, aes(x = total_sleep_time, y = term_gpa)) +
-  geom_point(color = "#664785", alpha = 0.5) +                               
+record_tab = data.frame(c())
+lm_sp = lm(term_gpa ~ total_sleep_time, data = sleep_df)
+
+tab_sp = lm_sp |> 
+  broom::tidy(conf.int = TRUE) |> 
+  mutate(
+    conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
+    estimate = round(estimate,6),
+    std.error = round(std.error,6)) |> 
+  select(-conf.low, -conf.high, -statistic) 
+
+
+tab_sp|> 
+  t() |> 
+  kable(format = "html") |> 
+  kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
+  column_spec(1, bold = TRUE, width = "3cm")
+
+re_new = data.frame(`Single Predictor` = 'Total Sleep Time',
+                    `P-value` = tab_sp$p.value[2],
+                    MSE = mean(residuals(lm_sp)^2)
+                    )
+record_tab = rbind(record_tab, re_new)
+```
+
+**Model Visualization**
+
+```{r}
+plot_sp = 
+  ggplot(data = sleep_df, aes(x = total_sleep_time, y = term_gpa)) +
+  geom_point(color = "#664785", alpha = 0.5) +                      
   geom_smooth(method = "lm", se = TRUE, color = '#F2A354') +  
+   geom_text(
+    aes(label = paste0("MSE = ", round(mean(residuals(lm_sp)^2),6))),
+    x = 500, y = 1,  
+    hjust = 0, vjust = 0, size = 4, color = "#664785") +
   labs(  
     x = "Total Sleep Time (min)",
-    y = "Term GPA"
+    y = "Term GPA",
+    title = "Regressoin Plot"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
 
+ggplotly(plot_sp)
 ```
 
 
 
-```{r}
-
-sp_total_sleep = lm(term_gpa ~ total_sleep_time, data = sleep_df)
-tidy_lm <- broom::tidy(sp_total_sleep,conf.int = TRUE)
-# Filter out intercept
-tidy_lm <- tidy_lm %>%
-  filter(term != "(Intercept)") 
-
-```
 
 --- 
 
 ### Variability in Bed Times {.tabset}
 
+**Numerical Result**
+
 ```{r}
-plot_bedtime2 <- sleep_df %>%  
-  ggplot(aes(x = bedtime_mssd, fill = university, color = university)) +
-  geom_density(alpha = 0.3, linewidth = 1) +
-  labs(x = "Mean Successive Squared Difference", y = "Density") +
-  xlim(c(0,2.5))+
-  theme_minimal() +
-  theme(
-    strip.text = element_text(size = 14),
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
-  )
+lm_sp = lm(term_gpa ~ bedtime_mssd, data = sleep_df)
+tab_sp = lm_sp |> 
+  broom::tidy(conf.int = TRUE) |> 
+  mutate(
+    conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
+    estimate = round(estimate,6),
+    std.error = round(std.error,6)) |> 
+  select(-conf.low, -conf.high, -statistic) 
 
-plot_bedtime2
 
+tab_sp|> 
+  t() |> 
+  kable(format = "html") |> 
+  kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
+  column_spec(1, bold = TRUE, width = "3cm")
+
+re_new = data.frame(`Single Predictor` = 'Variability in Bed Times',
+                    `P-value` = tab_sp$p.value[2],
+                    MSE = mean(residuals(lm_sp)^2)
+                    )
+record_tab = rbind(record_tab, re_new)
 ```
+
+**Model Visualization**
+
+```{r}
+plot_sp = 
+  ggplot(data = sleep_df, aes(x = bedtime_mssd, y = term_gpa)) +
+  geom_point(color = "#664785", alpha = 0.5) +                      
+  geom_smooth(method = "lm", se = TRUE, color = '#F2A354') +  
+  geom_text(
+   aes(label = paste0("MSE = ", round(mean(residuals(lm_sp)^2),6))),
+   x = 15, y = 1,  
+   hjust = 0, vjust = 0, size = 4, color = "#664785") +  
+  labs(  
+    x = "Mean Successive Squared Difference",
+    y = "Term GPA",
+    title = "Regressoin Plot"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggplotly(plot_sp)
+```
+
 
 --- 
 
 ### Sleeping Midpoint {.tabset}
 
+**Numerical Result**
+
 ```{r}
-plot_midpoint <- sleep_df %>% 
-  ggplot(aes(x = midpoint_sleep, fill = university, color = university)) +
-  geom_density(alpha = 0.3, linewidth = 1) +
-  labs(x = "Midpoint Sleep (minutes past 11 PM)", y = "Density") +
-  theme_minimal() +
-  theme(
-    strip.text = element_text(size = 14),
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
-  )
+lm_sp = lm(term_gpa ~ midpoint_sleep, data = sleep_df)
 
-plot_midpoint
+tab_sp = lm_sp |> 
+  broom::tidy(conf.int = TRUE) |> 
+  mutate(
+    conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
+    estimate = round(estimate,6),
+    std.error = round(std.error,6)) |> 
+  select(-conf.low, -conf.high, -statistic) 
 
+
+tab_sp|> 
+  t() |> 
+  kable(format = "html") |> 
+  kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
+  column_spec(1, bold = TRUE, width = "3cm")
+
+re_new = data.frame(`Single Predictor` = 'Midpoint Sleep',
+                    `P-value` = tab_sp$p.value[2],
+                    MSE = mean(residuals(lm_sp)^2)
+                    )
+record_tab = rbind(record_tab, re_new)
 ```
+
+**Model Visualization**
+
+```{r}
+plot_sp = 
+  ggplot(data = sleep_df, aes(x = midpoint_sleep, y = term_gpa)) +
+  geom_point(color = "#664785", alpha = 0.5) +                      
+  geom_smooth(method = "lm", se = TRUE, color = '#F2A354') +  
+  geom_text(
+   aes(label = paste0("MSE = ", round(mean(residuals(lm_sp)^2),6))),
+   x = 600, y = 1,  
+   hjust = 0, vjust = 0, size = 4, color = "#664785") +  
+  labs(  
+    x = "Midpoint Sleep (minutes past 11 PM)",
+    y = "Term GPA",
+    title = "Regressoin Plot"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggplotly(plot_sp)
+```
+
+
 
 --- 
 
 ### Daytime Sleep {.tabset}
 
+**Numerical Result**
+
 ```{r}
-plot_daysleep <- sleep_df %>% 
-  ggplot(aes(x = daytime_sleep, fill = university, color = university)) +
-  geom_density(alpha = 0.3, linewidth = 1) +
-  labs(x = "Daytime Sleep (minutes)", y = "Density") +
+lm_sp = lm(term_gpa ~ daytime_sleep, data = sleep_df)
+
+tab_sp = lm_sp |> 
+  broom::tidy(conf.int = TRUE) |> 
+  mutate(
+    conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
+    estimate = round(estimate,6),
+    std.error = round(std.error,6)) |> 
+  select(-conf.low, -conf.high, -statistic) 
+
+
+tab_sp|> 
+  t() |> 
+  kable(format = "html") |> 
+  kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
+  column_spec(1, bold = TRUE, width = "3cm")
+
+re_new = data.frame(`Single Predictor` = 'Daytime Sleep',
+                    `P-value` = tab_sp$p.value[2],
+                    MSE = mean(residuals(lm_sp)^2)
+                    )
+record_tab = rbind(record_tab, re_new)
+
+```
+
+
+**Model Visualization**
+
+```{r}
+plot_sp = 
+  ggplot(data = sleep_df, aes(x = daytime_sleep, y = term_gpa)) +
+  geom_point(color = "#664785", alpha = 0.5) +                      
+  geom_smooth(method = "lm", se = TRUE, color = '#F2A354') +  
+  geom_text(
+   aes(label = paste0("MSE = ", round(mean(residuals(lm_sp)^2),6))),
+   x = 200, y = 1,  
+   hjust = 0, vjust = 0, size = 4, color = "#664785") +  
+  labs(  
+    x = "Daytime Sleep (min)",
+    y = "Term GPA",
+    title = "Regressoin Plot"
+  ) +
   theme_minimal() +
-  theme(
-    strip.text = element_text(size = 14),
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5)
-  )
+  theme(plot.title = element_text(hjust = 0.5))
 
-plot_daysleep
+ggplotly(plot_sp)
 
 ```
 
 ---
 
-### Statistics {.tabset}
+ **COMMENTS:**
+ 
+We collect the p-value and the Mean Squared Error from each simple linear regression model to the following table:
+
 
 ```{r}
-sleep_df %>% select(total_sleep_time, bedtime_mssd, 
-                    midpoint_sleep, daytime_sleep, university) %>% 
-  tbl_summary(
-    by = university,
-    statistic = list(
-      all_continuous() ~ "{median} ({p25}, {p75})",
-      all_categorical() ~ "{n} / {N} ({p}%)")) %>% 
-    add_p() %>% 
-    add_overall()
+record_tab|> 
+  kable(format = "html") |> 
+  kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
+  column_spec(1, bold = TRUE, width = "5cm")
 ```
 
----
+Sleeping measure 'Total Sleep Time', 'Midpoint Sleep', and 'Daytime Sleep' have p-value less than 0.05, which means they have coefficient significantly not equal to 0. However, the measure 'Variability in Bed Times' has p-value larger than 0.05, implies this variable doesn't have significant impact on `term_gpa`.
 
 
+## Multiple Linear Regression
 
+Now consider including more variables to fit linear regression
+
+### Sleeping Measures Only
+
+Here use all the 4 sleeping measures as predictors to predict `term_gpa`.
 
 ```{r}
-lm_fit = lm(term_gpa ~ university + demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = sleep_df)
+lm_fit = lm(term_gpa ~ bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, data = sleep_df)
 
-# Tidy the regression results
-tidy_lm <- broom::tidy(lm_fit)
-
-# Filter out intercept
-tidy_lm <- tidy_lm %>%
-  filter(term != "(Intercept)")
-
-# Plot coefficients
-ggplot(tidy_lm, aes(x = reorder(term, estimate), y = estimate)) +
-  geom_point(fill = "steelblue") +
+broom::tidy(lm_fit) |> 
+  filter(term != "(Intercept)") |> 
+ggplot(aes(x = reorder(term, estimate), y = estimate)) +
+  geom_point(color = "steelblue") +
   geom_errorbar(aes(ymin = estimate - std.error, ymax = estimate + std.error), width = 0.2) +
   coord_flip() +
   labs(
@@ -199,8 +333,33 @@ ggplot(tidy_lm, aes(x = reorder(term, estimate), y = estimate)) +
     y = "Coefficient Estimate"
   ) +
   theme_minimal()
-
 ```
+
+
+**COMMENTS**
+
+### Students' Characteristics and Sleeping Measures
+
+
+```{r}
+lm_fit = lm(term_gpa ~ university + demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = sleep_df)
+
+
+broom::tidy(lm_fit) |> 
+  filter(term != "(Intercept)") |> 
+ggplot(aes(x = reorder(term, estimate), y = estimate)) +
+  geom_point(color = "steelblue") +
+  geom_errorbar(aes(ymin = estimate - std.error, ymax = estimate + std.error), width = 0.2) +
+  coord_flip() +
+  labs(
+    title = "Effect Sizes of Predictors on Cumulative GPA",
+    x = "Predictors",
+    y = "Coefficient Estimate"
+  ) +
+  theme_minimal()
+```
+
+**COMMENTS**
 
 
 
@@ -217,19 +376,6 @@ ggplot(tidy_lm, aes(x = reorder(term, estimate), y = estimate)) +
 
 ```
 
-
-```{r}
-ggplot(sleep_df, aes(x = factor(demo_gender), y = cum_gpa, fill = factor(demo_gender))) +
-  geom_boxplot() +
-  labs(
-    title = "GPA Differences by Gender",
-    x = "Gender",
-    y = "Cumulative GPA",
-    fill = "Gender"
-  ) +
-  theme_minimal()
-
-```
 
 
 ## Bootstrapping Part
@@ -258,17 +404,10 @@ boot_result =
     boot_ci_ul = quantile(estimate, .975),
   )
 
-boot_result
-```
-
-
-```{r}
-# Tidy the regression results
-
 boot_result |> 
   filter(term != "(Intercept)") |> 
   ggplot(aes(x = reorder(term, boot_est), y = boot_est)) +
-  geom_point(fill = "steelblue") +
+  geom_point(color = "steelblue") +
   geom_errorbar(aes(ymin = boot_ci_ll, ymax = boot_ci_ul), width = 0.2) +
   coord_flip() +
   labs(
@@ -279,6 +418,9 @@ boot_result |>
   theme_minimal()
 
 ```
+
+
+
 
 
 
