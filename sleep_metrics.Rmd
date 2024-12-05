@@ -1,5 +1,5 @@
 ---
-title: "Sleeping Measures"
+title: "Sleeping Metrics"
 output: 
   html_document:
     toc: true
@@ -15,7 +15,9 @@ library(corrplot)
 
 ```
 
-This data set includes four different measures of sleep: 
+This page explores the four sleep outcome variables included in our data set, how they relate to each other, and how they are related to our demographic and academic variables (previously described in our [students page](students.html)). 
+
+This data set includes four different measures of sleep behavior: 
 
 * `total_sleep_time`:	Average time in bed (the difference between wake time and bedtime) minus the length of total awake/restlessness in the main sleep episode, in minutes
 * `bedtime_mssd`:	Mean successive squared difference of bedtime, a measure of variability in bedtimes between consecutive nights
@@ -30,9 +32,7 @@ The descriptions above were taken directly from the CMU S&DS Data Repository.
 
 ## Overall Sleeping Patterns {.tabset}
 
-Below are plots describing the overall distributions of each of these sleep measures, broken down by university. We can observe that **COMMENTS**
-
-at this point I'm not sure If i can use gt summary to test (kruskal wallis?? I guess all the variables aren't normal...)
+The plots below show the overall distributions of each sleep metric, broken down by university. Each university follows very similar distributions for each measure, but for each metric, at least one university is statistically significantly distinct from the others (see the "Statistics" tab below). 
 
 ```{r}
 sleep_df <- read_csv("data/cmu-sleep.csv") %>% 
@@ -185,7 +185,7 @@ corrplot(cor_matrix,  method = "color",
 
 ## GPA and Course Units {.tabset}
 
-The plot below describes the density of students at different cumulative GPA and course load levels. The most dense single section of the heat map shows that many students have about a 3.75 GPA and a slightly above average amount of course units. Interestingly, there is also one additional, shorter peak on the plot that indicates that there is a moderately-sized group of students with both very high GPAs and course loads. 
+The plot below describes the density of students at different term GPA and course load levels. The most dense single section of the heat map shows that many students have about a 3.75 GPA and a slightly above average amount of course units. Interestingly, there is also one additional, shorter peak on the plot that indicates that there is a moderately-sized group of students with both very high GPAs and course loads. 
 
 Note that we are missing course unit amounts for the students recruited from Notre Dame, which make up 147 of our 634 total observations. 
 
@@ -204,9 +204,9 @@ sleep_df %>% ggplot(aes(x = term_gpa, y = zterm_units_zof_z)) +
 
 Understanding how the distributions of GPA and course load interact is useful in interpreting the heat map tabs below, which describe the sleeping behavior of different sub-groups of GPA and unit amounts. 
 
-### Total Sleep Time {.tabset}
+### Total Sleep Time* {.tabset}
 
-The group getting the least amount of sleep seem to be the 1.5-2.0 GPA students. Starting at the bottom left of the heat map and moving to the upper right, the total sleep time of students increases. 
+The group getting the least amount of sleep seems to be the 1.0-2.0 GPA students. Starting at the left of the heat map and moving right, the total sleep time of students gradually increases, with the lower right portion of the map getting the most sleep. It also looks like, especially in the left and center portions of the map, students with above average amounts of term units are getting less sleep. 
 
 It's interesting that students with lower GPAs seem to be getting less sleep, since I would've thought that students getting less sleep are spending more time studying, and so would have higher GPAs or heavier course loads. If students are missing out on sleep for other reasons, it would make sense that getting less sleep would make it harder to perform well in school. 
 
@@ -214,10 +214,10 @@ It's interesting that students with lower GPAs seem to be getting less sleep, si
 ```{r}
 
 sleep_df %>% drop_na(zterm_units_zof_z) %>% 
-  ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = total_sleep_time)) + 
+  ggplot(aes(x = plyr::round_any(term_gpa, 0.5), y = round(zterm_units_zof_z), fill = total_sleep_time)) + 
   geom_tile() + scale_fill_gradient(low = "blue", high = "yellow") +
   labs(
-    x = "Cumulative GPA",
+    x = "Term GPA",
     y = "Term Units (Z)",
     fill = "Total Sleep Time (min)"
   ) +
@@ -229,15 +229,15 @@ sleep_df %>% drop_na(zterm_units_zof_z) %>%
 
 ### Variability in Bed Times {.tabset}
 
-Variability in bed times are relatively even across all GPA and term unit groups. For the lower GPA students (less than 3.0) with roughly average course loads, there is slightly greater variability. 
+Variability in bed times are relatively even across all GPA and term unit groups. For the lower GPA students (less than 3.0) with slightly average course loads, there is slightly greater variability. 
 
 ```{r}
 
 sleep_df %>% drop_na(zterm_units_zof_z) %>% 
-  ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = bedtime_mssd)) + 
+  ggplot(aes(x = plyr::round_any(term_gpa, 0.5), y = round(zterm_units_zof_z), fill = bedtime_mssd)) + 
   geom_tile() + scale_fill_gradient(low = "blue", high = "yellow") +
   labs(
-    x = "Cumulative GPA",
+    x = "Term GPA",
     y = "Term Units (Z)",
     fill = "Bedtime Variability"
   ) +
@@ -249,17 +249,17 @@ sleep_df %>% drop_na(zterm_units_zof_z) %>%
 
 ### Sleeping Midpoint* {.tabset}
 
-The map below shows that students with greater GPAs (3.5-4.0) and heavier course loads (greater than 1 SD above average) have sleeping midpoints that are mostly within 6 hours of 11 PM. As we move from the upper-right to the lower-left of the plot, we can clearly see that the sleeping midpoint times gradually become later in the night. 
+The map below shows that students with greater GPAs (3.5-4.0) have sleeping midpoints that are mostly within 6 hours of 11 PM. Compared to the rest of the plot, this right-most section clearly has most of the darkest portions, indicating the earliest sleep times.  
 
-This trend implies that higher-GPA and higher-unit students are going to sleep earlier/waking up earlier than their peers. 
+This trend implies that higher-GPA students are going to sleep earlier/waking up earlier than their peers. 
 
 ```{r}
 
 sleep_df %>% drop_na(zterm_units_zof_z) %>% 
-  ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = midpoint_sleep)) + 
+  ggplot(aes(x = plyr::round_any(term_gpa, 0.5), y = round(zterm_units_zof_z), fill = midpoint_sleep)) + 
   geom_tile() + scale_fill_gradient(low = "blue", high = "yellow") +
   labs(
-    x = "Cumulative GPA",
+    x = "Term GPA",
     y = "Term Units (Z)",
     fill = "Minutes past 11 PM"
   ) +
@@ -271,15 +271,15 @@ sleep_df %>% drop_na(zterm_units_zof_z) %>%
 
 ### Daytime Sleep {.tabset}
 
-There isn't much of a distinct trend in daytime sleep between GPA and course unit groups. Overall, time spent sleeping during the day is relatively low, with students with average course loads and GPAs having more daytime sleep. 
+There isn't much of a distinct trend in daytime sleep between GPA and course unit groups. Overall, time spent sleeping during the day is relatively low. 
 
 ```{r}
 
 sleep_df %>% drop_na(zterm_units_zof_z) %>% 
-  ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = daytime_sleep)) + 
+  ggplot(aes(x = plyr::round_any(term_gpa, 0.5), y = round(zterm_units_zof_z), fill = daytime_sleep)) + 
   geom_tile() + scale_fill_gradient(low = "blue", high = "yellow") +
   labs(
-    x = "Cumulative GPA",
+    x = "Term GPA",
     y = "Term Units (Z)",
     fill = "Daytime Sleep (min)"
   ) +
@@ -390,6 +390,8 @@ plot_daysleep
 
 ### Statistics {.tabset}
 
+Note that we are missing gender data on three students in this study. 
+
 ```{r}
 sleep_df %>% select(total_sleep_time, bedtime_mssd, 
                     midpoint_sleep, daytime_sleep, demo_gender) %>% 
@@ -406,7 +408,7 @@ sleep_df %>% select(total_sleep_time, bedtime_mssd,
 
 ## Underrepresented Students {.tabset}
 
-**Comments**
+The distributions below for each metric are very similar between underrepresented and non-underrepresented students. Daytime sleep was the only metric found to have a statistically significant difference between these two groups. 
 
 ### Total Sleep Time {.tabset}
 
@@ -466,7 +468,9 @@ plot_midpoint
 
 ---
 
-### Daytime Sleep {.tabset}
+### Daytime Sleep* {.tabset}
+
+The plot below shows that non-underrepresented students spend less time sleeping during the day, which may indicate that they have more regular schedules that allow for consistent nighttime sleep. This difference in median daytime sleep was found to be statistically significant (see statistics tab). 
 
 ```{r}
 plot_daysleep <- sleep_df %>% filter(!is.na(demo_race)) %>%
@@ -487,6 +491,8 @@ plot_daysleep
 
 ### Statistics {.tabset}
 
+Note that we are missing race data on one student in this study. 
+
 ```{r}
 sleep_df %>% select(total_sleep_time, bedtime_mssd, 
                     midpoint_sleep, daytime_sleep, demo_race) %>% 
@@ -502,6 +508,8 @@ sleep_df %>% select(total_sleep_time, bedtime_mssd,
 ---
 
 ## First-Generation Students {.tabset}
+
+Similar to the data on underrepresented students, the distributions for each metric between first-generation and non-first-generation students are very similar except for the daytime sleep variable. 
 
 ### Total Sleep Time {.tabset}
 
@@ -561,7 +569,9 @@ plot_midpoint
 
 --- 
 
-### Daytime Sleep {.tabset}
+### Daytime Sleep* {.tabset}
+
+The plot below shows that non-first-generation students spend less time sleeping during the day. It's possible that, for similar reasons as the underrepresented students, first-generation students have less regular schedules and are less able to get consistent nighttime sleep. This difference in median daytime sleep was found to be statistically significant (see statistics tab). 
 
 ```{r}
 plot_daysleep <- sleep_df %>% filter(!is.na(demo_firstgen)) %>%
@@ -581,6 +591,8 @@ plot_daysleep
 --- 
 
 ### Statistics {.tabset}
+
+Note that we are missing first-generation status data on five students in this study.
 
 ```{r}
 sleep_df %>% select(total_sleep_time, bedtime_mssd, 

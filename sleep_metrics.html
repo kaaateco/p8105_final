@@ -11,9 +11,9 @@
 
 
 
-<title>Sleeping Measures</title>
+<title>Sleeping Metrics</title>
 
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -376,12 +376,16 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Sleeping Measures</h1>
+<h1 class="title toc-ignore">Sleeping Metrics</h1>
 
 </div>
 
 
-<p>This data set includes four different measures of sleep:</p>
+<p>This page explores the four sleep outcome variables included in our
+data set, how they relate to each other, and how they are related to our
+demographic and academic variables (previously described in our <a
+href="students.html">students page</a>).</p>
+<p>This data set includes four different measures of sleep behavior:</p>
 <ul>
 <li><code>total_sleep_time</code>: Average time in bed (the difference
 between wake time and bedtime) minus the length of total
@@ -402,11 +406,11 @@ interesting/notable results.</strong></p>
 <hr />
 <div id="overall-sleeping-patterns" class="section level2 tabset">
 <h2 class="tabset">Overall Sleeping Patterns</h2>
-<p>Below are plots describing the overall distributions of each of these
-sleep measures, broken down by university. We can observe that
-<strong>COMMENTS</strong></p>
-<p>at this point I’m not sure If i can use gt summary to test (kruskal
-wallis?? I guess all the variables aren’t normal…)</p>
+<p>The plots below show the overall distributions of each sleep metric,
+broken down by university. Each university follows very similar
+distributions for each measure, but for each metric, at least one
+university is statistically significantly distinct from the others (see
+the “Statistics” tab below).</p>
 <pre class="r"><code>sleep_df &lt;- read_csv(&quot;data/cmu-sleep.csv&quot;) %&gt;% 
   janitor::clean_names() %&gt;%  
   mutate(demo_race = case_when(demo_race == 0 ~ &quot;Underrepresented&quot;, 
@@ -459,8 +463,8 @@ plot_totalsleep    </code></pre>
   )
 
 plot_bedtime2
-## Warning: Removed 15 rows containing non-finite outside
-## the scale range (`stat_density()`).</code></pre>
+## Warning: Removed 15 rows containing non-finite outside the scale range
+## (`stat_density()`).</code></pre>
 <p><img src="sleep_metrics_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <hr />
 </div>
@@ -507,23 +511,23 @@ plot_daysleep</code></pre>
       all_categorical() ~ &quot;{n} / {N} ({p}%)&quot;)) %&gt;% 
     add_p() %&gt;% 
     add_overall()</code></pre>
-<div id="htkfxphlxx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#htkfxphlxx table {
+<div id="cwsiogcbbg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cwsiogcbbg table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#htkfxphlxx thead, #htkfxphlxx tbody, #htkfxphlxx tfoot, #htkfxphlxx tr, #htkfxphlxx td, #htkfxphlxx th {
+#cwsiogcbbg thead, #cwsiogcbbg tbody, #cwsiogcbbg tfoot, #cwsiogcbbg tr, #cwsiogcbbg td, #cwsiogcbbg th {
   border-style: none;
 }
 
-#htkfxphlxx p {
+#cwsiogcbbg p {
   margin: 0;
   padding: 0;
 }
 
-#htkfxphlxx .gt_table {
+#cwsiogcbbg .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -549,12 +553,12 @@ plot_daysleep</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#htkfxphlxx .gt_caption {
+#cwsiogcbbg .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#htkfxphlxx .gt_title {
+#cwsiogcbbg .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -566,7 +570,7 @@ plot_daysleep</code></pre>
   border-bottom-width: 0;
 }
 
-#htkfxphlxx .gt_subtitle {
+#cwsiogcbbg .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -578,7 +582,7 @@ plot_daysleep</code></pre>
   border-top-width: 0;
 }
 
-#htkfxphlxx .gt_heading {
+#cwsiogcbbg .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -590,13 +594,13 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#htkfxphlxx .gt_bottom_border {
+#cwsiogcbbg .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#htkfxphlxx .gt_col_headings {
+#cwsiogcbbg .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -611,7 +615,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#htkfxphlxx .gt_col_heading {
+#cwsiogcbbg .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -631,7 +635,7 @@ plot_daysleep</code></pre>
   overflow-x: hidden;
 }
 
-#htkfxphlxx .gt_column_spanner_outer {
+#cwsiogcbbg .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -643,15 +647,15 @@ plot_daysleep</code></pre>
   padding-right: 4px;
 }
 
-#htkfxphlxx .gt_column_spanner_outer:first-child {
+#cwsiogcbbg .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#htkfxphlxx .gt_column_spanner_outer:last-child {
+#cwsiogcbbg .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#htkfxphlxx .gt_column_spanner {
+#cwsiogcbbg .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -663,11 +667,11 @@ plot_daysleep</code></pre>
   width: 100%;
 }
 
-#htkfxphlxx .gt_spanner_row {
+#cwsiogcbbg .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#htkfxphlxx .gt_group_heading {
+#cwsiogcbbg .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -693,7 +697,7 @@ plot_daysleep</code></pre>
   text-align: left;
 }
 
-#htkfxphlxx .gt_empty_group_heading {
+#cwsiogcbbg .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -708,15 +712,15 @@ plot_daysleep</code></pre>
   vertical-align: middle;
 }
 
-#htkfxphlxx .gt_from_md > :first-child {
+#cwsiogcbbg .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#htkfxphlxx .gt_from_md > :last-child {
+#cwsiogcbbg .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#htkfxphlxx .gt_row {
+#cwsiogcbbg .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -735,7 +739,7 @@ plot_daysleep</code></pre>
   overflow-x: hidden;
 }
 
-#htkfxphlxx .gt_stub {
+#cwsiogcbbg .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -748,7 +752,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#htkfxphlxx .gt_stub_row_group {
+#cwsiogcbbg .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -762,15 +766,15 @@ plot_daysleep</code></pre>
   vertical-align: top;
 }
 
-#htkfxphlxx .gt_row_group_first td {
+#cwsiogcbbg .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#htkfxphlxx .gt_row_group_first th {
+#cwsiogcbbg .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#htkfxphlxx .gt_summary_row {
+#cwsiogcbbg .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -780,16 +784,16 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#htkfxphlxx .gt_first_summary_row {
+#cwsiogcbbg .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#htkfxphlxx .gt_first_summary_row.thick {
+#cwsiogcbbg .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#htkfxphlxx .gt_last_summary_row {
+#cwsiogcbbg .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -799,7 +803,7 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#htkfxphlxx .gt_grand_summary_row {
+#cwsiogcbbg .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -809,7 +813,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#htkfxphlxx .gt_first_grand_summary_row {
+#cwsiogcbbg .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -819,7 +823,7 @@ plot_daysleep</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#htkfxphlxx .gt_last_grand_summary_row_top {
+#cwsiogcbbg .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -829,11 +833,11 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#htkfxphlxx .gt_striped {
+#cwsiogcbbg .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#htkfxphlxx .gt_table_body {
+#cwsiogcbbg .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -842,7 +846,7 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#htkfxphlxx .gt_footnotes {
+#cwsiogcbbg .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -856,7 +860,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#htkfxphlxx .gt_footnote {
+#cwsiogcbbg .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -865,7 +869,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#htkfxphlxx .gt_sourcenotes {
+#cwsiogcbbg .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -879,7 +883,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#htkfxphlxx .gt_sourcenote {
+#cwsiogcbbg .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -887,72 +891,72 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#htkfxphlxx .gt_left {
+#cwsiogcbbg .gt_left {
   text-align: left;
 }
 
-#htkfxphlxx .gt_center {
+#cwsiogcbbg .gt_center {
   text-align: center;
 }
 
-#htkfxphlxx .gt_right {
+#cwsiogcbbg .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#htkfxphlxx .gt_font_normal {
+#cwsiogcbbg .gt_font_normal {
   font-weight: normal;
 }
 
-#htkfxphlxx .gt_font_bold {
+#cwsiogcbbg .gt_font_bold {
   font-weight: bold;
 }
 
-#htkfxphlxx .gt_font_italic {
+#cwsiogcbbg .gt_font_italic {
   font-style: italic;
 }
 
-#htkfxphlxx .gt_super {
+#cwsiogcbbg .gt_super {
   font-size: 65%;
 }
 
-#htkfxphlxx .gt_footnote_marks {
+#cwsiogcbbg .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#htkfxphlxx .gt_asterisk {
+#cwsiogcbbg .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#htkfxphlxx .gt_indent_1 {
+#cwsiogcbbg .gt_indent_1 {
   text-indent: 5px;
 }
 
-#htkfxphlxx .gt_indent_2 {
+#cwsiogcbbg .gt_indent_2 {
   text-indent: 10px;
 }
 
-#htkfxphlxx .gt_indent_3 {
+#cwsiogcbbg .gt_indent_3 {
   text-indent: 15px;
 }
 
-#htkfxphlxx .gt_indent_4 {
+#cwsiogcbbg .gt_indent_4 {
   text-indent: 20px;
 }
 
-#htkfxphlxx .gt_indent_5 {
+#cwsiogcbbg .gt_indent_5 {
   text-indent: 25px;
 }
 
-#htkfxphlxx .katex-display {
+#cwsiogcbbg .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#htkfxphlxx div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#cwsiogcbbg div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1050,13 +1054,13 @@ corrplot(cor_matrix,  method = &quot;color&quot;,
 </div>
 <div id="gpa-and-course-units" class="section level2 tabset">
 <h2 class="tabset">GPA and Course Units</h2>
-<p>The plot below describes the density of students at different
-cumulative GPA and course load levels. The most dense single section of
-the heat map shows that many students have about a 3.75 GPA and a
-slightly above average amount of course units. Interestingly, there is
-also one additional, shorter peak on the plot that indicates that there
-is a moderately-sized group of students with both very high GPAs and
-course loads.</p>
+<p>The plot below describes the density of students at different term
+GPA and course load levels. The most dense single section of the heat
+map shows that many students have about a 3.75 GPA and a slightly above
+average amount of course units. Interestingly, there is also one
+additional, shorter peak on the plot that indicates that there is a
+moderately-sized group of students with both very high GPAs and course
+loads.</p>
 <p>Note that we are missing course unit amounts for the students
 recruited from Notre Dame, which make up 147 of our 634 total
 observations.</p>
@@ -1069,17 +1073,20 @@ observations.</p>
     y = &quot;Term Units (Z)&quot;
   ) +
   theme_minimal()
-## Warning: Removed 154 rows containing non-finite outside
-## the scale range (`stat_density2d_filled()`).</code></pre>
+## Warning: Removed 154 rows containing non-finite outside the scale range
+## (`stat_density2d_filled()`).</code></pre>
 <p><img src="sleep_metrics_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>Understanding how the distributions of GPA and course load interact
 is useful in interpreting the heat map tabs below, which describe the
 sleeping behavior of different sub-groups of GPA and unit amounts.</p>
 <div id="total-sleep-time-1" class="section level3 tabset">
-<h3 class="tabset">Total Sleep Time</h3>
-<p>The group getting the least amount of sleep seem to be the 1.5-2.0
-GPA students. Starting at the bottom left of the heat map and moving to
-the upper right, the total sleep time of students increases.</p>
+<h3 class="tabset">Total Sleep Time*</h3>
+<p>The group getting the least amount of sleep seems to be the 1.0-2.0
+GPA students. Starting at the left of the heat map and moving right, the
+total sleep time of students gradually increases, with the lower right
+portion of the map getting the most sleep. It also looks like,
+especially in the left and center portions of the map, students with
+above average amounts of term units are getting less sleep.</p>
 <p>It’s interesting that students with lower GPAs seem to be getting
 less sleep, since I would’ve thought that students getting less sleep
 are spending more time studying, and so would have higher GPAs or
@@ -1088,10 +1095,10 @@ reasons, it would make sense that getting less sleep would make it
 harder to perform well in school.</p>
 <pre class="r"><code>
 sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;% 
-  ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = total_sleep_time)) + 
+  ggplot(aes(x = plyr::round_any(term_gpa, 0.5), y = round(zterm_units_zof_z), fill = total_sleep_time)) + 
   geom_tile() + scale_fill_gradient(low = &quot;blue&quot;, high = &quot;yellow&quot;) +
   labs(
-    x = &quot;Cumulative GPA&quot;,
+    x = &quot;Term GPA&quot;,
     y = &quot;Term Units (Z)&quot;,
     fill = &quot;Total Sleep Time (min)&quot;
   ) +
@@ -1102,14 +1109,14 @@ sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;%
 <div id="variability-in-bed-times-1" class="section level3 tabset">
 <h3 class="tabset">Variability in Bed Times</h3>
 <p>Variability in bed times are relatively even across all GPA and term
-unit groups. For the lower GPA students (less than 3.0) with roughly
+unit groups. For the lower GPA students (less than 3.0) with slightly
 average course loads, there is slightly greater variability.</p>
 <pre class="r"><code>
 sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;% 
-  ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = bedtime_mssd)) + 
+  ggplot(aes(x = plyr::round_any(term_gpa, 0.5), y = round(zterm_units_zof_z), fill = bedtime_mssd)) + 
   geom_tile() + scale_fill_gradient(low = &quot;blue&quot;, high = &quot;yellow&quot;) +
   labs(
-    x = &quot;Cumulative GPA&quot;,
+    x = &quot;Term GPA&quot;,
     y = &quot;Term Units (Z)&quot;,
     fill = &quot;Bedtime Variability&quot;
   ) +
@@ -1119,19 +1126,18 @@ sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;%
 </div>
 <div id="sleeping-midpoint-1" class="section level3 tabset">
 <h3 class="tabset">Sleeping Midpoint*</h3>
-<p>The map below shows that students with greater GPAs (3.5-4.0) and
-heavier course loads (greater than 1 SD above average) have sleeping
-midpoints that are mostly within 6 hours of 11 PM. As we move from the
-upper-right to the lower-left of the plot, we can clearly see that the
-sleeping midpoint times gradually become later in the night.</p>
-<p>This trend implies that higher-GPA and higher-unit students are going
-to sleep earlier/waking up earlier than their peers.</p>
+<p>The map below shows that students with greater GPAs (3.5-4.0) have
+sleeping midpoints that are mostly within 6 hours of 11 PM. Compared to
+the rest of the plot, this right-most section clearly has most of the
+darkest portions, indicating the earliest sleep times.</p>
+<p>This trend implies that higher-GPA students are going to sleep
+earlier/waking up earlier than their peers.</p>
 <pre class="r"><code>
 sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;% 
-  ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = midpoint_sleep)) + 
+  ggplot(aes(x = plyr::round_any(term_gpa, 0.5), y = round(zterm_units_zof_z), fill = midpoint_sleep)) + 
   geom_tile() + scale_fill_gradient(low = &quot;blue&quot;, high = &quot;yellow&quot;) +
   labs(
-    x = &quot;Cumulative GPA&quot;,
+    x = &quot;Term GPA&quot;,
     y = &quot;Term Units (Z)&quot;,
     fill = &quot;Minutes past 11 PM&quot;
   ) +
@@ -1143,14 +1149,13 @@ sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;%
 <h3 class="tabset">Daytime Sleep</h3>
 <p>There isn’t much of a distinct trend in daytime sleep between GPA and
 course unit groups. Overall, time spent sleeping during the day is
-relatively low, with students with average course loads and GPAs having
-more daytime sleep.</p>
+relatively low.</p>
 <pre class="r"><code>
 sleep_df %&gt;% drop_na(zterm_units_zof_z) %&gt;% 
-  ggplot(aes(x = plyr::round_any(cum_gpa, 0.5), y = round(zterm_units_zof_z), fill = daytime_sleep)) + 
+  ggplot(aes(x = plyr::round_any(term_gpa, 0.5), y = round(zterm_units_zof_z), fill = daytime_sleep)) + 
   geom_tile() + scale_fill_gradient(low = &quot;blue&quot;, high = &quot;yellow&quot;) +
   labs(
-    x = &quot;Cumulative GPA&quot;,
+    x = &quot;Term GPA&quot;,
     y = &quot;Term Units (Z)&quot;,
     fill = &quot;Daytime Sleep (min)&quot;
   ) +
@@ -1193,8 +1198,8 @@ plot_totalsleep    </code></pre>
   )
 
 plot_bedtime2
-## Warning: Removed 15 rows containing non-finite outside
-## the scale range (`stat_density()`).</code></pre>
+## Warning: Removed 15 rows containing non-finite outside the scale range
+## (`stat_density()`).</code></pre>
 <p><img src="sleep_metrics_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <hr />
 </div>
@@ -1253,6 +1258,8 @@ plot_daysleep</code></pre>
 </div>
 <div id="statistics-1" class="section level3 tabset">
 <h3 class="tabset">Statistics</h3>
+<p>Note that we are missing gender data on three students in this
+study.</p>
 <pre class="r"><code>sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, 
                     midpoint_sleep, daytime_sleep, demo_gender) %&gt;% 
   tbl_summary(
@@ -1262,23 +1269,23 @@ plot_daysleep</code></pre>
       all_categorical() ~ &quot;{n} / {N} ({p}%)&quot;)) %&gt;% 
     add_p() %&gt;% 
     add_overall()</code></pre>
-<div id="njqocnlkkf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#njqocnlkkf table {
+<div id="gatdtuhaie" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gatdtuhaie table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#njqocnlkkf thead, #njqocnlkkf tbody, #njqocnlkkf tfoot, #njqocnlkkf tr, #njqocnlkkf td, #njqocnlkkf th {
+#gatdtuhaie thead, #gatdtuhaie tbody, #gatdtuhaie tfoot, #gatdtuhaie tr, #gatdtuhaie td, #gatdtuhaie th {
   border-style: none;
 }
 
-#njqocnlkkf p {
+#gatdtuhaie p {
   margin: 0;
   padding: 0;
 }
 
-#njqocnlkkf .gt_table {
+#gatdtuhaie .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1304,12 +1311,12 @@ plot_daysleep</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#njqocnlkkf .gt_caption {
+#gatdtuhaie .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#njqocnlkkf .gt_title {
+#gatdtuhaie .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1321,7 +1328,7 @@ plot_daysleep</code></pre>
   border-bottom-width: 0;
 }
 
-#njqocnlkkf .gt_subtitle {
+#gatdtuhaie .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1333,7 +1340,7 @@ plot_daysleep</code></pre>
   border-top-width: 0;
 }
 
-#njqocnlkkf .gt_heading {
+#gatdtuhaie .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1345,13 +1352,13 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#njqocnlkkf .gt_bottom_border {
+#gatdtuhaie .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#njqocnlkkf .gt_col_headings {
+#gatdtuhaie .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1366,7 +1373,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#njqocnlkkf .gt_col_heading {
+#gatdtuhaie .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1386,7 +1393,7 @@ plot_daysleep</code></pre>
   overflow-x: hidden;
 }
 
-#njqocnlkkf .gt_column_spanner_outer {
+#gatdtuhaie .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1398,15 +1405,15 @@ plot_daysleep</code></pre>
   padding-right: 4px;
 }
 
-#njqocnlkkf .gt_column_spanner_outer:first-child {
+#gatdtuhaie .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#njqocnlkkf .gt_column_spanner_outer:last-child {
+#gatdtuhaie .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#njqocnlkkf .gt_column_spanner {
+#gatdtuhaie .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1418,11 +1425,11 @@ plot_daysleep</code></pre>
   width: 100%;
 }
 
-#njqocnlkkf .gt_spanner_row {
+#gatdtuhaie .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#njqocnlkkf .gt_group_heading {
+#gatdtuhaie .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1448,7 +1455,7 @@ plot_daysleep</code></pre>
   text-align: left;
 }
 
-#njqocnlkkf .gt_empty_group_heading {
+#gatdtuhaie .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1463,15 +1470,15 @@ plot_daysleep</code></pre>
   vertical-align: middle;
 }
 
-#njqocnlkkf .gt_from_md > :first-child {
+#gatdtuhaie .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#njqocnlkkf .gt_from_md > :last-child {
+#gatdtuhaie .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#njqocnlkkf .gt_row {
+#gatdtuhaie .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1490,7 +1497,7 @@ plot_daysleep</code></pre>
   overflow-x: hidden;
 }
 
-#njqocnlkkf .gt_stub {
+#gatdtuhaie .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1503,7 +1510,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#njqocnlkkf .gt_stub_row_group {
+#gatdtuhaie .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1517,15 +1524,15 @@ plot_daysleep</code></pre>
   vertical-align: top;
 }
 
-#njqocnlkkf .gt_row_group_first td {
+#gatdtuhaie .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#njqocnlkkf .gt_row_group_first th {
+#gatdtuhaie .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#njqocnlkkf .gt_summary_row {
+#gatdtuhaie .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1535,16 +1542,16 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#njqocnlkkf .gt_first_summary_row {
+#gatdtuhaie .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#njqocnlkkf .gt_first_summary_row.thick {
+#gatdtuhaie .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#njqocnlkkf .gt_last_summary_row {
+#gatdtuhaie .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1554,7 +1561,7 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#njqocnlkkf .gt_grand_summary_row {
+#gatdtuhaie .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1564,7 +1571,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#njqocnlkkf .gt_first_grand_summary_row {
+#gatdtuhaie .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1574,7 +1581,7 @@ plot_daysleep</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#njqocnlkkf .gt_last_grand_summary_row_top {
+#gatdtuhaie .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1584,11 +1591,11 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#njqocnlkkf .gt_striped {
+#gatdtuhaie .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#njqocnlkkf .gt_table_body {
+#gatdtuhaie .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1597,7 +1604,7 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#njqocnlkkf .gt_footnotes {
+#gatdtuhaie .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1611,7 +1618,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#njqocnlkkf .gt_footnote {
+#gatdtuhaie .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1620,7 +1627,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#njqocnlkkf .gt_sourcenotes {
+#gatdtuhaie .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1634,7 +1641,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#njqocnlkkf .gt_sourcenote {
+#gatdtuhaie .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1642,72 +1649,72 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#njqocnlkkf .gt_left {
+#gatdtuhaie .gt_left {
   text-align: left;
 }
 
-#njqocnlkkf .gt_center {
+#gatdtuhaie .gt_center {
   text-align: center;
 }
 
-#njqocnlkkf .gt_right {
+#gatdtuhaie .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#njqocnlkkf .gt_font_normal {
+#gatdtuhaie .gt_font_normal {
   font-weight: normal;
 }
 
-#njqocnlkkf .gt_font_bold {
+#gatdtuhaie .gt_font_bold {
   font-weight: bold;
 }
 
-#njqocnlkkf .gt_font_italic {
+#gatdtuhaie .gt_font_italic {
   font-style: italic;
 }
 
-#njqocnlkkf .gt_super {
+#gatdtuhaie .gt_super {
   font-size: 65%;
 }
 
-#njqocnlkkf .gt_footnote_marks {
+#gatdtuhaie .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#njqocnlkkf .gt_asterisk {
+#gatdtuhaie .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#njqocnlkkf .gt_indent_1 {
+#gatdtuhaie .gt_indent_1 {
   text-indent: 5px;
 }
 
-#njqocnlkkf .gt_indent_2 {
+#gatdtuhaie .gt_indent_2 {
   text-indent: 10px;
 }
 
-#njqocnlkkf .gt_indent_3 {
+#gatdtuhaie .gt_indent_3 {
   text-indent: 15px;
 }
 
-#njqocnlkkf .gt_indent_4 {
+#gatdtuhaie .gt_indent_4 {
   text-indent: 20px;
 }
 
-#njqocnlkkf .gt_indent_5 {
+#gatdtuhaie .gt_indent_5 {
   text-indent: 25px;
 }
 
-#njqocnlkkf .katex-display {
+#gatdtuhaie .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#njqocnlkkf div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#gatdtuhaie div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1762,7 +1769,10 @@ N = 368</span><span class="gt_footnote_marks" style="white-space:nowrap;font-sty
 </div>
 <div id="underrepresented-students" class="section level2 tabset">
 <h2 class="tabset">Underrepresented Students</h2>
-<p><strong>Comments</strong></p>
+<p>The distributions below for each metric are very similar between
+underrepresented and non-underrepresented students. Daytime sleep was
+the only metric found to have a statistically significant difference
+between these two groups.</p>
 <div id="total-sleep-time-3" class="section level3 tabset">
 <h3 class="tabset">Total Sleep Time</h3>
 <pre class="r"><code>plot_totalsleep &lt;- sleep_df %&gt;% filter(!is.na(demo_race)) %&gt;%
@@ -1793,8 +1803,8 @@ plot_totalsleep    </code></pre>
   )
 
 plot_bedtime2
-## Warning: Removed 15 rows containing non-finite outside
-## the scale range (`stat_density()`).</code></pre>
+## Warning: Removed 15 rows containing non-finite outside the scale range
+## (`stat_density()`).</code></pre>
 <p><img src="sleep_metrics_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <hr />
 </div>
@@ -1815,7 +1825,12 @@ plot_midpoint</code></pre>
 <hr />
 </div>
 <div id="daytime-sleep-3" class="section level3 tabset">
-<h3 class="tabset">Daytime Sleep</h3>
+<h3 class="tabset">Daytime Sleep*</h3>
+<p>The plot below shows that non-underrepresented students spend less
+time sleeping during the day, which may indicate that they have more
+regular schedules that allow for consistent nighttime sleep. This
+difference in median daytime sleep was found to be statistically
+significant (see statistics tab).</p>
 <pre class="r"><code>plot_daysleep &lt;- sleep_df %&gt;% filter(!is.na(demo_race)) %&gt;%
   ggplot(aes(x = daytime_sleep, fill = demo_race, color = demo_race)) +
   geom_density(alpha = 0.3, linewidth = 1) +
@@ -1832,6 +1847,7 @@ plot_daysleep</code></pre>
 </div>
 <div id="statistics-2" class="section level3 tabset">
 <h3 class="tabset">Statistics</h3>
+<p>Note that we are missing race data on one student in this study.</p>
 <pre class="r"><code>sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, 
                     midpoint_sleep, daytime_sleep, demo_race) %&gt;% 
   tbl_summary(
@@ -1841,23 +1857,23 @@ plot_daysleep</code></pre>
       all_categorical() ~ &quot;{n} / {N} ({p}%)&quot;)) %&gt;% 
     add_p() %&gt;% 
     add_overall()</code></pre>
-<div id="apwvfzdlun" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#apwvfzdlun table {
+<div id="qwkkkdwxxo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qwkkkdwxxo table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#apwvfzdlun thead, #apwvfzdlun tbody, #apwvfzdlun tfoot, #apwvfzdlun tr, #apwvfzdlun td, #apwvfzdlun th {
+#qwkkkdwxxo thead, #qwkkkdwxxo tbody, #qwkkkdwxxo tfoot, #qwkkkdwxxo tr, #qwkkkdwxxo td, #qwkkkdwxxo th {
   border-style: none;
 }
 
-#apwvfzdlun p {
+#qwkkkdwxxo p {
   margin: 0;
   padding: 0;
 }
 
-#apwvfzdlun .gt_table {
+#qwkkkdwxxo .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1883,12 +1899,12 @@ plot_daysleep</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#apwvfzdlun .gt_caption {
+#qwkkkdwxxo .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#apwvfzdlun .gt_title {
+#qwkkkdwxxo .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1900,7 +1916,7 @@ plot_daysleep</code></pre>
   border-bottom-width: 0;
 }
 
-#apwvfzdlun .gt_subtitle {
+#qwkkkdwxxo .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1912,7 +1928,7 @@ plot_daysleep</code></pre>
   border-top-width: 0;
 }
 
-#apwvfzdlun .gt_heading {
+#qwkkkdwxxo .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1924,13 +1940,13 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#apwvfzdlun .gt_bottom_border {
+#qwkkkdwxxo .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#apwvfzdlun .gt_col_headings {
+#qwkkkdwxxo .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1945,7 +1961,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#apwvfzdlun .gt_col_heading {
+#qwkkkdwxxo .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1965,7 +1981,7 @@ plot_daysleep</code></pre>
   overflow-x: hidden;
 }
 
-#apwvfzdlun .gt_column_spanner_outer {
+#qwkkkdwxxo .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1977,15 +1993,15 @@ plot_daysleep</code></pre>
   padding-right: 4px;
 }
 
-#apwvfzdlun .gt_column_spanner_outer:first-child {
+#qwkkkdwxxo .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#apwvfzdlun .gt_column_spanner_outer:last-child {
+#qwkkkdwxxo .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#apwvfzdlun .gt_column_spanner {
+#qwkkkdwxxo .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1997,11 +2013,11 @@ plot_daysleep</code></pre>
   width: 100%;
 }
 
-#apwvfzdlun .gt_spanner_row {
+#qwkkkdwxxo .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#apwvfzdlun .gt_group_heading {
+#qwkkkdwxxo .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2027,7 +2043,7 @@ plot_daysleep</code></pre>
   text-align: left;
 }
 
-#apwvfzdlun .gt_empty_group_heading {
+#qwkkkdwxxo .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2042,15 +2058,15 @@ plot_daysleep</code></pre>
   vertical-align: middle;
 }
 
-#apwvfzdlun .gt_from_md > :first-child {
+#qwkkkdwxxo .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#apwvfzdlun .gt_from_md > :last-child {
+#qwkkkdwxxo .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#apwvfzdlun .gt_row {
+#qwkkkdwxxo .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2069,7 +2085,7 @@ plot_daysleep</code></pre>
   overflow-x: hidden;
 }
 
-#apwvfzdlun .gt_stub {
+#qwkkkdwxxo .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2082,7 +2098,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#apwvfzdlun .gt_stub_row_group {
+#qwkkkdwxxo .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2096,15 +2112,15 @@ plot_daysleep</code></pre>
   vertical-align: top;
 }
 
-#apwvfzdlun .gt_row_group_first td {
+#qwkkkdwxxo .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#apwvfzdlun .gt_row_group_first th {
+#qwkkkdwxxo .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#apwvfzdlun .gt_summary_row {
+#qwkkkdwxxo .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2114,16 +2130,16 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#apwvfzdlun .gt_first_summary_row {
+#qwkkkdwxxo .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#apwvfzdlun .gt_first_summary_row.thick {
+#qwkkkdwxxo .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#apwvfzdlun .gt_last_summary_row {
+#qwkkkdwxxo .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2133,7 +2149,7 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#apwvfzdlun .gt_grand_summary_row {
+#qwkkkdwxxo .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2143,7 +2159,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#apwvfzdlun .gt_first_grand_summary_row {
+#qwkkkdwxxo .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2153,7 +2169,7 @@ plot_daysleep</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#apwvfzdlun .gt_last_grand_summary_row_top {
+#qwkkkdwxxo .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2163,11 +2179,11 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#apwvfzdlun .gt_striped {
+#qwkkkdwxxo .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#apwvfzdlun .gt_table_body {
+#qwkkkdwxxo .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2176,7 +2192,7 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#apwvfzdlun .gt_footnotes {
+#qwkkkdwxxo .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2190,7 +2206,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#apwvfzdlun .gt_footnote {
+#qwkkkdwxxo .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2199,7 +2215,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#apwvfzdlun .gt_sourcenotes {
+#qwkkkdwxxo .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2213,7 +2229,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#apwvfzdlun .gt_sourcenote {
+#qwkkkdwxxo .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2221,72 +2237,72 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#apwvfzdlun .gt_left {
+#qwkkkdwxxo .gt_left {
   text-align: left;
 }
 
-#apwvfzdlun .gt_center {
+#qwkkkdwxxo .gt_center {
   text-align: center;
 }
 
-#apwvfzdlun .gt_right {
+#qwkkkdwxxo .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#apwvfzdlun .gt_font_normal {
+#qwkkkdwxxo .gt_font_normal {
   font-weight: normal;
 }
 
-#apwvfzdlun .gt_font_bold {
+#qwkkkdwxxo .gt_font_bold {
   font-weight: bold;
 }
 
-#apwvfzdlun .gt_font_italic {
+#qwkkkdwxxo .gt_font_italic {
   font-style: italic;
 }
 
-#apwvfzdlun .gt_super {
+#qwkkkdwxxo .gt_super {
   font-size: 65%;
 }
 
-#apwvfzdlun .gt_footnote_marks {
+#qwkkkdwxxo .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#apwvfzdlun .gt_asterisk {
+#qwkkkdwxxo .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#apwvfzdlun .gt_indent_1 {
+#qwkkkdwxxo .gt_indent_1 {
   text-indent: 5px;
 }
 
-#apwvfzdlun .gt_indent_2 {
+#qwkkkdwxxo .gt_indent_2 {
   text-indent: 10px;
 }
 
-#apwvfzdlun .gt_indent_3 {
+#qwkkkdwxxo .gt_indent_3 {
   text-indent: 15px;
 }
 
-#apwvfzdlun .gt_indent_4 {
+#qwkkkdwxxo .gt_indent_4 {
   text-indent: 20px;
 }
 
-#apwvfzdlun .gt_indent_5 {
+#qwkkkdwxxo .gt_indent_5 {
   text-indent: 25px;
 }
 
-#apwvfzdlun .katex-display {
+#qwkkkdwxxo .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#apwvfzdlun div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#qwkkkdwxxo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -2341,6 +2357,9 @@ N = 514</span><span class="gt_footnote_marks" style="white-space:nowrap;font-sty
 </div>
 <div id="first-generation-students" class="section level2 tabset">
 <h2 class="tabset">First-Generation Students</h2>
+<p>Similar to the data on underrepresented students, the distributions
+for each metric between first-generation and non-first-generation
+students are very similar except for the daytime sleep variable.</p>
 <div id="total-sleep-time-4" class="section level3 tabset">
 <h3 class="tabset">Total Sleep Time</h3>
 <pre class="r"><code>plot_totalsleep &lt;- sleep_df %&gt;% filter(!is.na(demo_firstgen)) %&gt;%
@@ -2371,8 +2390,8 @@ plot_totalsleep    </code></pre>
   )
 
 plot_bedtime2
-## Warning: Removed 15 rows containing non-finite outside
-## the scale range (`stat_density()`).</code></pre>
+## Warning: Removed 15 rows containing non-finite outside the scale range
+## (`stat_density()`).</code></pre>
 <p><img src="sleep_metrics_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 <hr />
 </div>
@@ -2393,7 +2412,13 @@ plot_midpoint</code></pre>
 <hr />
 </div>
 <div id="daytime-sleep-4" class="section level3 tabset">
-<h3 class="tabset">Daytime Sleep</h3>
+<h3 class="tabset">Daytime Sleep*</h3>
+<p>The plot below shows that non-first-generation students spend less
+time sleeping during the day. It’s possible that, for similar reasons as
+the underrepresented students, first-generation students have less
+regular schedules and are less able to get consistent nighttime sleep.
+This difference in median daytime sleep was found to be statistically
+significant (see statistics tab).</p>
 <pre class="r"><code>plot_daysleep &lt;- sleep_df %&gt;% filter(!is.na(demo_firstgen)) %&gt;%
   ggplot(aes(x = daytime_sleep, fill = demo_firstgen, color = demo_firstgen)) +
   geom_density(alpha = 0.3, linewidth = 1) +
@@ -2410,6 +2435,8 @@ plot_daysleep</code></pre>
 </div>
 <div id="statistics-3" class="section level3 tabset">
 <h3 class="tabset">Statistics</h3>
+<p>Note that we are missing first-generation status data on five
+students in this study.</p>
 <pre class="r"><code>sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, 
                     midpoint_sleep, daytime_sleep, demo_firstgen) %&gt;% 
   tbl_summary(
@@ -2419,23 +2446,23 @@ plot_daysleep</code></pre>
       all_categorical() ~ &quot;{n} / {N} ({p}%)&quot;)) %&gt;% 
     add_p() %&gt;% 
     add_overall()</code></pre>
-<div id="lwftfwibiw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#lwftfwibiw table {
+<div id="vezdxjtbhd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#vezdxjtbhd table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#lwftfwibiw thead, #lwftfwibiw tbody, #lwftfwibiw tfoot, #lwftfwibiw tr, #lwftfwibiw td, #lwftfwibiw th {
+#vezdxjtbhd thead, #vezdxjtbhd tbody, #vezdxjtbhd tfoot, #vezdxjtbhd tr, #vezdxjtbhd td, #vezdxjtbhd th {
   border-style: none;
 }
 
-#lwftfwibiw p {
+#vezdxjtbhd p {
   margin: 0;
   padding: 0;
 }
 
-#lwftfwibiw .gt_table {
+#vezdxjtbhd .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2461,12 +2488,12 @@ plot_daysleep</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#lwftfwibiw .gt_caption {
+#vezdxjtbhd .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#lwftfwibiw .gt_title {
+#vezdxjtbhd .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2478,7 +2505,7 @@ plot_daysleep</code></pre>
   border-bottom-width: 0;
 }
 
-#lwftfwibiw .gt_subtitle {
+#vezdxjtbhd .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2490,7 +2517,7 @@ plot_daysleep</code></pre>
   border-top-width: 0;
 }
 
-#lwftfwibiw .gt_heading {
+#vezdxjtbhd .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2502,13 +2529,13 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#lwftfwibiw .gt_bottom_border {
+#vezdxjtbhd .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#lwftfwibiw .gt_col_headings {
+#vezdxjtbhd .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2523,7 +2550,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#lwftfwibiw .gt_col_heading {
+#vezdxjtbhd .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2543,7 +2570,7 @@ plot_daysleep</code></pre>
   overflow-x: hidden;
 }
 
-#lwftfwibiw .gt_column_spanner_outer {
+#vezdxjtbhd .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2555,15 +2582,15 @@ plot_daysleep</code></pre>
   padding-right: 4px;
 }
 
-#lwftfwibiw .gt_column_spanner_outer:first-child {
+#vezdxjtbhd .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#lwftfwibiw .gt_column_spanner_outer:last-child {
+#vezdxjtbhd .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#lwftfwibiw .gt_column_spanner {
+#vezdxjtbhd .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2575,11 +2602,11 @@ plot_daysleep</code></pre>
   width: 100%;
 }
 
-#lwftfwibiw .gt_spanner_row {
+#vezdxjtbhd .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#lwftfwibiw .gt_group_heading {
+#vezdxjtbhd .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2605,7 +2632,7 @@ plot_daysleep</code></pre>
   text-align: left;
 }
 
-#lwftfwibiw .gt_empty_group_heading {
+#vezdxjtbhd .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2620,15 +2647,15 @@ plot_daysleep</code></pre>
   vertical-align: middle;
 }
 
-#lwftfwibiw .gt_from_md > :first-child {
+#vezdxjtbhd .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#lwftfwibiw .gt_from_md > :last-child {
+#vezdxjtbhd .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#lwftfwibiw .gt_row {
+#vezdxjtbhd .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2647,7 +2674,7 @@ plot_daysleep</code></pre>
   overflow-x: hidden;
 }
 
-#lwftfwibiw .gt_stub {
+#vezdxjtbhd .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2660,7 +2687,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#lwftfwibiw .gt_stub_row_group {
+#vezdxjtbhd .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2674,15 +2701,15 @@ plot_daysleep</code></pre>
   vertical-align: top;
 }
 
-#lwftfwibiw .gt_row_group_first td {
+#vezdxjtbhd .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#lwftfwibiw .gt_row_group_first th {
+#vezdxjtbhd .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#lwftfwibiw .gt_summary_row {
+#vezdxjtbhd .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2692,16 +2719,16 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#lwftfwibiw .gt_first_summary_row {
+#vezdxjtbhd .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#lwftfwibiw .gt_first_summary_row.thick {
+#vezdxjtbhd .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#lwftfwibiw .gt_last_summary_row {
+#vezdxjtbhd .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2711,7 +2738,7 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#lwftfwibiw .gt_grand_summary_row {
+#vezdxjtbhd .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2721,7 +2748,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#lwftfwibiw .gt_first_grand_summary_row {
+#vezdxjtbhd .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2731,7 +2758,7 @@ plot_daysleep</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#lwftfwibiw .gt_last_grand_summary_row_top {
+#vezdxjtbhd .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2741,11 +2768,11 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#lwftfwibiw .gt_striped {
+#vezdxjtbhd .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#lwftfwibiw .gt_table_body {
+#vezdxjtbhd .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2754,7 +2781,7 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#lwftfwibiw .gt_footnotes {
+#vezdxjtbhd .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2768,7 +2795,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#lwftfwibiw .gt_footnote {
+#vezdxjtbhd .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2777,7 +2804,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#lwftfwibiw .gt_sourcenotes {
+#vezdxjtbhd .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2791,7 +2818,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#lwftfwibiw .gt_sourcenote {
+#vezdxjtbhd .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2799,72 +2826,72 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#lwftfwibiw .gt_left {
+#vezdxjtbhd .gt_left {
   text-align: left;
 }
 
-#lwftfwibiw .gt_center {
+#vezdxjtbhd .gt_center {
   text-align: center;
 }
 
-#lwftfwibiw .gt_right {
+#vezdxjtbhd .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#lwftfwibiw .gt_font_normal {
+#vezdxjtbhd .gt_font_normal {
   font-weight: normal;
 }
 
-#lwftfwibiw .gt_font_bold {
+#vezdxjtbhd .gt_font_bold {
   font-weight: bold;
 }
 
-#lwftfwibiw .gt_font_italic {
+#vezdxjtbhd .gt_font_italic {
   font-style: italic;
 }
 
-#lwftfwibiw .gt_super {
+#vezdxjtbhd .gt_super {
   font-size: 65%;
 }
 
-#lwftfwibiw .gt_footnote_marks {
+#vezdxjtbhd .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#lwftfwibiw .gt_asterisk {
+#vezdxjtbhd .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#lwftfwibiw .gt_indent_1 {
+#vezdxjtbhd .gt_indent_1 {
   text-indent: 5px;
 }
 
-#lwftfwibiw .gt_indent_2 {
+#vezdxjtbhd .gt_indent_2 {
   text-indent: 10px;
 }
 
-#lwftfwibiw .gt_indent_3 {
+#vezdxjtbhd .gt_indent_3 {
   text-indent: 15px;
 }
 
-#lwftfwibiw .gt_indent_4 {
+#vezdxjtbhd .gt_indent_4 {
   text-indent: 20px;
 }
 
-#lwftfwibiw .gt_indent_5 {
+#vezdxjtbhd .gt_indent_5 {
   text-indent: 25px;
 }
 
-#lwftfwibiw .katex-display {
+#vezdxjtbhd .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#lwftfwibiw div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#vezdxjtbhd div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>

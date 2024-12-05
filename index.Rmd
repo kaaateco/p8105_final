@@ -1,10 +1,16 @@
 ---
-title: "U Up? The Grades and Sleeping Patterns of First-Year College Students"
+title: "U Up? Sleep and GPAs of First-Year College Students"
 output: 
   html_document:
     toc: false
     toc_float: false
 ---
+
+Poor sleep practices are detrimental to human health and performance in all aspects of life. Unusual sleeping patterns are particularly common amongst college students, especially first-year students, who are adjusting to being independent adults for the first time. At the same time, these new college students are taking challenging coursework, on which success or failure is highly consequential for their future. Therefore, understanding which sleeping habits are correlated with student academic success can be very useful in guiding student behavior. Additionally, it is important to know how sleeping behavior is correlated with demographic factors such as gender, race, and first-generation status. 
+
+In this project, we used a data set from 
+
+
 
 We want to address the following research questions among first-year college students:
 
