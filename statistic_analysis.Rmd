@@ -321,18 +321,59 @@ Here use all the 4 sleeping measures as predictors to predict `term_gpa`.
 ```{r}
 lm_fit = lm(term_gpa ~ bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, data = sleep_df)
 
-broom::tidy(lm_fit) |> 
-  filter(term != "(Intercept)") |> 
-ggplot(aes(x = reorder(term, estimate), y = estimate)) +
-  geom_point(color = "steelblue") +
-  geom_errorbar(aes(ymin = estimate - std.error, ymax = estimate + std.error), width = 0.2) +
+lm_result =
+  broom::tidy(lm_fit,conf.int = TRUE) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
+  mutate(Method = 'Linear Regression')
+
+boot_straps = 
+  sleep_df|> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result = 
+  boot_straps |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(Method = 'Bootstrap',
+         estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high,Method)
+  
+
+com_coef =
+  rbind(lm_result,boot_result) |> 
+  filter(term != "(Intercept)") 
+
+plot_coef = 
+  com_coef |>   
+  ggplot(aes(x = reorder(term, estimate), y = estimate, color = Method)) +
+  geom_point(position = position_dodge(width = 0.3)) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), 
+                width = 0.5, 
+                position = position_dodge(width = 0.3)) +
   coord_flip() +
   labs(
     title = "Effect Sizes of Predictors on Cumulative GPA",
     x = "Predictors",
     y = "Coefficient Estimate"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom")
+
+plot_coef
+
 ```
 
 
@@ -341,48 +382,14 @@ ggplot(aes(x = reorder(term, estimate), y = estimate)) +
 ### Students' Characteristics and Sleeping Measures
 
 
-```{r}
+```{r,fig.width= 6, fig.height=10 }
 lm_fit = lm(term_gpa ~ university + demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = sleep_df)
 
+lm_result =
+  broom::tidy(lm_fit,conf.int = TRUE) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
+  mutate(Method = 'Linear Regression')
 
-broom::tidy(lm_fit) |> 
-  filter(term != "(Intercept)") |> 
-ggplot(aes(x = reorder(term, estimate), y = estimate)) +
-  geom_point(color = "steelblue") +
-  geom_errorbar(aes(ymin = estimate - std.error, ymax = estimate + std.error), width = 0.2) +
-  coord_flip() +
-  labs(
-    title = "Effect Sizes of Predictors on Cumulative GPA",
-    x = "Predictors",
-    y = "Coefficient Estimate"
-  ) +
-  theme_minimal()
-```
-
-**COMMENTS**
-
-
-
-```{r}
- ggplot(sleep_df, aes(x = total_sleep_time, y = cum_gpa)) +
-  geom_point(alpha = 0.6, color = '#554637') +
-  geom_smooth(method = "lm", se = FALSE, aes(color = cohort)) +
-  labs(
-    title = "Relationship Between Total Sleep Time and Cumulative GPA",
-    x = "Total Sleep Time (Hours)",
-    y = "Cumulative GPA"
-  ) +
-  theme_minimal()
-
-```
-
-
-
-## Bootstrapping Part
-
-
-```{r}
-set.seed(111)
 boot_straps = 
   sleep_df|> 
   modelr::bootstrap(1000) |> 
@@ -399,25 +406,43 @@ boot_result =
   group_by(term) |> 
   summarise(
     boot_est = mean(estimate),
-    boot_se = sd(estimate),
-    boot_ci_ll = quantile(estimate, .025),
-    boot_ci_ul = quantile(estimate, .975),
-  )
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(Method = 'Bootstrap',
+         estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high,Method)
+  
 
-boot_result |> 
-  filter(term != "(Intercept)") |> 
-  ggplot(aes(x = reorder(term, boot_est), y = boot_est)) +
-  geom_point(color = "steelblue") +
-  geom_errorbar(aes(ymin = boot_ci_ll, ymax = boot_ci_ul), width = 0.2) +
+com_coef =
+  rbind(lm_result,boot_result) |> 
+  filter(term != "(Intercept)") 
+
+plot_coef = 
+  com_coef |>   
+  ggplot(aes(x = reorder(term, estimate), y = estimate, color = Method)) +
+  geom_point(position = position_dodge(width = 0.7)) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), 
+                width = 0.5, 
+                position = position_dodge(width = 0.7)) +
   coord_flip() +
   labs(
     title = "Effect Sizes of Predictors on Cumulative GPA",
     x = "Predictors",
     y = "Coefficient Estimate"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom")
+
+plot_coef
+
 
 ```
+
+
+**COMMENTS**
 
 
 
@@ -427,4 +452,17 @@ boot_result |>
 
 ## University Specific Model
 
+
+```{r,fig.width= 6, fig.height=10}
+ ggplot(sleep_df, aes(x = total_sleep_time, y = cum_gpa)) +
+  geom_point(alpha = 0.6, color = "#664785") +
+  geom_smooth(method = "lm", se = FALSE, aes(color = university),alpha = 0.7) +
+  labs(
+    title = "Relationship Between Total Sleep Time and Cumulative GPA",
+    x = "Total Sleep Time (Hours)",
+    y = "Cumulative GPA"
+  ) +
+  theme_minimal()
+
+```
 
