@@ -13,7 +13,7 @@
 
 <title>Demographics: Exploratory Analysis</title>
 
-<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -925,8 +925,8 @@ difference in racial makeup of students from the three universities.</p>
                        method.args = list(var.equal = var_equal), 
                        label.y = 4, 
                        label.x = 1.5) +
-    stat_summary(fun = &quot;mean&quot;, fun.min = &quot;mean&quot;, color = &quot;skyblue&quot;, 
-                 fun.max= &quot;mean&quot;, size= 0.2, geom = &quot;crossbar&quot;)
+    stat_summary(fun = &quot;median&quot;, fun.min = &quot;median&quot;, color = &quot;skyblue&quot;, 
+                 fun.max= &quot;median&quot;, size= 0.2, geom = &quot;crossbar&quot;)
                            
 }</code></pre>
 <div id="race" class="section level3 tabset">
@@ -961,10 +961,12 @@ load.</p>
 </div>
 <div id="grade-point-average-gpa" class="section level2 tabset">
 <h2 class="tabset">Grade Point Average (GPA)</h2>
-<p>We ran t-test (with/without equal variance, see <a
-href="#appendix_a-section">Appendix A</a>) to compare mean GPA between
-different categories. In general, students from underrepresented race
-have less GPA compared to students who are not underrepresented.
+<p>The term and cumulative GPAs’ distribution are both
+negatively-skewed. Median GPAs are between 3 to 4, variable within this
+range for different groups. We ran t-test (with/without equal variance,
+see <a href="#appendix_a-section">Appendix A</a>) to compare mean GPA
+between different categories. In general, students from underrepresented
+race have less GPA compared to students who are not underrepresented.
 Similarly, first generations have lower GPA than first-year students who
 are not first generation. Men and women have similar mean GPA. Between
 the three universities, students from NDU have higher mean GPA when CMU
@@ -993,8 +995,8 @@ and UW students.</p>
                        method.args = list(var.equal = var_equal), 
                        p.adjust.method = &quot;bonferroni&quot;, 
                        label.y = y_positions) +
-    stat_summary(fun = &quot;mean&quot;, fun.min = &quot;mean&quot;, color = &quot;skyblue&quot;, 
-                 fun.max= &quot;mean&quot;, size= 0.2, geom = &quot;crossbar&quot;) 
+    stat_summary(fun = &quot;median&quot;, fun.min = &quot;median&quot;, color = &quot;skyblue&quot;, 
+                 fun.max= &quot;median&quot;, size= 0.2, geom = &quot;crossbar&quot;) 
 }</code></pre>
 <div id="race-1" class="section level3 tabset">
 <h3 class="tabset">Race</h3>
