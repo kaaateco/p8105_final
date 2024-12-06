@@ -834,3 +834,188 @@ boot_result_uw |>
 ```
 
 ---
+
+
+
+
+### Students' Characteristics and Sleeping Measures{.tabset}
+
+```{r}
+set.seed(100)
+
+boot_straps_cmu = 
+  sleep_df|> 
+  filter(university == "CMU") |> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result_cmu = 
+  boot_straps_cmu |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(Method = 'Bootstrap',
+         estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high,Method) |> 
+  mutate(term = reorder(term, estimate),
+         university = 'CMU')
+
+
+boot_straps_ndu = 
+  sleep_df|> 
+  filter(university == "NDU") |> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result_ndu = 
+  boot_straps_ndu |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(Method = 'Bootstrap',
+         estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high,Method) |> 
+  mutate(term = reorder(term, estimate),
+         university = 'NDU')
+
+
+boot_straps_uw = 
+  sleep_df|> 
+  filter(university == "UW") |> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result_uw = 
+  boot_straps_uw |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(Method = 'Bootstrap',
+         estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high,Method) |> 
+  mutate(term = reorder(term, estimate),
+         university = 'UW')
+
+
+uni_coef = rbind(boot_result_cmu,
+                 boot_result_ndu,
+                 boot_result_uw) |> 
+  mutate(university = factor(university, levels = c("CMU", "NDU", "UW"))) 
+
+uni_coef |>
+  filter(term != "(Intercept)") |> 
+  ggplot(aes(x = term, y = estimate, color = university)) +
+  geom_point(position = position_dodge(width = 0.7)) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), 
+                width = 0.5, 
+                position = position_dodge(width = 0.7)) +
+  coord_flip() +
+  labs(
+    title = "Effect Sizes of Predictors on Cumulative GPA",
+    x = "Predictors",
+    y = "Coefficient Estimate"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom")
+
+```
+
+
+**Comments**
+
+#### CMU{.tabset}
+
+
+```{r}
+boot_result_cmu |> 
+  filter(term != "(Intercept)") |> 
+  mutate(
+    conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
+    estimate = round(estimate,6),
+    std.error = round(std.error,6)) |> 
+  select(-conf.low, -conf.high) |> 
+  select(-university) |> 
+  arrange(-estimate) |> 
+  kable(format = "html") |> 
+  kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
+  column_spec(1, bold = TRUE, width = "4.5cm") 
+
+```
+
+
+
+#### NDU{.tabset}
+
+
+```{r}
+boot_result_ndu |> 
+  filter(term != "(Intercept)") |> 
+  mutate(
+    conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
+    estimate = round(estimate,6),
+    std.error = round(std.error,6)) |> 
+  select(-conf.low, -conf.high) |> 
+  select(-university) |> 
+  arrange(-estimate) |> 
+  kable(format = "html") |> 
+  kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
+  column_spec(1, bold = TRUE, width = "4.5cm") 
+
+```
+
+
+---
+
+
+
+#### UW{.tabset}
+
+
+```{r}
+boot_result_uw |> 
+  filter(term != "(Intercept)") |> 
+  mutate(
+    conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
+    estimate = round(estimate,6),
+    std.error = round(std.error,6)) |> 
+  select(-conf.low, -conf.high) |> 
+  select(-university) |> 
+  arrange(-estimate) |> 
+  kable(format = "html") |> 
+  kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
+  column_spec(1, bold = TRUE, width = "4.5cm") 
+
+```
+
+---
