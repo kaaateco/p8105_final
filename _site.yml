@@ -16,8 +16,6 @@ navbar:
       href: sleep_metrics.html
     - text: "Statistical Analysis"
       href: statistic_analysis.html
-    - text: "Shiny App"
-      href: NA
     - text: "Project Report"
       href: report.html
     - icon: fa-github fa-lg

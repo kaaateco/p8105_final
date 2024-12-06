@@ -28,9 +28,7 @@ To read more about our data set or the team behind this project, please see our 
 
 To check out our exploratory analyses of student demographics and academic information, please see our [Students](students.html) page. To further understand our measures of sleeping behavior and how they are distributed in our student population, check out our [Sleeping Patterns](sleep_metrics.html) page. 
 
-To review our statistical modeling approach and the variables we found important for GPA prediction, check out our [Statistical Analysis](statistic_analysis.html). Input your own data into our [Shiny App](NEED LINK) to predict your own first-year GPA!
-
-Finally, read more about our project in our [Project Report](report.html). Thanks!
+To review our statistical modeling approach and the variables we found important for GPA prediction, check out our [Statistical Analysis](statistic_analysis.html). Finally, read more about our project in our [Project Report](report.html). Thanks!
 
 -----
 

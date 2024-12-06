@@ -41,7 +41,7 @@ Finally, as previous undergraduates, current graduate students, and potentially 
 
 The data for our project came from a 2023 study, ["Nightly sleep duration predicts grade point average in the first year of college" ](https://www.pnas.org/doi/10.1073/pnas.2209123120), by JD Creswell et al. In this study, they found that term GPA and total sleep time were positively associated. Their multiple regression analysis controlled for daytime sleep, demographic variables, and standardized course load. All previous studies on this topic relied on self-reported recollections of total sleep time, which is prone to recall bias, and excludes other potentially important measures of sleep behavior. 
 
-Our project aimed to expand upon the study conducted by JD Creswell et al in several ways: to further explore the distributions of and correlations between the demographic, academic, and sleep behavior variables they collected; improve upon the models they used to predict GPA; and to create an interactive Shiny app to predict GPA based on users-inputted demographic factors and sleep behavior. 
+Our project aimed to expand upon the study conducted by JD Creswell et al in several ways: to further explore the distributions of and correlations between the demographic, academic, and sleep behavior variables they collected; improve upon the models they used to predict GPA; and to use a linear regression model combined with bootstrapping to increase model accuracy. 
 
 ---
 
