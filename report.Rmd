@@ -104,7 +104,6 @@ We also noticed that there were several variables with a handful of missing valu
 ---
 
 ## Exploratory Analysis  
-Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
 
 Our exploratory analysis is broken into two main sections: [student data](students.html) and [sleeping patterns](sleep_metrics.html). 
 
