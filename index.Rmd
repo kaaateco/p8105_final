@@ -14,12 +14,6 @@ Poor sleep practices are detrimental to human health and performance in all aspe
 <img width="500" src="images/sleeping_istock.jpg">
 </div>
 
-We wanted to address the following research questions among first-year college students:
-
-* How are course load and GPA distributed in different gender, race, educational background and colleges?
-* What are the main sleeping patterns seen in students over multiple measures of sleeping behavior? 
-* What can we learn about the relationship between academic performance, demographic characteristics, and sleeping habits in first-year college students? Can academic performance be predicted using these variables?
-
 ---
 
 ## Navigating our Project

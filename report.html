@@ -13,7 +13,7 @@
 
 <title>U Up? Sleep and GPA of First-Year College Students</title>
 
-<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
@@ -36,6 +36,8 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
 
@@ -388,6 +390,12 @@ Students</h1>
 <p>Group Members: Kate Colvin (kac2301), Yuying Lu (yl5839), and
 Chhiring Lama (cyl2159)</p>
 <hr />
+<style type="text/css">
+tr:hover {background-color: coral;}
+th {
+  height: 5px;
+}
+</style>
 <div id="motivation" class="section level2">
 <h2>Motivation</h2>
 <p>Student lack of success and under-performance in college is a large
@@ -476,11 +484,11 @@ collected directly from the universities.</p>
 data set itself can be found on <a
 href="https://cmustatistics.github.io/data-repository/psychology/cmu-sleep.html">this
 page</a>.</p>
-<pre class="r"><code>sleep_df &lt;- read_csv(&quot;data/cmu-sleep.csv&quot;) %&gt;% 
-  janitor::clean_names() %&gt;%  
+<pre class="r"><code>sleep_df &lt;- read_csv(&quot;data/cmu-sleep.csv&quot;) |&gt; 
+  janitor::clean_names() |&gt; 
   mutate(demo_race = case_when(demo_race == 0 ~ &quot;Underrepresented&quot;, 
                                      demo_race == 1 ~ &quot;Non-underrepresented&quot;),
-         demo_race = fct_relevel(demo_race, &quot;Underrepresented&quot;),
+         demo_race = fct_relevel(demo_race, &quot;Non-underrepresented&quot;),
          demo_gender = case_when(demo_gender == 0 ~ &quot;Male&quot;, 
                                      demo_gender == 1 ~ &quot;Female&quot;),
          demo_gender = fct_relevel(demo_gender, &quot;Male&quot;), 
@@ -509,7 +517,7 @@ set:</p>
 <li><code>university</code>: Out of the three
 university,<code>NDU = Notre Dame University</code>,
 <code>CMU = Carnegie Mellon University</code> and
-<code>UW = University of Washington</code>. This variable is derived
+<code>UW = University of Washington</code>. This information is derived
 from <code>study</code> variable as <code>1</code> and <code>5</code>
 were from Carnegie Mellon University, <code>2</code> and <code>3</code>
 from University of Washington, and <code>4</code> from Notre Dame
@@ -527,26 +535,380 @@ demographic variables, but notably, we are missing all course load
 information (<code>term_units</code>, <code>zterm_units_zof_z</code>)
 for students recruited from Notre Dame, which make up 147 of our 634
 total observations. Rows with these missing values were removed when
-required for our exploratory analyses, and course load information
-variables were not included in our regression models. <strong>IS THIS
-RIGHT LOL??</strong></p>
+course load information was required for our exploratory analyses, and
+course load information variables were not included in our regression
+models.</p>
 <hr />
 </div>
-<div id="exploratory-analysis-students" class="section level2">
-<h2>Exploratory Analysis: Students</h2>
+<div id="exploratory-analysis" class="section level2">
+<h2>Exploratory Analysis</h2>
 <p>Visualizations, summaries, and exploratory statistical analyses.
 Justify the steps you took, and show any major changes to your
 ideas.</p>
 <p>Our exploratory analysis is broken into two main sections: <a
 href="students.html">student data</a> and <a
 href="sleep_metrics.html">sleeping patterns</a>.</p>
-<p><em>Chhiring’s section</em></p>
+<div id="exploratory-analysis-students" class="section level3 tabset">
+<h3 class="tabset">Exploratory Analysis: Students</h3>
+<pre class="r"><code>student_sleep_df &lt;- sleep_df |&gt; 
+  rename(`University` =`university`, 
+         `Race` =`demo_race`, 
+         `Gender` =`demo_gender`, 
+         `First-Generation` =`demo_firstgen`, 
+         `Relative Course Load`= `zterm_units_zof_z`, 
+         `End-of-term GPA` =  `term_gpa`, 
+         `Cumulative GPA` = `cum_gpa`)
+
+plot_gpa &lt;- function(demo, gpa, var_equal, comp) {
+  subset_df &lt;- student_sleep_df |&gt; 
+    drop_na(rlang::sym(demo), rlang::sym(gpa)) 
+  
+  max_y &lt;- max(subset_df[,gpa], na.rm = TRUE)
+  
+  y_positions &lt;- seq(max_y, by = 0.5, length.out = length(comp))
+  
+  cols &lt;- c(&quot;End-of-term GPA&quot; = &quot;#ffaaaa&quot;, 
+            &quot;Cumulative GPA&quot; = &quot;#ffddba&quot;)
+  
+  subset_df |&gt; 
+    ggplot(aes(x = get(demo), y = get(gpa), fill = gpa)) +
+    geom_violin(alpha = 0.2) + 
+    labs(y = &quot;&quot;, x = &quot;&quot;, fill = &quot;&quot;) +
+    scale_y_continuous(expand = c(0,0), limits = c(min(subset_df[,gpa]), max(y_positions) + 0.5)) +
+    #facet_wrap(~academic_info, ncol = 3, scales = &quot;free&quot;) +
+    theme(panel.spacing = unit(1, &quot;lines&quot;)) +
+    scale_fill_manual(values = cols) +
+    stat_compare_means(aes(label = paste0(&quot;p = &quot;, p.format)), method = &quot;t.test&quot;, 
+                       paired = FALSE, comparisons = comp,
+                       method.args = list(var.equal = var_equal), 
+                       p.adjust.method = &quot;bonferroni&quot;, 
+                       label.y = y_positions) +
+    stat_summary(fun = &quot;median&quot;, fun.min = &quot;median&quot;, color = &quot;skyblue&quot;, 
+                 fun.max= &quot;median&quot;, size= 0.2, geom = &quot;crossbar&quot;) 
+}</code></pre>
 <p>All of the graphs and analyses mentioned in this segment can be found
-on our <a href="students.html">Students</a> page.</p>
+on our <a href="students.html">Students</a> page. Among students from
+different universities, proportion of underrepresented students were not
+significantly different.</p>
+<p>Our analysis of course load and GPA data provided valuable insights
+into the relationship between demographics and academic performance.
+First, we observed no significant differences in course load across
+various demographic groups, as measured by an independent t-test. Mean
+relative course load is near 0, meaning they have average course load.
+This indicates that students from different demographic backgrounds and
+universities generally maintained similar course loads. However, we did
+find that students from underrepresented racial groups had significantly
+lower GPAs compared to their well-represented peers (independent t-test,
+p = 0.0022). Additionally, first-generation students exhibited lower
+term GPAs than their non-first-generation counterparts (p = 0.00069).
+Notably, students from NDU had higher GPAs than those from CMU (p =
+1.6e-11) and UW (p = 6e-11). The term and cumulative GPAs’ distribution
+are both negatively-skewed. Median GPAs are between 3 to 4, variable
+within this range for different groups.</p>
+<div id="race" class="section level4 tabset">
+<h4 class="tabset">Race</h4>
+<pre class="r"><code>demo_name = &quot;Race&quot;
+comp = list(c(&quot;Underrepresented&quot;, &quot;Non-underrepresented&quot;))
+plot_gpa(demo = demo_name, &quot;End-of-term GPA&quot;, FALSE, comp) +
+  plot_gpa(demo = demo_name, &quot;Cumulative GPA&quot;, FALSE, comp)</code></pre>
+<p><img src="report_files/figure-html/unnamed-chunk-5-1.png" width="80%" /></p>
+</div>
+<div id="gender" class="section level4 tabset">
+<h4 class="tabset">Gender</h4>
+<pre class="r"><code>demo_name = &quot;Gender&quot;
+comp &lt;- list(c(&quot;Male&quot;, &quot;Female&quot;))
+plot_gpa(demo = demo_name, &quot;End-of-term GPA&quot;, TRUE, comp) +
+  plot_gpa(demo = demo_name, &quot;Cumulative GPA&quot;, TRUE, comp)</code></pre>
+<p><img src="report_files/figure-html/unnamed-chunk-6-1.png" width="80%" /></p>
+</div>
+<div id="first-generation" class="section level4 tabset">
+<h4 class="tabset">First-Generation</h4>
+<pre class="r"><code>demo_name = &quot;First-Generation&quot;
+comp &lt;- list(c(&quot;Non-first gen&quot;, &quot;First-gen&quot;))
+plot_gpa(demo = demo_name, &quot;End-of-term GPA&quot;, TRUE, comp) +
+  plot_gpa(demo = demo_name, &quot;Cumulative GPA&quot;, TRUE, comp)</code></pre>
+<p><img src="report_files/figure-html/unnamed-chunk-7-1.png" width="80%" /></p>
+</div>
+<div id="university" class="section level4 tabset">
+<h4 class="tabset">University</h4>
+<pre class="r"><code>demo_name = &quot;University&quot;
+comp = list(c(&quot;CMU&quot;, &quot;NDU&quot;), c(&quot;NDU&quot;, &quot;UW&quot;), c(&quot;CMU&quot;, &quot;UW&quot;))
+plot_gpa(demo = demo_name, &quot;End-of-term GPA&quot;, FALSE, comp) +
+  plot_gpa(demo = demo_name, &quot;Cumulative GPA&quot;, FALSE, comp)</code></pre>
+<p><img src="report_files/figure-html/unnamed-chunk-8-1.png" width="80%" /></p>
+<p>We used multiple linear regression to model relative effects of
+demographics and course load on term GPA. After controlling for race,
+gender, university, and first-generation college status, course load was
+found to have no significant effect on GPA (p = 0.133). Given that
+course load did not vary significantly across student groups, did not
+show a meaningful association with term GPA, and that Notre Dame
+University (NDU) lacked relevant data on course load, we excluded this
+variable from our final statistical analyses.</p>
+</div>
+</div>
+<div id="section" class="section level3 tabset">
+<h3 class="tabset"></h3>
+<p>We found that underrepresented students had GPAs 0.72 points lower
+than their peers from well-represented racial backgrounds, suggesting
+that race may be a critical predictor of GPA outcomes (p = 1.08e-05).
+However, first-generation college status did not have a direct effect on
+GPA once the interplay with other factors was accounted for. Further
+analysis revealed that first-generation students in our study were
+disproportionately from underrepresented racial backgrounds and were
+predominantly enrolled at the University of Washington (UW) (See
+<em>Appendix B</em> in <a href="students.html">student data</a>). This
+concentration may help explain the initial GPA differences observed
+among first-generation students before adjusting for these overlapping
+factors.</p>
+<p>We examined whether students’ GPAs improved within individual
+demographic groups. Interestingly, the changes were minimal and not
+statistically significant (See Section <em>Improvement in GPA</em> in <a
+href="students.html">student data</a>). This was true across all groups,
+indicating that the term GPA did not vary significantly from cumulative
+GPA during their first year.</p>
+<div id="coefficient-estimate" class="section level4 tabset">
+<h4 class="tabset">Coefficient Estimate</h4>
+<pre class="r"><code>model &lt;- lm(`End-of-term GPA` ~ `Relative Course Load`*Race +
+     `Relative Course Load`*`Gender` +
+     `Relative Course Load`*`First-Generation` +
+     `Relative Course Load`*`University`, 
+                data = student_sleep_df) 
+
+res &lt;- bind_cols(broom::tidy(model), confint(model, level = 0.95))|&gt; 
+  mutate(term= str_replace(term, &quot;RaceUnderrepresented&quot;, &quot;Race - Underrepresented&quot;), 
+         term= str_replace(term, &quot;GenderFemale&quot;, &quot;Gender - Female&quot;), 
+         term= str_replace(term, &quot;`First-Generation`First-gen&quot;, &quot;First-gen&quot;), 
+         term= str_replace(term, &quot;UniversityUW&quot;, &quot;University - UW&quot;)) |&gt; 
+  select(term, estimate, `2.5 %`, `97.5 %`) |&gt; 
+  filter(term != &quot;(Intercept)&quot;)
+
+res |&gt; 
+  mutate(term = fct_reorder(term, estimate, sort)) |&gt;
+  ggplot(aes(x = term, y = estimate)) +
+  geom_hline(yintercept = 0, linetype = &quot;dashed&quot;, color = &quot;grey&quot;) +
+  geom_errorbar(aes(ymin = `2.5 %`, ymax = `97.5 %`),color = &quot;darkred&quot;, width = 0.5)+
+  geom_point(size = 2, shape = 21, fill = &quot;white&quot;) +
+  theme(plot.title = element_text(size = 10, face = &quot;bold&quot;), 
+        axis.title = element_text(size = 9, face = &quot;bold&quot;)) +
+  labs(y = &quot;Coefficient&quot;, x = &quot;Predictor&quot;,
+       title = &quot;Coefficient Estimate (w/ 95% CI)&quot;, color = &quot;&quot;) +
+  coord_flip()</code></pre>
+<p><img src="report_files/figure-html/unnamed-chunk-9-1.png" width="80%" /></p>
+</div>
+<div id="statistics" class="section level4 tabset">
+<h4 class="tabset">Statistics</h4>
+<pre class="r"><code>model |&gt; 
+  broom::tidy() |&gt; 
+  mutate(term= str_replace(term, &quot;RaceUnderrepresented&quot;, &quot;Race - Underrepresented&quot;), 
+         term= str_replace(term, &quot;GenderFemale&quot;, &quot;Gender - Female&quot;), 
+         term= str_replace(term, &quot;`First-Generation`First-gen&quot;, &quot;First-gen&quot;), 
+         term= str_replace(term, &quot;UniversityUW&quot;, &quot;University - UW&quot;)) |&gt; 
+  rename(`SE` = `std.error`) |&gt; 
+  mutate(estimate = round(`estimate`, digits = 3), 
+         `SE` = round(`SE`, digits = 3), 
+         statistic = round(`statistic`, digits = 3)) |&gt; 
+  mutate(`p.value` = signif(`p.value`, digits = 3)) |&gt; 
+  knitr::kable(digits = 170) |&gt; 
+  row_spec(2, background = &quot;darkgrey&quot;) |&gt; 
+  kable_minimal()</code></pre>
+<table class=" lightable-minimal" style="font-family: &quot;Trebuchet MS&quot;, verdana, sans-serif; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+term
+</th>
+<th style="text-align:right;">
+estimate
+</th>
+<th style="text-align:right;">
+SE
+</th>
+<th style="text-align:right;">
+statistic
+</th>
+<th style="text-align:right;">
+p.value
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+3.403
+</td>
+<td style="text-align:right;">
+0.049
+</td>
+<td style="text-align:right;">
+69.481
+</td>
+<td style="text-align:right;">
+0.00e+00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;background-color: darkgrey !important;">
+<code>Relative Course Load</code>
+</td>
+<td style="text-align:right;background-color: darkgrey !important;">
+0.076
+</td>
+<td style="text-align:right;background-color: darkgrey !important;">
+0.051
+</td>
+<td style="text-align:right;background-color: darkgrey !important;">
+1.504
+</td>
+<td style="text-align:right;background-color: darkgrey !important;">
+1.33e-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Race - Underrepresented
+</td>
+<td style="text-align:right;">
+-0.283
+</td>
+<td style="text-align:right;">
+0.064
+</td>
+<td style="text-align:right;">
+-4.449
+</td>
+<td style="text-align:right;">
+1.08e-05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Gender - Female
+</td>
+<td style="text-align:right;">
+0.000
+</td>
+<td style="text-align:right;">
+0.050
+</td>
+<td style="text-align:right;">
+0.006
+</td>
+<td style="text-align:right;">
+9.95e-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+First-gen
+</td>
+<td style="text-align:right;">
+-0.093
+</td>
+<td style="text-align:right;">
+0.063
+</td>
+<td style="text-align:right;">
+-1.466
+</td>
+<td style="text-align:right;">
+1.43e-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+University - UW
+</td>
+<td style="text-align:right;">
+0.093
+</td>
+<td style="text-align:right;">
+0.050
+</td>
+<td style="text-align:right;">
+1.865
+</td>
+<td style="text-align:right;">
+6.28e-02
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<code>Relative Course Load</code>:Race - Underrepresented
+</td>
+<td style="text-align:right;">
+-0.029
+</td>
+<td style="text-align:right;">
+0.061
+</td>
+<td style="text-align:right;">
+-0.474
+</td>
+<td style="text-align:right;">
+6.36e-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<code>Relative Course Load</code>:Gender - Female
+</td>
+<td style="text-align:right;">
+-0.028
+</td>
+<td style="text-align:right;">
+0.049
+</td>
+<td style="text-align:right;">
+-0.576
+</td>
+<td style="text-align:right;">
+5.65e-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<code>Relative Course Load</code>:First-gen
+</td>
+<td style="text-align:right;">
+0.043
+</td>
+<td style="text-align:right;">
+0.063
+</td>
+<td style="text-align:right;">
+0.675
+</td>
+<td style="text-align:right;">
+5.00e-01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<code>Relative Course Load</code>:University - UW
+</td>
+<td style="text-align:right;">
+0.019
+</td>
+<td style="text-align:right;">
+0.051
+</td>
+<td style="text-align:right;">
+0.372
+</td>
+<td style="text-align:right;">
+7.10e-01
+</td>
+</tr>
+</tbody>
+</table>
 <hr />
 </div>
-<div id="exploratory-analysis-sleep" class="section level2 tabset">
-<h2 class="tabset">Exploratory Analysis: Sleep</h2>
+</div>
+<div id="exploratory-analysis-sleep" class="section level3 tabset">
+<h3 class="tabset">Exploratory Analysis: Sleep</h3>
 <p>All of the graphs mentioned in this segment and further in-depth
 explanations can be found on our <a href="sleep_metrics.html">Sleeping
 Patterns</a> page.</p>
@@ -590,8 +952,8 @@ or who were first-generation tended to have greater daytime sleep.</p>
 <p>Again, please see the <a href="sleep_metrics.html">Sleeping
 Patterns</a> page for all of the data visualizations that go along with
 these results.</p>
-<div id="total-sleep-time" class="section level3 tabset">
-<h3 class="tabset">Total Sleep Time</h3>
+<div id="total-sleep-time" class="section level4 tabset">
+<h4 class="tabset">Total Sleep Time</h4>
 <pre class="r"><code>plot_totalsleep &lt;- sleep_df %&gt;%  
   ggplot(aes(x = total_sleep_time, fill = university, color = university)) +
   geom_density(alpha = 0.3, linewidth = 1) +
@@ -603,11 +965,11 @@ these results.</p>
   )
 
 plot_totalsleep    </code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <hr />
 </div>
-<div id="variability-in-bed-times" class="section level3 tabset">
-<h3 class="tabset">Variability in Bed Times</h3>
+<div id="variability-in-bed-times" class="section level4 tabset">
+<h4 class="tabset">Variability in Bed Times</h4>
 <pre class="r"><code>plot_bedtime2 &lt;- sleep_df %&gt;%  
   ggplot(aes(x = bedtime_mssd, fill = university, color = university)) +
   geom_density(alpha = 0.3, linewidth = 1) +
@@ -620,11 +982,11 @@ plot_totalsleep    </code></pre>
   )
 
 plot_bedtime2</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <hr />
 </div>
-<div id="sleeping-midpoint" class="section level3 tabset">
-<h3 class="tabset">Sleeping Midpoint</h3>
+<div id="sleeping-midpoint" class="section level4 tabset">
+<h4 class="tabset">Sleeping Midpoint</h4>
 <pre class="r"><code>plot_midpoint &lt;- sleep_df %&gt;% 
   ggplot(aes(x = midpoint_sleep, fill = university, color = university)) +
   geom_density(alpha = 0.3, linewidth = 1) +
@@ -636,11 +998,11 @@ plot_bedtime2</code></pre>
   )
 
 plot_midpoint</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <hr />
 </div>
-<div id="daytime-sleep" class="section level3 tabset">
-<h3 class="tabset">Daytime Sleep</h3>
+<div id="daytime-sleep" class="section level4 tabset">
+<h4 class="tabset">Daytime Sleep</h4>
 <pre class="r"><code>plot_daysleep &lt;- sleep_df %&gt;% 
   ggplot(aes(x = daytime_sleep, fill = university, color = university)) +
   geom_density(alpha = 0.3, linewidth = 1) +
@@ -652,11 +1014,11 @@ plot_midpoint</code></pre>
   )
 
 plot_daysleep</code></pre>
-<p><img src="report_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="report_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <hr />
 </div>
-<div id="statistics" class="section level3 tabset">
-<h3 class="tabset">Statistics</h3>
+<div id="statistics-1" class="section level4 tabset">
+<h4 class="tabset">Statistics</h4>
 <pre class="r"><code>sleep_df %&gt;% select(total_sleep_time, bedtime_mssd, 
                     midpoint_sleep, daytime_sleep, university) %&gt;% 
   tbl_summary(
@@ -666,23 +1028,23 @@ plot_daysleep</code></pre>
       all_categorical() ~ &quot;{n} / {N} ({p}%)&quot;)) %&gt;% 
     add_p() %&gt;% 
     add_overall()</code></pre>
-<div id="oytlasubpl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#oytlasubpl table {
+<div id="fllkpqysmq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fllkpqysmq table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#oytlasubpl thead, #oytlasubpl tbody, #oytlasubpl tfoot, #oytlasubpl tr, #oytlasubpl td, #oytlasubpl th {
+#fllkpqysmq thead, #fllkpqysmq tbody, #fllkpqysmq tfoot, #fllkpqysmq tr, #fllkpqysmq td, #fllkpqysmq th {
   border-style: none;
 }
 
-#oytlasubpl p {
+#fllkpqysmq p {
   margin: 0;
   padding: 0;
 }
 
-#oytlasubpl .gt_table {
+#fllkpqysmq .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -708,12 +1070,12 @@ plot_daysleep</code></pre>
   border-left-color: #D3D3D3;
 }
 
-#oytlasubpl .gt_caption {
+#fllkpqysmq .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#oytlasubpl .gt_title {
+#fllkpqysmq .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -725,7 +1087,7 @@ plot_daysleep</code></pre>
   border-bottom-width: 0;
 }
 
-#oytlasubpl .gt_subtitle {
+#fllkpqysmq .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -737,7 +1099,7 @@ plot_daysleep</code></pre>
   border-top-width: 0;
 }
 
-#oytlasubpl .gt_heading {
+#fllkpqysmq .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -749,13 +1111,13 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#oytlasubpl .gt_bottom_border {
+#fllkpqysmq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#oytlasubpl .gt_col_headings {
+#fllkpqysmq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -770,7 +1132,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#oytlasubpl .gt_col_heading {
+#fllkpqysmq .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -790,7 +1152,7 @@ plot_daysleep</code></pre>
   overflow-x: hidden;
 }
 
-#oytlasubpl .gt_column_spanner_outer {
+#fllkpqysmq .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -802,15 +1164,15 @@ plot_daysleep</code></pre>
   padding-right: 4px;
 }
 
-#oytlasubpl .gt_column_spanner_outer:first-child {
+#fllkpqysmq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#oytlasubpl .gt_column_spanner_outer:last-child {
+#fllkpqysmq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#oytlasubpl .gt_column_spanner {
+#fllkpqysmq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -822,11 +1184,11 @@ plot_daysleep</code></pre>
   width: 100%;
 }
 
-#oytlasubpl .gt_spanner_row {
+#fllkpqysmq .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#oytlasubpl .gt_group_heading {
+#fllkpqysmq .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -852,7 +1214,7 @@ plot_daysleep</code></pre>
   text-align: left;
 }
 
-#oytlasubpl .gt_empty_group_heading {
+#fllkpqysmq .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -867,15 +1229,15 @@ plot_daysleep</code></pre>
   vertical-align: middle;
 }
 
-#oytlasubpl .gt_from_md > :first-child {
+#fllkpqysmq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#oytlasubpl .gt_from_md > :last-child {
+#fllkpqysmq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#oytlasubpl .gt_row {
+#fllkpqysmq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -894,7 +1256,7 @@ plot_daysleep</code></pre>
   overflow-x: hidden;
 }
 
-#oytlasubpl .gt_stub {
+#fllkpqysmq .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -907,7 +1269,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#oytlasubpl .gt_stub_row_group {
+#fllkpqysmq .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -921,15 +1283,15 @@ plot_daysleep</code></pre>
   vertical-align: top;
 }
 
-#oytlasubpl .gt_row_group_first td {
+#fllkpqysmq .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#oytlasubpl .gt_row_group_first th {
+#fllkpqysmq .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#oytlasubpl .gt_summary_row {
+#fllkpqysmq .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -939,16 +1301,16 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#oytlasubpl .gt_first_summary_row {
+#fllkpqysmq .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#oytlasubpl .gt_first_summary_row.thick {
+#fllkpqysmq .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#oytlasubpl .gt_last_summary_row {
+#fllkpqysmq .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -958,7 +1320,7 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#oytlasubpl .gt_grand_summary_row {
+#fllkpqysmq .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -968,7 +1330,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#oytlasubpl .gt_first_grand_summary_row {
+#fllkpqysmq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -978,7 +1340,7 @@ plot_daysleep</code></pre>
   border-top-color: #D3D3D3;
 }
 
-#oytlasubpl .gt_last_grand_summary_row_top {
+#fllkpqysmq .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -988,11 +1350,11 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#oytlasubpl .gt_striped {
+#fllkpqysmq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#oytlasubpl .gt_table_body {
+#fllkpqysmq .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1001,7 +1363,7 @@ plot_daysleep</code></pre>
   border-bottom-color: #D3D3D3;
 }
 
-#oytlasubpl .gt_footnotes {
+#fllkpqysmq .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1015,7 +1377,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#oytlasubpl .gt_footnote {
+#fllkpqysmq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1024,7 +1386,7 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#oytlasubpl .gt_sourcenotes {
+#fllkpqysmq .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1038,7 +1400,7 @@ plot_daysleep</code></pre>
   border-right-color: #D3D3D3;
 }
 
-#oytlasubpl .gt_sourcenote {
+#fllkpqysmq .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1046,72 +1408,72 @@ plot_daysleep</code></pre>
   padding-right: 5px;
 }
 
-#oytlasubpl .gt_left {
+#fllkpqysmq .gt_left {
   text-align: left;
 }
 
-#oytlasubpl .gt_center {
+#fllkpqysmq .gt_center {
   text-align: center;
 }
 
-#oytlasubpl .gt_right {
+#fllkpqysmq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#oytlasubpl .gt_font_normal {
+#fllkpqysmq .gt_font_normal {
   font-weight: normal;
 }
 
-#oytlasubpl .gt_font_bold {
+#fllkpqysmq .gt_font_bold {
   font-weight: bold;
 }
 
-#oytlasubpl .gt_font_italic {
+#fllkpqysmq .gt_font_italic {
   font-style: italic;
 }
 
-#oytlasubpl .gt_super {
+#fllkpqysmq .gt_super {
   font-size: 65%;
 }
 
-#oytlasubpl .gt_footnote_marks {
+#fllkpqysmq .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#oytlasubpl .gt_asterisk {
+#fllkpqysmq .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#oytlasubpl .gt_indent_1 {
+#fllkpqysmq .gt_indent_1 {
   text-indent: 5px;
 }
 
-#oytlasubpl .gt_indent_2 {
+#fllkpqysmq .gt_indent_2 {
   text-indent: 10px;
 }
 
-#oytlasubpl .gt_indent_3 {
+#fllkpqysmq .gt_indent_3 {
   text-indent: 15px;
 }
 
-#oytlasubpl .gt_indent_4 {
+#fllkpqysmq .gt_indent_4 {
   text-indent: 20px;
 }
 
-#oytlasubpl .gt_indent_5 {
+#fllkpqysmq .gt_indent_5 {
   text-indent: 25px;
 }
 
-#oytlasubpl .katex-display {
+#fllkpqysmq .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#oytlasubpl div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#fllkpqysmq div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1168,6 +1530,7 @@ N = 279</span><span class="gt_footnote_marks" style="white-space:nowrap;font-sty
 </table>
 </div>
 <hr />
+</div>
 </div>
 </div>
 <div id="additional-analysis" class="section level2">

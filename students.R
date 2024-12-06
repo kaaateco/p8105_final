@@ -1,13 +1,4 @@
----
-title: "Demographics: Exploratory Analysis"
-output: 
-  html_document:
-    toc: true
-    toc_float: true
-    code_folding: hide
----
-
-```{r include = FALSE,message=FALSE,warning=FALSE}
+## ----include = FALSE,message=FALSE,warning=FALSE-------------------------------------------------------------------------------------------
 library(tidyverse)
 library(gtsummary)
 library(plotly)
@@ -28,10 +19,9 @@ options(
 
 scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
-```
 
-This page is designed to get an understanding of the characteristics (demographic and educational) of the 634 students who were included in this dataset. 
-```{r,message=FALSE,warning=FALSE}
+
+## ----message=FALSE,warning=FALSE-----------------------------------------------------------------------------------------------------------
 sleep_df <- read_csv("data/cmu-sleep.csv") |> 
   janitor::clean_names() |> 
   mutate(demo_race = case_when(demo_race == 0 ~ "Underrepresented", 
@@ -55,19 +45,14 @@ sleep_df <- read_csv("data/cmu-sleep.csv") |>
                             cohort == "uw1" ~ "UW", 
                             cohort == "uw2" ~ "UW"))
 
-```
 
-```{css, echo = FALSE}
-tr:hover {background-color: coral;}
-th {
-  height: 5px;
-}
-```
 
-## Demographic and Academic Information
+## tr:hover {background-color: coral;}
+## th {
+##   height: 5px;
+## }
 
-The dataset consists of first-year students from three different kind universities: Carnegie Mellon (CMU) is a STEM-focused private university, University of Washington (UW) is a large public university and Notre Dame (NDU) is a private catholic university. Each cohort have students roughly 15-20% students with underrepresented racial identity. However, the male to female ratio, and proportion of first generation students vary between the cohorts. There is significant difference in gender ratio and  proportion of first generation students in different universities. 
-```{r, fig.width = 5, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 5, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 sleep_df <- sleep_df |> 
   rename(`Cohort` =`cohort`, 
          `University` =`university`, 
@@ -98,9 +83,9 @@ summary_tbl <- sleep_df |>
 
 as_kable_extra(summary_tbl) |> 
   kable_minimal()
-```
 
-```{r, echo = FALSE, message=FALSE,warning=FALSE}
+
+## ----echo = FALSE, message=FALSE,warning=FALSE---------------------------------------------------------------------------------------------
 long_sleep_df <- sleep_df |> 
   pivot_longer(
       cols = c(`Relative Course Load`, `End-of-term GPA`, `Cumulative GPA`), 
@@ -136,15 +121,9 @@ get_levene_res <- function(demo){
 
 demo_list <- c("University", "Race", "Gender", "First-Generation")
 levene_res <- lapply(demo_list, get_levene_res) 
-```
 
-## Relative Course Load {.tabset}
 
-To compare relative course load (`zterm_units_zof_z`) between different groups of each demographics, we ran t-test (with/without equal variance). See [Appendix A](#appendix_a-section) to learn about how we identified an appropriate two-sample mean test.\ 
-
-The results suggest that the different genders, races, first generation groups and universities do not differ significantly. This suggests that we can directly compare difference in GPAs between categories of each demographics. Since there isn't significant difference in racial makeup of students from the three universities. 
-
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------------------
 plot_courseload <- function(demo, var_equal) {
   sleep_df |> 
     drop_na(rlang::sym(demo), `Relative Course Load`) |> 
@@ -156,48 +135,36 @@ plot_courseload <- function(demo, var_equal) {
                        method.args = list(var.equal = var_equal), 
                        label.y = 4, 
                        label.x = 1.5) +
-    stat_summary(fun = "median", fun.min = "median", color = "skyblue", 
-                 fun.max= "median", size= 0.2, geom = "crossbar")
+    stat_summary(fun = "mean", fun.min = "mean", color = "skyblue", 
+                 fun.max= "mean", size= 0.2, geom = "crossbar")
                            
 }
-```
 
-### Race {.tabset}
 
-```{r, fig.width = 5, fig.height = 4, out.width = "60%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 5, fig.height = 4, out.width = "60%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "Race"
 comp <- list(c("Underrepresented", "Non-underrepresented"))
 plot_courseload(demo_name, TRUE)
-```
 
-### Gender {.tabset}
 
-```{r, fig.width = 5, fig.height = 4, out.width = "60%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 5, fig.height = 4, out.width = "60%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "Gender"
 comp <- list(c("Male", "Female"))
 plot_courseload(demo = demo_name, TRUE)
-```
 
-### First-Generation {.tabset}
 
-```{r, fig.width = 5, fig.height = 4, out.width = "60%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 5, fig.height = 4, out.width = "60%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "First-Generation"
 comp <- list(c("Non-first gen", "First-gen"))
 plot_courseload(demo = demo_name, TRUE)
-```
 
-### University {.tabset}
 
-```{r, fig.width = 5, fig.height = 4, out.width = "60%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 5, fig.height = 4, out.width = "60%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "University"
 plot_courseload(demo = demo_name, TRUE)
-```
-</br> Observations from NDU do not have information related to term unit load. 
 
-## Grade Point Average (GPA) {.tabset}
-The term and cumulative GPAs' distribution are both negatively-skewed. Median GPAs are between 3 to 4, variable within this range for different groups. We ran t-test (with/without equal variance, see [Appendix A](#appendix_a-section)) to compare mean GPA between different categories. In general, students from underrepresented race have less GPA compared to students who are not underrepresented. Similarly, first generations have lower GPA than first-year students who are not first generation. Men and women have similar mean GPA. Between the three universities, students from NDU have higher mean GPA when CMU and UW students. 
 
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------------------
 plot_gpa <- function(demo, gpa, var_equal, comp) {
   subset_df <- sleep_df |> 
     drop_na(rlang::sym(demo), rlang::sym(gpa)) 
@@ -222,52 +189,40 @@ plot_gpa <- function(demo, gpa, var_equal, comp) {
                        method.args = list(var.equal = var_equal), 
                        p.adjust.method = "bonferroni", 
                        label.y = y_positions) +
-    stat_summary(fun = "median", fun.min = "median", color = "skyblue", 
-                 fun.max= "median", size= 0.2, geom = "crossbar") 
+    stat_summary(fun = "mean", fun.min = "mean", color = "skyblue", 
+                 fun.max= "mean", size= 0.2, geom = "crossbar") 
 }
-```
 
-### Race {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "Race"
 comp = list(c("Underrepresented", "Non-underrepresented"))
 plot_gpa(demo = demo_name, "End-of-term GPA", FALSE, comp) +
   plot_gpa(demo = demo_name, "Cumulative GPA", FALSE, comp)
-```
 
-### Gender {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "Gender"
 comp <- list(c("Male", "Female"))
 plot_gpa(demo = demo_name, "End-of-term GPA", TRUE, comp) +
   plot_gpa(demo = demo_name, "Cumulative GPA", TRUE, comp)
-```
 
-### First-Generation {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "First-Generation"
 comp <- list(c("Non-first gen", "First-gen"))
 plot_gpa(demo = demo_name, "End-of-term GPA", TRUE, comp) +
   plot_gpa(demo = demo_name, "Cumulative GPA", TRUE, comp)
-```
 
-### University {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "University"
 comp = list(c("CMU", "NDU"), c("NDU", "UW"), c("CMU", "UW"))
 plot_gpa(demo = demo_name, "End-of-term GPA", FALSE, comp) +
   plot_gpa(demo = demo_name, "Cumulative GPA", FALSE, comp)
-```
 
-## Course load verus GPA {.tabset}
 
-After accounting for race, gender, first-generation status and university, we know that course load does not have an effect on term GPA (See `Statistic` tab). This suggests that the difference in GPA that we have seen between racial groups exists, even after accounting for combined effect with course load difference. The GPA difference seen in first-generation students in two sample-mean test could potentially be due to difference in racial makeup and student number in CMU between first-generation and non-first generation students (See [Appendix B](#appendix_b-section)). 
-
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------------------
 plot_loadgpa <- function(demo) {
   sleep_df |> 
     drop_na(rlang::sym(demo), `End-of-term GPA`, `Relative Course Load`) |> 
@@ -281,38 +236,29 @@ plot_loadgpa <- function(demo) {
     strip.text = element_text(size = 14),
     plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
 }
-```
 
-### Race {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 7, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "Race"
 plot_loadgpa(demo = demo_name)
-```
 
-### Gender {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 7, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "Gender"
 plot_loadgpa(demo = demo_name)
-```
 
-### First-Generation {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 7, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "First-Generation"
 plot_loadgpa(demo = demo_name)
-```
 
-### University {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 7, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "University"
 plot_loadgpa(demo = demo_name)
-```
 
-### Statistics {.tabset}
-```{r}
+
+## ------------------------------------------------------------------------------------------------------------------------------------------
 lm(`End-of-term GPA` ~ `Relative Course Load`*Race +
      `Relative Course Load`*`Gender` +
      `Relative Course Load`*`First-Generation` +
@@ -331,13 +277,9 @@ lm(`End-of-term GPA` ~ `Relative Course Load`*Race +
   knitr::kable(digits = 170) |> 
   row_spec(2, background = "darkgrey") |> 
   kable_minimal()
-```
 
-## Improvement in GPA {.tabset}
 
-Utilizing paired t-test, we compared average cumulative GPA before term start and the term GPA in each demographic group. GPA within each group of the demographics did not improve significantly during the semester. We can explore them individually as shown below. 
-
-```{r}
+## ------------------------------------------------------------------------------------------------------------------------------------------
 cols <- c("End-of-term GPA" = "#ffaaaa", 
             "Cumulative GPA" = "#ffddba")
 
@@ -364,75 +306,52 @@ plot_improv <- function(demo, comp) {
                        p.adjust.method = "bonferroni", 
                        label.y = max_y)
 }
-```
 
-### Race {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "Race"
 plot_improv(demo = demo_name, comp)
-```
 
-### Gender {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "Gender"
 plot_improv(demo = demo_name, comp)
-```
 
-### First-Generation {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "First-Generation"
 plot_improv(demo = demo_name, comp)
-```
 
-### University {.tabset}
 
-```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 demo_name = "University"
 plot_improv(demo = demo_name, comp)
-```
-\
 
-## Appendix A: Appropriate Two-Sample Mean Test Identification {#appendix_a-section} 
-## {.tabset}
 
-### Normality Test {.tabset} 
-```{r,  fig.width = 5, fig.height = 2, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 5, fig.height = 2, out.width = "90%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 ggplot(long_sleep_df, aes(sample = `unit`)) +
   stat_qq(size = 0.4, shape = 21) +
   stat_qq_line() +
   labs(x = "Theoritical Quantiles", y = "Sample Quantiles", 
        title = "Normal Q-Q Plot") +
   facet_wrap(~academic_info, ncol = 3)
-```
 
-```{css, echo = FALSE}
-caption {
-      color: #000022;
-      font-weight: bold;
-      font-size: 20px;
-    }
-```
 
-```{r}
+## caption {
+##       color: #000022;
+##       font-weight: bold;
+##       font-size: 20px;
+##     }
+
+## ------------------------------------------------------------------------------------------------------------------------------------------
 shapiro_res |> 
   select(-method) |> 
   column_to_rownames("academic_info") |> 
   kable(digits = 25, align = "l", caption = "Shapiro-Wilk Normality Test") |> 
   kable_minimal()
-```
 
-As shown by the QQPlot and the Shapiro-Wilk normality test, the three measures (course load, term GPA and cumulative GPA) do not follow a normal distribution. However, due to Central Limit Theorem, the sample mean will approximate normal distribution with sample size is large (n > 30). In this case, a t-test is still feasible. 
 
-### Equality in Variance {.tabset}
-Given the variables did not follow normal distribution, we use Levene's test to identify if the variance in observations for the three quantitative measures in each demographic group is equal or not. We tested the following hypothesis:
-
-$H_o: \sigma_{1}^2 = \sigma_{2}^2 = ... = \sigma_{k}^2$ where there are k groups in the particular demographic category. \
-$H_a:$ At least 2 $\sigma_{i}^2$ are unequal \
-
-```{r,  fig.width = 5, fig.height = 2, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
+## ----fig.width = 5, fig.height = 2, out.width = "90%", dpi=600,message=FALSE,warning=FALSE-------------------------------------------------
 Reduce(rbind, levene_res) |> 
   select(-statistic) |> 
     pivot_wider(
@@ -441,12 +360,9 @@ Reduce(rbind, levene_res) |>
   column_to_rownames("academic_info") |> 
   kable(digits = 25, align = "l", caption = "Levene's Test For Homogeneity of Variance: P-values") |> 
   kable_minimal()
-```
 
-Given the p-values, at 5% significance level, we can assume equal variance in relative course load between different group in each demographic category. We assume equal variance for the two GPA measures for different genders and category for first-generation students. For the aforementioned groups, we use two sample t-test with equal variance. For GPA measures between university groups and racial groups, we use two sample t-test with unequal variance. \
 
-## Appendix B: First-Gen Demographic Distribution {#appendix_b-section} 
-```{r, warning = FALSE, message = FALSE}
+## ----warning = FALSE, message = FALSE------------------------------------------------------------------------------------------------------
 summary_tbl_first <- sleep_df |> 
   select(`Race`, `Gender`, `First-Generation`, `University`) |> 
   tbl_summary(
@@ -461,11 +377,4 @@ summary_tbl_first <- sleep_df |>
 
 as_kable_extra(summary_tbl_first) |> 
   kable_minimal()
-```
-
-
-
-
-
-
 

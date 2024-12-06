@@ -14,6 +14,18 @@ Group Members: Kate Colvin (kac2301), Yuying Lu (yl5839), and Chhiring Lama (cyl
 ```{r, echo=FALSE, include=FALSE}
 library(tidyverse)
 library(gtsummary)
+library(ggpubr)
+library(patchwork)
+library(kableExtra)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+```
+
+```{css, echo = FALSE}
+tr:hover {background-color: coral;}
+th {
+  height: 5px;
+}
 ```
 
 
@@ -58,11 +70,11 @@ We found our data from the [Carnegie Mellon University Statistics and Data Scien
 More information on how data collection was conducted and the final data set itself can be found on [this page](https://cmustatistics.github.io/data-repository/psychology/cmu-sleep.html). 
 
 ```{r, message=FALSE}
-sleep_df <- read_csv("data/cmu-sleep.csv") %>% 
-  janitor::clean_names() %>%  
+sleep_df <- read_csv("data/cmu-sleep.csv") |> 
+  janitor::clean_names() |> 
   mutate(demo_race = case_when(demo_race == 0 ~ "Underrepresented", 
                                      demo_race == 1 ~ "Non-underrepresented"),
-         demo_race = fct_relevel(demo_race, "Underrepresented"),
+         demo_race = fct_relevel(demo_race, "Non-underrepresented"),
          demo_gender = case_when(demo_gender == 0 ~ "Male", 
                                      demo_gender == 1 ~ "Female"),
          demo_gender = fct_relevel(demo_gender, "Male"), 
@@ -80,30 +92,159 @@ sleep_df <- read_csv("data/cmu-sleep.csv") %>%
                             cohort == "nh" ~ "NDU",
                             cohort == "uw1" ~ "UW", 
                             cohort == "uw2" ~ "UW"))
-
 ```
 
 For the exploratory analyses, we utilized the full data set, which contains 634 students. Cleaning the data involved several steps. First, all demographic variables (race, gender, and first-generation status) were encoded in 0s and 1s, so we used the data dictionary to replace the values in these columns with the correct labels. Next, we created two new variables to help us explore different sub-groups of the data set: 
 
-* `university`:	Out of the three university,`NDU = Notre Dame University`, `CMU = Carnegie Mellon University` and `UW = University of Washington`. This variable is derived from `study` variable as `1` and `5` were from Carnegie Mellon University, `2` and `3` from University of Washington, and `4` from Notre Dame University. 
+* `university`:	Out of the three university,`NDU = Notre Dame University`, `CMU = Carnegie Mellon University` and `UW = University of Washington`. This information is derived from `study` variable as `1` and `5` were from Carnegie Mellon University, `2` and `3` from University of Washington, and `4` from Notre Dame University. 
 * `time_collection`: It refers to the time of data collection, derived from `study` variable. The value `4` in `study` was is for `Spring 2016`, `5` for `Spring 2017`, `1`, `2` for `Spring 2018`, and `3` for `Spring 2019`.
 
-We also noticed that there were several variables with a handful of missing values. There are less than 5 missing entries for each of our demographic variables, but notably, we are missing all course load information (`term_units`, `zterm_units_zof_z`) for students recruited from Notre Dame, which make up 147 of our 634 total observations. Rows with these missing values were removed when required for our exploratory analyses, and course load information variables were not included in our regression models. **IS THIS RIGHT LOL??**
+We also noticed that there were several variables with a handful of missing values. There are less than 5 missing entries for each of our demographic variables, but notably, we are missing all course load information (`term_units`, `zterm_units_zof_z`) for students recruited from Notre Dame, which make up 147 of our 634 total observations. Rows with these missing values were removed when course load information was required for our exploratory analyses, and course load information variables were not included in our regression models.
 
 ---
 
-## Exploratory Analysis: Students 
+## Exploratory Analysis  
 Visualizations, summaries, and exploratory statistical analyses. Justify the steps you took, and show any major changes to your ideas.
 
 Our exploratory analysis is broken into two main sections: [student data](students.html) and [sleeping patterns](sleep_metrics.html). 
 
-*Chhiring's section*
+### Exploratory Analysis: Students {.tabset}
+```{r, message=FALSE,warning=FALSE}
+student_sleep_df <- sleep_df |> 
+  rename(`University` =`university`, 
+         `Race` =`demo_race`, 
+         `Gender` =`demo_gender`, 
+         `First-Generation` =`demo_firstgen`, 
+         `Relative Course Load`= `zterm_units_zof_z`, 
+         `End-of-term GPA` =  `term_gpa`, 
+         `Cumulative GPA` = `cum_gpa`)
 
-All of the graphs and analyses mentioned in this segment can be found on our [Students](students.html) page. 
+plot_gpa <- function(demo, gpa, var_equal, comp) {
+  subset_df <- student_sleep_df |> 
+    drop_na(rlang::sym(demo), rlang::sym(gpa)) 
+  
+  max_y <- max(subset_df[,gpa], na.rm = TRUE)
+  
+  y_positions <- seq(max_y, by = 0.5, length.out = length(comp))
+  
+  cols <- c("End-of-term GPA" = "#ffaaaa", 
+            "Cumulative GPA" = "#ffddba")
+  
+  subset_df |> 
+    ggplot(aes(x = get(demo), y = get(gpa), fill = gpa)) +
+    geom_violin(alpha = 0.2) + 
+    labs(y = "", x = "", fill = "") +
+    scale_y_continuous(expand = c(0,0), limits = c(min(subset_df[,gpa]), max(y_positions) + 0.5)) +
+    #facet_wrap(~academic_info, ncol = 3, scales = "free") +
+    theme(panel.spacing = unit(1, "lines")) +
+    scale_fill_manual(values = cols) +
+    stat_compare_means(aes(label = paste0("p = ", p.format)), method = "t.test", 
+                       paired = FALSE, comparisons = comp,
+                       method.args = list(var.equal = var_equal), 
+                       p.adjust.method = "bonferroni", 
+                       label.y = y_positions) +
+    stat_summary(fun = "median", fun.min = "median", color = "skyblue", 
+                 fun.max= "median", size= 0.2, geom = "crossbar") 
+}
+```
+All of the graphs and analyses mentioned in this segment can be found on our [Students](students.html) page. Among students from different universities, proportion of underrepresented students were not significantly different. 
+
+Our analysis of course load and GPA data provided valuable insights into the relationship between demographics and academic performance. First, we observed no significant differences in course load across various demographic groups, as measured by an independent t-test. Mean relative course load is near 0, meaning they have average course load. This indicates that students from different demographic backgrounds and universities generally maintained similar course loads. However, we did find that students from underrepresented racial groups had significantly lower GPAs compared to their well-represented peers (independent t-test, p = 0.0022). Additionally, first-generation students exhibited lower term GPAs than their non-first-generation counterparts (p = 0.00069). Notably, students from NDU had higher GPAs than those from CMU (p = 1.6e-11) and UW (p = 6e-11). The term and cumulative GPAs' distribution are both negatively-skewed. Median GPAs are between 3 to 4, variable within this range for different groups. 
+
+#### Race {.tabset}
+
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "Race"
+comp = list(c("Underrepresented", "Non-underrepresented"))
+plot_gpa(demo = demo_name, "End-of-term GPA", FALSE, comp) +
+  plot_gpa(demo = demo_name, "Cumulative GPA", FALSE, comp)
+```
+
+#### Gender {.tabset}
+
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "Gender"
+comp <- list(c("Male", "Female"))
+plot_gpa(demo = demo_name, "End-of-term GPA", TRUE, comp) +
+  plot_gpa(demo = demo_name, "Cumulative GPA", TRUE, comp)
+```
+
+#### First-Generation {.tabset}
+
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "First-Generation"
+comp <- list(c("Non-first gen", "First-gen"))
+plot_gpa(demo = demo_name, "End-of-term GPA", TRUE, comp) +
+  plot_gpa(demo = demo_name, "Cumulative GPA", TRUE, comp)
+```
+
+#### University {.tabset}
+
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+demo_name = "University"
+comp = list(c("CMU", "NDU"), c("NDU", "UW"), c("CMU", "UW"))
+plot_gpa(demo = demo_name, "End-of-term GPA", FALSE, comp) +
+  plot_gpa(demo = demo_name, "Cumulative GPA", FALSE, comp)
+```
+
+We used multiple linear regression to model relative effects of demographics and course load on term GPA. After controlling for race, gender, university, and first-generation college status, course load was found to have no significant effect on GPA (p = 0.133). Given that course load did not vary significantly across student groups, did not show a meaningful association with term GPA, and that Notre Dame University (NDU) lacked relevant data on course load, we excluded this variable from our final statistical analyses.
+
+### {.tabset}
+
+We found that underrepresented students had GPAs 0.72 points lower than their peers from well-represented racial backgrounds, suggesting that race may be a critical predictor of GPA outcomes (p = 1.08e-05). However, first-generation college status did not have a direct effect on GPA once the interplay with other factors was accounted for. Further analysis revealed that first-generation students in our study were disproportionately from underrepresented racial backgrounds and were predominantly enrolled at the University of Washington (UW) (See *Appendix B* in [student data](students.html)). This concentration may help explain the initial GPA differences observed among first-generation students before adjusting for these overlapping factors. 
+
+We examined whether students' GPAs improved within individual demographic groups. Interestingly, the changes were minimal and not statistically significant (See Section *Improvement in GPA* in [student data](students.html)). This was true across all groups, indicating that the term GPA did not vary significantly from cumulative GPA during their first year. 
+
+#### Coefficient Estimate {.tabset}
+```{r, fig.width = 7, fig.height = 4, out.width = "80%", dpi=600,message=FALSE,warning=FALSE}
+model <- lm(`End-of-term GPA` ~ `Relative Course Load`*Race +
+     `Relative Course Load`*`Gender` +
+     `Relative Course Load`*`First-Generation` +
+     `Relative Course Load`*`University`, 
+                data = student_sleep_df) 
+
+res <- bind_cols(broom::tidy(model), confint(model, level = 0.95))|> 
+  mutate(term= str_replace(term, "RaceUnderrepresented", "Race - Underrepresented"), 
+         term= str_replace(term, "GenderFemale", "Gender - Female"), 
+         term= str_replace(term, "`First-Generation`First-gen", "First-gen"), 
+         term= str_replace(term, "UniversityUW", "University - UW")) |> 
+  select(term, estimate, `2.5 %`, `97.5 %`) |> 
+  filter(term != "(Intercept)")
+
+res |> 
+  mutate(term = fct_reorder(term, estimate, sort)) |>
+  ggplot(aes(x = term, y = estimate)) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey") +
+  geom_errorbar(aes(ymin = `2.5 %`, ymax = `97.5 %`),color = "darkred", width = 0.5)+
+  geom_point(size = 2, shape = 21, fill = "white") +
+  theme(plot.title = element_text(size = 10, face = "bold"), 
+        axis.title = element_text(size = 9, face = "bold")) +
+  labs(y = "Coefficient", x = "Predictor",
+       title = "Coefficient Estimate (w/ 95% CI)", color = "") +
+  coord_flip()
+```
+
+#### Statistics {.tabset}
+```{r}
+model |> 
+  broom::tidy() |> 
+  mutate(term= str_replace(term, "RaceUnderrepresented", "Race - Underrepresented"), 
+         term= str_replace(term, "GenderFemale", "Gender - Female"), 
+         term= str_replace(term, "`First-Generation`First-gen", "First-gen"), 
+         term= str_replace(term, "UniversityUW", "University - UW")) |> 
+  rename(`SE` = `std.error`) |> 
+  mutate(estimate = round(`estimate`, digits = 3), 
+         `SE` = round(`SE`, digits = 3), 
+         statistic = round(`statistic`, digits = 3)) |> 
+  mutate(`p.value` = signif(`p.value`, digits = 3)) |> 
+  knitr::kable(digits = 170) |> 
+  row_spec(2, background = "darkgrey") |> 
+  kable_minimal()
+```
 
 ---
 
-## Exploratory Analysis: Sleep {.tabset}
+### Exploratory Analysis: Sleep {.tabset}
 
 All of the graphs mentioned in this segment and further in-depth explanations can be found on our [Sleeping Patterns](sleep_metrics.html) page.
 
@@ -117,7 +258,7 @@ Between different gender, race, and first-generation statuses, minimal differenc
 
 Again, please see the [Sleeping Patterns](sleep_metrics.html) page for all of the data visualizations that go along with these results. 
 
-### Total Sleep Time {.tabset}
+#### Total Sleep Time {.tabset}
 
 ```{r}
 plot_totalsleep <- sleep_df %>%  
@@ -136,7 +277,7 @@ plot_totalsleep
 
 ---
 
-### Variability in Bed Times {.tabset}
+#### Variability in Bed Times {.tabset}
 
 ```{r, warning=FALSE}
 plot_bedtime2 <- sleep_df %>%  
@@ -156,7 +297,7 @@ plot_bedtime2
 
 --- 
 
-### Sleeping Midpoint {.tabset}
+#### Sleeping Midpoint {.tabset}
 
 ```{r}
 plot_midpoint <- sleep_df %>% 
@@ -175,7 +316,7 @@ plot_midpoint
 
 --- 
 
-### Daytime Sleep {.tabset}
+#### Daytime Sleep {.tabset}
 
 ```{r}
 plot_daysleep <- sleep_df %>% 
@@ -194,7 +335,7 @@ plot_daysleep
 
 ---
 
-### Statistics {.tabset}
+#### Statistics {.tabset}
 
 ```{r}
 sleep_df %>% select(total_sleep_time, bedtime_mssd, 
