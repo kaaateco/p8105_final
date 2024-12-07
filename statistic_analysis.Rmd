@@ -35,16 +35,17 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 ```
 
-In this page, we use some typical statistic models to further explore the impact of students' sleeping patterns on their GPA. 
+In this page, we further explore the impact of students' sleeping patterns on their GPA by fitting GPA prediction models based on the predictors we're interested. We consider using linear regression model combined with bootstrapping method for model fitting. 
 
 ---
 
-## Simple Linear Regression {.tabset}
+## 1. Simple Linear Regression {.tabset}
 
-To begin with, fit simple linear regression model to demonstrate the individual impact of each sleeping measure on students' GPA. Each time we use one sleeping measure as the predictor to predict the `term_gpa`.
+To begin with, fit simple linear regression model to demonstrate the individual impact of each sleeping measure on students' term GPA. Each time we use one sleeping measure as the predictor to predict the `term_gpa`.
 
-Below are plots and statistics of the simple linear regression models. 
+The result shows that the `total_sleep_time` (see tab *Total Sleep Time*) variable has positive correlation with `term gpa` while the other three variables -- `bedtime_mssd`(see tab *Variability in Bed Times*), `midpoint_sleep`(see tab *Sleep Midpoint*) and `daytime_sleep`(see tab *Daytime Sleep*) are negative related with `term_gpa`. We also collect the p-value and the Mean Squared Error (MSE) from each simple linear regression model(see tab *Comparison*). All of the sleeping measures have significantly non-zero coefficient when used as the only predictor to predict term GPA. Among them, the simple linear regresison has the smallest MSE when using the variable `total_sleep_time`.
 
+Below are detailed information about the simple linear regression models.
 
 ```{r, include=FALSE}
 sleep_df <- read_csv("data/cmu-sleep.csv") %>% 
@@ -299,9 +300,7 @@ ggplotly(plot_sp)
 
 ---
 
- **COMMENTS:**
- 
-We collect the p-value and the Mean Squared Error from each simple linear regression model to the following table:
+### Comparision{.tabset}
 
 
 ```{r}
@@ -311,19 +310,23 @@ record_tab|>
   column_spec(1, bold = TRUE, width = "5cm")
 ```
 
-Sleeping measure 'Total Sleep Time', 'Midpoint Sleep', and 'Daytime Sleep' have p-value less than 0.05, which means they have coefficient significantly not equal to 0. However, the measure 'Variability in Bed Times' has p-value larger than 0.05, implies this variable doesn't have significant impact on `term_gpa`.
-
 
 
 ---
 
-## Multiple Linear Regression
 
-Now consider including more variables to fit linear regression
 
-### Sleeping Measures Only{.tabset}
 
-Here use all the 4 sleeping measures as predictors to predict `term_gpa`.
+
+
+
+## 2. Multiple Linear Regression
+
+In this section, we aim to leverage more predictor at a time for model fitting. The first part (**Sleeping Measures Only Model**) focus on linear model that includes all of the 4 sleeping measures as predictors without considering other factors that may have impact on term GPA. The second part (**Scharacteristic-Included Model**) is about the linear model that includes other informative characteristics of students as the predictors. For each part, we applied linear regression on the initial data set (labeled as *Initial*) and 1000 times boostrapped data set (labeled as *Bootstrap*). 
+
+
+
+### Sleeping Measures Only Model{.tabset}
 
 ```{r}
 set.seed(100)
@@ -386,12 +389,8 @@ plot_coef
 
 ```
 
-**Comments**
 
-For Sleep Measure Only  
-
-The detailed information of the estimated coefficient are listed below:
-
+When including only 4 sleeping measure variables as the predictors, the linear regression model based either initial data or the boostrapped data have significant variables `total_sleep_time` and `midpoint_sleep`. However, for the model based on initial data, the coefficient of `daytime_sleep` is also significant non-zero. The detailed information of the estimated coefficient are listed below:
 
 #### Linear Regression{.tabset}
 
@@ -430,10 +429,9 @@ boot_result |>
   column_spec(1, bold = TRUE, width = "4cm") 
 ```
 
-
 ---
 
-### Students' Characteristics and Sleeping Measures{.tabset}
+### Characteristic-Included Model{.tabset}
 
 
 ```{r,fig.width= 6, fig.height=10 }
@@ -499,12 +497,9 @@ plot_coef
 
 ```
 
-**Comments**
-
 According to the regression result, the variable `cum_gpa`, `universityNDU`, `total_sleep_time` are significant non-zero, which means it has great impact on `term_gpa`. It make sense since the `cum_gpa` reflects the students academic background before the studied term, which is crucial to the students' performance in a new term. Additionally, different universities have different academic atmosphere and also follows different grading patterns for students' study performance, leading to distinct `term_gpa` even when other variables are the same. Besides, the larger `total_sleep_time` have potential to improve students' study performance, which implies getting a good sleep is helpful in increasing the GPA.
 
 The detailed information of the estimated coefficient are listed below:
-
 
 #### Linear Regression{.tabset}
 
@@ -546,16 +541,14 @@ boot_result |>
 ---
 
 
-## University Specific Model
-
+## 3. Further Exploration
 
 From the multiple linear regression result, the `university` variable has significant impact on the `term_gpa`. Thus, we're going to further explore the how the other predictors impact the `term_gpa` within a specific university.
 
 
 ### Sleeping Measures Impact{.tabset}
 
-The following figures shows the individual impact of each sleeping measure within different universities. The each line in the plot represents a simple linear regression model for a specific university.  
-
+The following figures show the individual impact of each sleeping measure within different universities. Each line in the plot represents a simple linear regression model for a specific university.  
 
 #### Total Sleep Time {.tabset}
 
@@ -574,8 +567,6 @@ plot_uni =
 ggplotly(plot_uni)
 
 ```
-
-
 
 --- 
 
@@ -643,17 +634,12 @@ ggplotly(plot_uni)
 
 ---
 
- **COMMENTS:**
- 
-## Model Fitting
 
-Now we fit the multiple linear regression model for each university and we fit the linear regression model based on 1000 times of bootstrap.
+### University Specific Model
 
-### Sleep Measure Only{.tabset}
+Now we fit the multiple linear regression model for each university and we also consider both the sleeping measure only model and characteristic-included model. Besides, since we need separate the data into three sub dataset by university for model fitting, the number of the sample size decreases. To ensure good performance of linear model, we only consider the the model fitting with bootstrapping. For each university, we bootstrap the corresponding sub data for 1000 times and apply the linear regression. 
 
-When the predictors include only the 4 sleeping measure variables, we have the following results
-
-
+#### Sleep Measure Only{.tabset}
 
 ```{r}
 set.seed(100)
@@ -679,11 +665,11 @@ boot_result_cmu =
     conf.low = quantile(estimate, .025),
     conf.high = quantile(estimate, .975),
   ) |> 
-  mutate(Method = 'Bootstrap',
-         estimate = boot_est) |> 
-  select(term, estimate, std.error, conf.low, conf.high,Method) |> 
+  mutate(estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
   mutate(term = reorder(term, estimate),
-         university = 'CMU')
+         university = 'CMU')|>
+  filter(term != "(Intercept)") 
 
 
 boot_straps_ndu = 
@@ -707,11 +693,11 @@ boot_result_ndu =
     conf.low = quantile(estimate, .025),
     conf.high = quantile(estimate, .975),
   ) |> 
-  mutate(Method = 'Bootstrap',
-         estimate = boot_est) |> 
-  select(term, estimate, std.error, conf.low, conf.high,Method) |> 
+  mutate(estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
   mutate(term = reorder(term, estimate),
-         university = 'NDU')
+         university = 'NDU')|>
+  filter(term != "(Intercept)") 
 
 
 boot_straps_uw = 
@@ -735,11 +721,11 @@ boot_result_uw =
     conf.low = quantile(estimate, .025),
     conf.high = quantile(estimate, .975),
   ) |> 
-  mutate(Method = 'Bootstrap',
-         estimate = boot_est) |> 
-  select(term, estimate, std.error, conf.low, conf.high,Method) |> 
+  mutate(estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
   mutate(term = reorder(term, estimate),
-         university = 'UW')
+         university = 'UW')|>
+  filter(term != "(Intercept)") 
 
 
 uni_coef = rbind(boot_result_cmu,
@@ -747,8 +733,7 @@ uni_coef = rbind(boot_result_cmu,
                  boot_result_uw) |> 
   mutate(university = factor(university, levels = c("CMU", "NDU", "UW"))) 
 
-uni_coef |>
-  filter(term != "(Intercept)") |> 
+uni_coef |> 
   ggplot(aes(x = term, y = estimate, color = university)) +
   geom_point(position = position_dodge(width = 0.7)) +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), 
@@ -766,7 +751,7 @@ uni_coef |>
 
 ```
 
-As we can see from the coefficient estimation result, there's different pattern of how sleeping measures affect the students' term GPA. And more detailed result are 
+As we can see from the coefficient estimation result, there's different patterns of how sleeping measures affect the students' term GPA. `total_sleep_time` is significant for both NDU and UW. More detailed result are shown below:
 
 
 #### CMU{.tabset}
@@ -774,7 +759,6 @@ As we can see from the coefficient estimation result, there's different pattern 
 
 ```{r}
 boot_result_cmu |> 
-  filter(term != "(Intercept)") |> 
   mutate(
     conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
     estimate = round(estimate,6),
@@ -786,6 +770,8 @@ boot_result_cmu |>
   kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
   column_spec(1, bold = TRUE, width = "4.5cm") 
 
+term_order <- boot_result_cmu |> arrange(-estimate) 
+term_order = term_order$term
 ```
 
 
@@ -795,14 +781,14 @@ boot_result_cmu |>
 
 ```{r}
 boot_result_ndu |> 
-  filter(term != "(Intercept)") |> 
   mutate(
+    term = factor(term, levels = term_order),
     conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
     estimate = round(estimate,6),
     std.error = round(std.error,6)) |> 
   select(-conf.low, -conf.high) |> 
   select(-university) |> 
-  arrange(-estimate) |> 
+  arrange(term) |> 
   kable(format = "html") |> 
   kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
   column_spec(1, bold = TRUE, width = "4.5cm") 
@@ -819,14 +805,14 @@ boot_result_ndu |>
 
 ```{r}
 boot_result_uw |> 
-  filter(term != "(Intercept)") |> 
   mutate(
+    term = factor(term, levels = term_order),
     conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
     estimate = round(estimate,6),
     std.error = round(std.error,6)) |> 
   select(-conf.low, -conf.high) |> 
   select(-university) |> 
-  arrange(-estimate) |> 
+  arrange(term) |> 
   kable(format = "html") |> 
   kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
   column_spec(1, bold = TRUE, width = "4.5cm") 
@@ -834,6 +820,7 @@ boot_result_uw |>
 ```
 
 ---
+
 
 
 
@@ -864,11 +851,11 @@ boot_result_cmu =
     conf.low = quantile(estimate, .025),
     conf.high = quantile(estimate, .975),
   ) |> 
-  mutate(Method = 'Bootstrap',
-         estimate = boot_est) |> 
-  select(term, estimate, std.error, conf.low, conf.high,Method) |> 
+  mutate(estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
   mutate(term = reorder(term, estimate),
-         university = 'CMU')
+         university = 'CMU')|> 
+  filter(term != "(Intercept)")
 
 
 boot_straps_ndu = 
@@ -892,11 +879,11 @@ boot_result_ndu =
     conf.low = quantile(estimate, .025),
     conf.high = quantile(estimate, .975),
   ) |> 
-  mutate(Method = 'Bootstrap',
-         estimate = boot_est) |> 
-  select(term, estimate, std.error, conf.low, conf.high,Method) |> 
+  mutate(estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
   mutate(term = reorder(term, estimate),
-         university = 'NDU')
+         university = 'NDU')|> 
+  filter(term != "(Intercept)")
 
 
 boot_straps_uw = 
@@ -920,11 +907,11 @@ boot_result_uw =
     conf.low = quantile(estimate, .025),
     conf.high = quantile(estimate, .975),
   ) |> 
-  mutate(Method = 'Bootstrap',
-         estimate = boot_est) |> 
-  select(term, estimate, std.error, conf.low, conf.high,Method) |> 
+  mutate(estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
   mutate(term = reorder(term, estimate),
-         university = 'UW')
+         university = 'UW')|> 
+  filter(term != "(Intercept)")
 
 
 uni_coef = rbind(boot_result_cmu,
@@ -933,7 +920,6 @@ uni_coef = rbind(boot_result_cmu,
   mutate(university = factor(university, levels = c("CMU", "NDU", "UW"))) 
 
 uni_coef |>
-  filter(term != "(Intercept)") |> 
   ggplot(aes(x = term, y = estimate, color = university)) +
   geom_point(position = position_dodge(width = 0.7)) +
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), 
@@ -951,15 +937,14 @@ uni_coef |>
 
 ```
 
+`cum_gpa` is significant in all the university and `total_sleep_time` is still significant in NDU and UW. The impact of other variables shift between universities. The detailed results are shown below:
 
-**Comments**
 
 #### CMU{.tabset}
 
 
 ```{r}
 boot_result_cmu |> 
-  filter(term != "(Intercept)") |> 
   mutate(
     conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
     estimate = round(estimate,6),
@@ -971,6 +956,8 @@ boot_result_cmu |>
   kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
   column_spec(1, bold = TRUE, width = "4.5cm") 
 
+term_order <- boot_result_cmu |> arrange(-estimate) 
+term_order = term_order$term
 ```
 
 
@@ -980,14 +967,14 @@ boot_result_cmu |>
 
 ```{r}
 boot_result_ndu |> 
-  filter(term != "(Intercept)") |> 
   mutate(
+    term = factor(term, levels = term_order),
     conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
     estimate = round(estimate,6),
     std.error = round(std.error,6)) |> 
   select(-conf.low, -conf.high) |> 
   select(-university) |> 
-  arrange(-estimate) |> 
+  arrange(term) |> 
   kable(format = "html") |> 
   kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
   column_spec(1, bold = TRUE, width = "4.5cm") 
@@ -1004,14 +991,14 @@ boot_result_ndu |>
 
 ```{r}
 boot_result_uw |> 
-  filter(term != "(Intercept)") |> 
   mutate(
+    term = factor(term, levels = term_order),
     conf_int = paste0("[",round(conf.low,6),", ",round(conf.high,6), "]"),
     estimate = round(estimate,6),
     std.error = round(std.error,6)) |> 
   select(-conf.low, -conf.high) |> 
   select(-university) |> 
-  arrange(-estimate) |> 
+  arrange(term) |> 
   kable(format = "html") |> 
   kable_styling(c("hover", "condensed"), full_width = FALSE) |> 
   column_spec(1, bold = TRUE, width = "4.5cm") 
@@ -1019,3 +1006,7 @@ boot_result_uw |>
 ```
 
 ---
+
+## 4. Conclusion
+
+
