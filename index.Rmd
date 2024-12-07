@@ -37,7 +37,7 @@ To review our statistical modeling approach and the variables we found important
 For a brief overview of our project, watch the video below!
 
 <div class="video-container">
-<iframe src="https://www.youtube.com/watch?v=7R6WJC_GATw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe src="https://www.youtube.com/embed/7R6WJC_GATw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 
 
