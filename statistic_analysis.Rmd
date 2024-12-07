@@ -28,7 +28,7 @@ In this page, we further explore the impact of students' sleeping patterns on th
 
 ## 1. Simple Linear Regression {.tabset}
 
-To begin with, fit simple linear regression model to demonstrate the individual impact of each sleeping measure on students' term GPA. Each time we use one sleeping measure as the predictor to predict the `term_gpa`.
+To begin with, fit simple linear regression model to demonstrate the individual effect of each sleeping measure on students' term GPA. Each time we use one sleeping measure as the predictor to predict the `term_gpa`.
 
 The result shows that the `total_sleep_time` (see tab *Total Sleep Time*) variable has positive correlation with `term gpa` while the other three variables -- `bedtime_mssd`(see tab *Variability in Bed Times*), `midpoint_sleep`(see tab *Sleep Midpoint*) and `daytime_sleep`(see tab *Daytime Sleep*) are negative related with `term_gpa`. We also collect the p-value and the Mean Squared Error (MSE) from each simple linear regression model(see tab *Comparison*). All of the sleeping measures have significantly non-zero coefficient when used as the only predictor to predict term GPA. Among them, the simple linear regression has the smallest MSE when using the variable `total_sleep_time`.
 
