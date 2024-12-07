@@ -363,7 +363,7 @@ All of the graphs mentioned in this segment and further in-depth explanations ca
 
 To get a deeper glimpse into the relationship between academic performance, demographic characteristics, and sleeping habits in first-year college students, we considered fitting GPA prediction models based on the characteristic and sleeping measure variables.
 
-We first demonstrated the individual impact of each sleeping measure on students' term GPA by fitting simple linear regression model based on the pooled data, which included observations from three universities. Each time we used one sleeping measure as the predictor to predict the `term_gpa`.  
+We first demonstrated the individual effect of each sleeping measure on students' term GPA by fitting simple linear regression model based on the pooled data, which included observations from three universities. Each time we used one sleeping measure as the predictor to predict the `term_gpa`.  
 
 The result shows that the `total_sleep_time` (see tab *Total Sleep Time*) variable has positive correlation with `term gpa` while the other three variables -- `bedtime_mssd`(see tab *Variability in Bed Times*), `midpoint_sleep`(see tab *Sleep Midpoint*) and `daytime_sleep`(see tab *Daytime Sleep*) are negative related with `term_gpa`. We also collected the p-value and the Mean Squared Error (MSE) from each simple linear regression model(see tab *Comparison*). All of the sleeping measures have significantly non-zero coefficient when used as the only predictor to predict term GPA. Among them, the simple linear regression has the smallest MSE when using the variable `total_sleep_time`.
 
