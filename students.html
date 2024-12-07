@@ -419,12 +419,10 @@ th {
 <p>The dataset consists of first-year students from three different kind
 universities: Carnegie Mellon (CMU) is a STEM-focused private
 university, University of Washington (UW) is a large public university
-and Notre Dame (NDU) is a private catholic university. Each cohort have
-students roughly 15-20% students with underrepresented racial identity.
-However, the male to female ratio, and proportion of first generation
-students vary between the cohorts. There is significant difference in
-gender ratio and proportion of first generation students in different
-universities.</p>
+and Notre Dame (NDU) is a private catholic university. Each university
+have students roughly 15-20% students with underrepresented racial
+identity. However, the male to female ratio, and proportion of first
+generation students vary between the universities.</p>
 <pre class="r"><code>sleep_df &lt;- sleep_df |&gt; 
   rename(`Cohort` =`cohort`, 
          `University` =`university`, 
@@ -503,6 +501,7 @@ p-value
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
+0.2
 </td>
 </tr>
 <tr>
@@ -575,6 +574,7 @@ Unknown
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
+0.017
 </td>
 </tr>
 <tr>
@@ -648,6 +648,7 @@ style=" font-weight: bold; font-style: italic;   ">First-Generation</span>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
+&lt;0.001
 </td>
 </tr>
 <tr>
@@ -720,6 +721,7 @@ Unknown
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
+&lt;0.001
 </td>
 </tr>
 <tr>
@@ -816,6 +818,7 @@ NA (NA, NA)
 0.04 (-0.50, 0.37)
 </td>
 <td style="text-align:center;">
+0.4
 </td>
 </tr>
 <tr>
@@ -855,6 +858,7 @@ GPA</span>
 3.50 (3.17, 3.79)
 </td>
 <td style="text-align:center;">
+&lt;0.001
 </td>
 </tr>
 <tr>
@@ -875,6 +879,7 @@ GPA</span>
 3.49 (3.17, 3.73)
 </td>
 <td style="text-align:center;">
+&lt;0.001
 </td>
 </tr>
 </tbody>
@@ -884,21 +889,26 @@ GPA</span>
 <sup>1</sup> n / N (%); Median (Q1, Q3)
 </td>
 </tr>
+<tr>
+<td style="padding: 0; " colspan="100%">
+<sup>2</sup> Pearson’s Chi-squared test; Kruskal-Wallis rank sum test
+</td>
+</tr>
 </tfoot>
 </table>
 </div>
 <div id="relative-course-load" class="section level2 tabset">
 <h2 class="tabset">Relative Course Load</h2>
-<p>To compare relative course load (<code>zterm_units_zof_z</code>)
-between different groups of each demographics, we ran t-test
-(with/without equal variance). See <a
+<p>The Median relative course load is near 0, meaning they have average
+course load. To compare relative course load
+(<code>zterm_units_zof_z</code>) between different groups of each
+demographics, we ran t-test (with/without equal variance). See <a
 href="#appendix_a-section">Appendix A</a> to learn about how we
 identified an appropriate two-sample mean test. </p>
-<p>The results suggest that the different genders, races, first
-generation groups and universities do not differ significantly. This
-suggests that we can directly compare difference in GPAs between
-categories of each demographics. Since there isn’t significant
-difference in racial makeup of students from the three universities.</p>
+<p>Course load in different genders, races, first generation groups and
+universities do not differ significantly. This suggests that we can
+directly compare difference in GPAs between categories of each
+demographics.</p>
 <pre class="r"><code>plot_courseload &lt;- function(demo, var_equal) {
   sleep_df |&gt; 
     drop_na(rlang::sym(demo), `Relative Course Load`) |&gt; 
@@ -1020,13 +1030,14 @@ plot_gpa(demo = demo_name, &quot;End-of-term GPA&quot;, FALSE, comp) +
 <h2 class="tabset">Course load verus GPA</h2>
 <p>After accounting for race, gender, first-generation status and
 university, we know that course load does not have an effect on term GPA
-(See <code>Statistic</code> tab). This suggests that the difference in
-GPA that we have seen between racial groups exists, even after
-accounting for combined effect with course load difference. The GPA
-difference seen in first-generation students in two sample-mean test
-could potentially be due to difference in racial makeup and student
-number in CMU between first-generation and non-first generation students
-(See <a href="#appendix_b-section">Appendix B</a>).</p>
+(See <code>Statistic</code> tab). Thee result also reveals that the
+difference in GPA that we have seen between racial groups exists, even
+after accounting for combined effect with course load difference. The
+GPA difference seen in first-generation students in two sample-mean test
+could potentially be due to difference in racial makeup and difference
+in the student number in CMU between first-generation and non-first
+generation students (See <a href="#appendix_b-section">Appendix
+B</a>).</p>
 <pre class="r"><code>plot_loadgpa &lt;- function(demo) {
   sleep_df |&gt; 
     drop_na(rlang::sym(demo), `End-of-term GPA`, `Relative Course Load`) |&gt; 
@@ -1423,7 +1434,7 @@ mean will approximate normal distribution with sample size is large (n
 </div>
 <div id="equality-in-variance" class="section level3 tabset">
 <h3 class="tabset">Equality in Variance</h3>
-<p>Given the variables did not follow normal distribution, we use
+<p>Given the variables did not follow normal distribution, we used
 Levene’s test to identify if the variance in observations for the three
 quantitative measures in each demographic group is equal or not. We
 tested the following hypothesis:</p>
@@ -1586,6 +1597,7 @@ p-value
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
+&lt;0.001
 </td>
 </tr>
 <tr>
@@ -1647,6 +1659,7 @@ Unknown
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
+0.7
 </td>
 </tr>
 <tr>
@@ -1709,6 +1722,7 @@ style=" font-weight: bold; font-style: italic;   ">University</span>
 <td style="text-align:center;">
 </td>
 <td style="text-align:center;">
+&lt;0.001
 </td>
 </tr>
 <tr>
@@ -1764,6 +1778,11 @@ UW
 <tr>
 <td style="padding: 0; " colspan="100%">
 <sup>1</sup> n / N (%)
+</td>
+</tr>
+<tr>
+<td style="padding: 0; " colspan="100%">
+<sup>2</sup> Pearson’s Chi-squared test
 </td>
 </tr>
 </tfoot>

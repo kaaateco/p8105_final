@@ -66,7 +66,7 @@ th {
 
 ## Demographic and Academic Information
 
-The dataset consists of first-year students from three different kind universities: Carnegie Mellon (CMU) is a STEM-focused private university, University of Washington (UW) is a large public university and Notre Dame (NDU) is a private catholic university. Each cohort have students roughly 15-20% students with underrepresented racial identity. However, the male to female ratio, and proportion of first generation students vary between the cohorts. There is significant difference in gender ratio and  proportion of first generation students in different universities. 
+The dataset consists of first-year students from three different kind universities: Carnegie Mellon (CMU) is a STEM-focused private university, University of Washington (UW) is a large public university and Notre Dame (NDU) is a private catholic university. Each university have students roughly 15-20% students with underrepresented racial identity. However, the male to female ratio, and proportion of first generation students vary between the universities. 
 ```{r, fig.width = 5, fig.height = 4, out.width = "90%", dpi=600,message=FALSE,warning=FALSE}
 sleep_df <- sleep_df |> 
   rename(`Cohort` =`cohort`, 
@@ -140,9 +140,9 @@ levene_res <- lapply(demo_list, get_levene_res)
 
 ## Relative Course Load {.tabset}
 
-To compare relative course load (`zterm_units_zof_z`) between different groups of each demographics, we ran t-test (with/without equal variance). See [Appendix A](#appendix_a-section) to learn about how we identified an appropriate two-sample mean test.\ 
+The Median relative course load is near 0, meaning they have average course load. To compare relative course load (`zterm_units_zof_z`) between different groups of each demographics, we ran t-test (with/without equal variance). See [Appendix A](#appendix_a-section) to learn about how we identified an appropriate two-sample mean test.\ 
 
-The results suggest that the different genders, races, first generation groups and universities do not differ significantly. This suggests that we can directly compare difference in GPAs between categories of each demographics. Since there isn't significant difference in racial makeup of students from the three universities. 
+Course load in different genders, races, first generation groups and universities do not differ significantly. This suggests that we can directly compare difference in GPAs between categories of each demographics. 
 
 ```{r}
 plot_courseload <- function(demo, var_equal) {
@@ -265,7 +265,7 @@ plot_gpa(demo = demo_name, "End-of-term GPA", FALSE, comp) +
 
 ## Course load verus GPA {.tabset}
 
-After accounting for race, gender, first-generation status and university, we know that course load does not have an effect on term GPA (See `Statistic` tab). This suggests that the difference in GPA that we have seen between racial groups exists, even after accounting for combined effect with course load difference. The GPA difference seen in first-generation students in two sample-mean test could potentially be due to difference in racial makeup and student number in CMU between first-generation and non-first generation students (See [Appendix B](#appendix_b-section)). 
+After accounting for race, gender, first-generation status and university, we know that course load does not have an effect on term GPA (See `Statistic` tab). Thee result also reveals that the difference in GPA that we have seen between racial groups exists, even after accounting for combined effect with course load difference. The GPA difference seen in first-generation students in two sample-mean test could potentially be due to difference in racial makeup and difference in the student number in CMU between first-generation and non-first generation students (See [Appendix B](#appendix_b-section)). 
 
 ```{r}
 plot_loadgpa <- function(demo) {
@@ -427,7 +427,7 @@ shapiro_res |>
 As shown by the QQPlot and the Shapiro-Wilk normality test, the three measures (course load, term GPA and cumulative GPA) do not follow a normal distribution. However, due to Central Limit Theorem, the sample mean will approximate normal distribution with sample size is large (n > 30). In this case, a t-test is still feasible. 
 
 ### Equality in Variance {.tabset}
-Given the variables did not follow normal distribution, we use Levene's test to identify if the variance in observations for the three quantitative measures in each demographic group is equal or not. We tested the following hypothesis:
+Given the variables did not follow normal distribution, we used Levene's test to identify if the variance in observations for the three quantitative measures in each demographic group is equal or not. We tested the following hypothesis:
 
 $H_o: \sigma_{1}^2 = \sigma_{2}^2 = ... = \sigma_{k}^2$ where there are k groups in the particular demographic category. \
 $H_a:$ At least 2 $\sigma_{i}^2$ are unequal \
