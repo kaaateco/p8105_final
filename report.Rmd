@@ -860,7 +860,7 @@ uni_coef |>
 
 ## Discussion 
 
-**Exploratory Analysis Findings:**
+**Exploratory Analysis Findings**
 
 When exploring the student characteristics, we observed no significant differences in course load across various demographic groups, as measured by an independent t-test. However, we found both demographically underrepresented and first-generation groups are more likely to have lower GPA compared with their corresponding complement groups. Additionally, we found no significant relationship between the course load and GPA, no matter the relationship is overall or in a specific demographic sub-group. These finding answered Q1 and Q4 in *Initial Questions* portion.
 
@@ -874,7 +874,7 @@ Besides, among the characteristic variables, `cum_gpa` is crucial to the `term_g
 
 Findings in statistical analysis part responded to Q3 and Q6 in *Initial Questions* portion.
 
-**Suggestion**
+**Suggestions**
 
 Since the characteristic variable is usually fixed, students should focus on adjusting their sleeping patterns to improve their academic performance. 
 
