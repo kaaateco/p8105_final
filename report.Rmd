@@ -12,11 +12,16 @@ Group Members: Kate Colvin (kac2301), Yuying Lu (yl5839), and Chhiring Lama (cyl
 --- 
 
 ```{r, echo=FALSE, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 library(tidyverse)
 library(gtsummary)
 library(ggpubr)
 library(patchwork)
 library(kableExtra)
+library(plotly)
+library(ggplot2)
+library(broom)
+library(knitr)
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
@@ -51,15 +56,15 @@ Initially, our proposed project was to study how the lifestyle habits of college
 
 Our primary questions heading into this project were: 
 
-* How are course load and GPA distributed in different gender, race, educational background and colleges?
-* What are the main sleeping patterns seen in students over multiple measures of sleeping behavior? 
-* What can we learn about the relationship between academic performance, demographic characteristics, and sleeping habits in first-year college students? Can academic performance be predicted using these variables?
+* Q1: How are course load and GPA distributed in different gender, race, educational background and colleges?
+* Q2: What are the main sleeping patterns seen in students over multiple measures of sleeping behavior? 
+* Q3: What can we learn about the relationship between academic performance, demographic characteristics, and sleeping habits in first-year college students? Can academic performance be predicted using these variables?
 
 As we explored the data further, several additional questions came up regarding the variables relationships with each other and how the structure of the study may impact our results: 
 
-* How is course load related to GPA overall, and in various demographic sub-groups?
-* How are different sleeping behaviors related to each other? How will this inform our regression models? 
-* How important are the characteristic differences of the three universities recruited in this study (Carnegie Mellon, Notre Dame, and University of Washington)? Will this change what demographic and sleeping variables are most predictive of GPA?
+* Q4: How is course load related to GPA overall, and in various demographic sub-groups?
+* Q5: How are different sleeping behaviors related to each other? How will this inform our regression models? 
+* Q6: How important are the characteristic differences of the three universities recruited in this study (Carnegie Mellon, Notre Dame, and University of Washington)? Will this change the impact of demographic and sleeping variables on the GPA?
 
 ---
 
@@ -99,13 +104,15 @@ For the exploratory analyses, we utilized the full data set, which contains 634 
 * `university`:	Out of the three university,`NDU = Notre Dame University`, `CMU = Carnegie Mellon University` and `UW = University of Washington`. This information is derived from `study` variable as `1` and `5` were from Carnegie Mellon University, `2` and `3` from University of Washington, and `4` from Notre Dame University. 
 * `time_collection`: It refers to the time of data collection, derived from `study` variable. The value `4` in `study` was is for `Spring 2016`, `5` for `Spring 2017`, `1`, `2` for `Spring 2018`, and `3` for `Spring 2019`.
 
-We also noticed that there were several variables with a handful of missing values. There are less than 5 missing entries for each of our demographic variables, but notably, we are missing all course load information (`term_units`, `zterm_units_zof_z`) for students recruited from Notre Dame, which make up 147 of our 634 total observations. Rows with these missing values were removed when course load information was required for our exploratory analyses, and course load information variables were not included in our regression models.
+We also noticed that there were several variables with a handful of missing values. There are less than 5 missing entries for each of our demographic variables, but notably, we are missing all course load information (`term_units`, `zterm_units_zof_z`) for students recruited from Notre Dame, which make up 147 of our 634 total observations. Rows with these missing values were removed when course load information was required for our exploratory analyses, and course load information variables were not included in our statistical analysis.
+
+Further data wrangling are done before we fit linear regression models in statistical analysis. The time-related data `total_sleep_time`, `midpoint_sleep` and `daytime_sleep` being recorded in minutes are transformed into hour form. Additionally, the `bedtime_mssd` that mainly distributed round $0^+$ are replaced by a log-transformed value log(`bedtime_mssd`+1). These transformations shrink the difference in the range scale of the variables.
 
 ---
 
 ## Exploratory Analysis  
 
-Our exploratory analysis is broken into two main sections: [student data](students.html) and [sleeping patterns](sleep_metrics.html). 
+Our exploratory analysis is broken into two main sections: [student characteristics](students.html) and [sleeping patterns](sleep_metrics.html). 
 
 ### Exploratory Analysis: Students {.tabset}
 ```{r, message=FALSE,warning=FALSE}
@@ -249,9 +256,9 @@ All of the graphs mentioned in this segment and further in-depth explanations ca
 
 At the bottom of this section are plots of the overall distributions of each of the four sleep metrics, stratified by university. Two of the metrics, "Total Sleep Time" and "Sleeping Midpoint", are roughly normally distributed. The two other metrics, "Variability in Sleep Time" and "Daytime Sleep" are both very right skewed distributions. For all metrics, distributions are very similar between each university, but for each metric, at least one university is statistically significantly distinct from the others (see the "Statistics" tab below).
 
-To look at the relationships between these metrics, we constructed a Pearson correlation coefficient table that indicates that several of the sleep behavior variables are correlated with each other. First, sleeping midpoint and bedtime variability are positively correlated (0.41), which makes sense, since more sporadic sleeping schedules are commonly explained by staying up late. Additionally, total sleep time has a moderate negative correlation with daytime sleep (-0.29) and sleeping midpoint (-0.33). This also makes sense, as we would expect that longer nighttime sleep would lead to less time sleeping during the day and likely an earlier bedtime. These relationships helped informed our regression analyses, which is discussed below in the "Additional Analysis" portion. 
+To look at the relationships between these metrics, we constructed a Pearson correlation coefficient table that indicates that several of the sleep behavior variables are correlated with each other. First, sleeping midpoint and bedtime variability are positively correlated (0.41), which makes sense, since more sporadic sleeping schedules are commonly explained by staying up late. Additionally, total sleep time has a moderate negative correlation with daytime sleep (-0.29) and sleeping midpoint (-0.33). This also makes sense, as we expect that longer nighttime sleep would lead to less time sleeping during the day and likely an earlier bedtime. These relationships helped informed our regression analyses, which is discussed below in the "Statistical Analysis" portion. 
 
-Interesting patterns were also found between these metrics and the demographic and academic variables included in this data set. On a heat map of GPA and course load, we found that "Total Sleep Time" increased with greater GPAs and decreased with greater course loads, and that "Sleeping Midpoint" became earlier as GPA increased. These were not entirely expected results, as we initially thought that less sleep and later sleeping midpoints may be correlated with a higher GPA, and that students may be staying up late to study. Since this is not the case, it appears that getting less sleep and sleeping later may instead be interfering with student academic performance. 
+Interesting patterns were also found between these metrics and the demographic and academic variables included in this data set. On a heat map of GPA and course load, we found that "Total Sleep Time" increased with greater GPAs and decreased with greater course loads, and that "Sleeping Midpoint" became earlier as GPA increased. These findings were expected results, as we initially thought that less sleep and later sleeping midpoints may lead to insufficient and low quality of sleep, making students too tired to study well in the daytime. 
 
 Between different gender, race, and first-generation statuses, minimal differences were found between sleeping behaviors. "Sleeping Midpoint" and "Daytime Sleep" were the only variables with statistically significantly different medians. For gender, we found that men tended to have later sleeping midpoints (a pattern found within each of the three universities individually), and that students of underrepresented races or who were first-generation tended to have greater daytime sleep. 
 
@@ -350,11 +357,530 @@ sleep_df %>% select(total_sleep_time, bedtime_mssd,
 
 ---
 
-## Additional Analysis
-If you undertake formal statistical analyses, describe these in detail
+## Statitical Analysis
+
+All of the graphs mentioned in this segment and further in-depth explanations can be found on our [Statistical Analysis](statistic_analysis.html) page.
+
+To get a deeper glimpse into the relationship between academic performance, demographic characteristics, and sleeping habits in first-year college students, we considered fitting GPA prediction models based on the characteristic and sleeping measure variables.
+
+We first demonstrated the individual impact of each sleeping measure on students' term GPA by fitting simple linear regression model based on the pooled data, which included observations from three universities. Each time we used one sleeping measure as the predictor to predict the `term_gpa`.  
+
+The result shows that the `total_sleep_time` (see tab *Total Sleep Time*) variable has positive correlation with `term gpa` while the other three variables -- `bedtime_mssd`(see tab *Variability in Bed Times*), `midpoint_sleep`(see tab *Sleep Midpoint*) and `daytime_sleep`(see tab *Daytime Sleep*) are negative related with `term_gpa`. We also collected the p-value and the Mean Squared Error (MSE) from each simple linear regression model(see tab *Comparison*). All of the sleeping measures have significantly non-zero coefficient when used as the only predictor to predict term GPA. Among them, the simple linear regression has the smallest MSE when using the variable `total_sleep_time`.
+
+Next we applied multiple linear regression model that includes more than one variable at a time. We first included  (**Sleeping Measures Only Model**) focus on linear model that includes all of the 4 sleeping measures as predictors without considering other factors that may have impact on term GPA. The second part (**Characteristic-Included Model**) were about the linear model that included other informative characteristics of students as the predictors. For each part, we applied linear regression on the initial data set (labeled as *Initial*) and 1000 times bootstrapped data set (labeled as *Bootstrap*). 
+
+**Sleeping Measures Only Model**
+
+```{r, include=FALSE}
+sleep_df <- read_csv("data/cmu-sleep.csv") %>% 
+  janitor::clean_names() %>%  
+  mutate(demo_race = case_when(demo_race == 0 ~ "Underrepresented", 
+                                     demo_race == 1 ~ "Non-underrepresented"),
+         demo_race = fct_relevel(demo_race, "Underrepresented"),
+         demo_gender = case_when(demo_gender == 0 ~ "Male", 
+                                     demo_gender == 1 ~ "Female"),
+         demo_gender = fct_relevel(demo_gender, "Male"), 
+         demo_firstgen = case_when(demo_firstgen == "0" ~ "Non-first gen", 
+                                   demo_firstgen == "1" ~ "First-gen", 
+                                   TRUE ~ NA),
+         demo_firstgen = fct_relevel(demo_firstgen, "Non-first gen"), 
+         time_collection = case_when(cohort == "lac1" ~ "Spring, 2018", 
+                            cohort == "lac2" ~ "Spring, 2017",
+                            cohort == "nh" ~ "Spring, 2016",
+                            cohort == "uw1" ~ "Spring, 2018", 
+                            cohort == "uw2" ~ "Spring, 2019"), 
+         university = case_when(cohort == "lac1" ~ "CMU", 
+                            cohort == "lac2" ~ "CMU",
+                            cohort == "nh" ~ "NDU",
+                            cohort == "uw1" ~ "UW", 
+                            cohort == "uw2" ~ "UW")) |> 
+  mutate(total_sleep_time = total_sleep_time / 60,
+         bedtime_mssd = log(bedtime_mssd+1),
+         midpoint_sleep = midpoint_sleep / 60,
+         daytime_sleep =  daytime_sleep / 60)
+
+```
+
+```{r}
+set.seed(100)
+lm_fit = lm(term_gpa ~ bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, data = sleep_df)
+
+lm_result =
+  broom::tidy(lm_fit,conf.int = TRUE) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
+  mutate(Method = 'Linear Regression')|> 
+  mutate(term = reorder(term, estimate))
+
+boot_straps = 
+  sleep_df|> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result = 
+  boot_straps |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(Method = 'Bootstrap',
+         estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high,Method)|> 
+  mutate(term = reorder(term, estimate))
+  
+
+com_coef =
+  rbind(lm_result,boot_result) |> 
+  filter(term != "(Intercept)") 
+
+plot_coef = 
+  com_coef |>   
+  ggplot(aes(x = term, estimate, y = estimate, color = Method)) +
+  geom_point(position = position_dodge(width = 0.3)) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), 
+                width = 0.5, 
+                position = position_dodge(width = 0.3)) +
+  coord_flip() +
+  labs(
+    title = "Effect Sizes of Predictors on Cumulative GPA",
+    x = "Predictors",
+    y = "Coefficient Estimate"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom")
+
+plot_coef
+
+```
+
+
+When including only 4 sleeping measure variables as the predictors, the linear regression model based either initial data or the bootstrapped data have significant variables `total_sleep_time` and `midpoint_sleep`. However, for the model based on initial data, the coefficient of `daytime_sleep` is also significant non-zero. The numeric result of the estimated coefficient can be found in the page [Statistical Analysis](statistic_analysis.html).
+
+**Characteristic-Included Model**
+
+```{r}
+set.seed(100)
+lm_fit = lm(term_gpa ~ university + demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = sleep_df)
+
+lm_result =
+  broom::tidy(lm_fit,conf.int = TRUE) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
+  mutate(Method = 'Linear Regression')|> 
+  mutate(term = reorder(term, estimate))
+
+boot_straps = 
+  sleep_df|> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ university + demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result = 
+  boot_straps |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(Method = 'Bootstrap',
+         estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high,Method) |> 
+  mutate(term = reorder(term, estimate))
+  
+
+com_coef =
+  rbind(lm_result,boot_result) |> 
+  filter(term != "(Intercept)") 
+
+plot_coef = 
+  com_coef |>   
+  ggplot(aes(x = term, y = estimate, color = Method)) +
+  geom_point(position = position_dodge(width = 0.7)) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), 
+                width = 0.5, 
+                position = position_dodge(width = 0.7)) +
+  coord_flip() +
+  labs(
+    title = "Effect Sizes of Predictors on Cumulative GPA",
+    x = "Predictors",
+    y = "Coefficient Estimate"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom")
+
+plot_coef
+
+
+```
+
+According to the regression result, the variable `cum_gpa`, `universityNDU`, `total_sleep_time` are significantly non-zero, which means it has great impact on `term_gpa`. It makes sense since the `cum_gpa` reflects the students academic background before the studied term, which is crucial to the students' performance in a new term. Additionally, different universities have different academic atmosphere and also follows different grading patterns for students' study performance, leading to distinct `term_gpa` even when other variables are the same. Besides, the larger `total_sleep_time` have potential to improve students' study performance, which implies getting a good sleep is helpful in increasing the GPA. The numeric result of the estimated coefficient can be found in the page [Statistical Analysis](statistic_analysis.html).
+
+Since the `university` variable has significant impact on the `term_gpa` accorrding to characteristic-included linear regression model, we further explored the how the impact of different predictors on the `term_gpa` shift between universities. 
+
+### {.tabset}
+
+**Sleeping Measures Impact**
+
+The following figures show the individual impact of each sleeping measure within different universities. Each line in the plot represents a simple linear regression model for a specific university.  
+
+#### Total Sleep Time {.tabset}
+
+```{r}
+plot_uni = 
+  ggplot(sleep_df, aes(x = total_sleep_time, y = term_gpa)) +
+  geom_point(alpha = 0.6, color = "#664785") +
+  geom_smooth(method = "lm", se = FALSE, aes(color = university),alpha = 0.5) +
+  labs(
+    title = "University Specific Simple Linear Regression",
+    x = "Total Sleep Time (Hours)",
+    y = "Term GPA"
+  ) +
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5))
+ggplotly(plot_uni)
+
+```
+
+--- 
+
+#### Variability in Bed Times {.tabset}
+
+
+```{r}
+plot_uni = 
+  ggplot(sleep_df, aes(x = bedtime_mssd, y = term_gpa)) +
+  geom_point(alpha = 0.6, color = "#664785") +
+  geom_smooth(method = "lm", se = FALSE, aes(color = university),alpha = 0.5) +
+  labs(
+    title = "University Specific Simple Linear Regression",
+    x = "Mean Successive Squared Difference",
+    y = "Term GPA"
+  ) +
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5))
+ggplotly(plot_uni)
+```
+
+
+--- 
+
+
+#### Sleeping Midpoint {.tabset}
+
+
+```{r}
+plot_uni = 
+  ggplot(sleep_df, aes(x = midpoint_sleep, y = term_gpa)) +
+  geom_point(alpha = 0.6, color = "#664785") +
+  geom_smooth(method = "lm", se = FALSE, aes(color = university),alpha = 0.5) +
+  labs(
+    title = "University Specific Simple Linear Regression",
+    x = "Midpoint Sleep (hrs past 11 PM)",
+    y = "Term GPA"
+  ) +
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5))
+ggplotly(plot_uni)
+```
+
+--- 
+
+#### Daytime Sleep {.tabset}
+
+
+```{r}
+plot_uni = 
+  ggplot(sleep_df, aes(x = daytime_sleep, y = term_gpa)) +
+  geom_point(alpha = 0.6, color = "#664785") +
+  geom_smooth(method = "lm", se = FALSE, aes(color = university),alpha = 0.5) +
+  labs(
+    title = "University Specific Simple Linear Regression",
+    x = "Daytime Sleep (h)",
+    y = "Term GPA"
+  ) +
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5))
+ggplotly(plot_uni)
+```
+
+
+
+### {.tabset}
+
+We also fitted the multiple linear regression model for each university and we considered both the sleeping measure only model and characteristic-included model. Besides, when we separated the data into three sub dataset by university for university specific model fitting, the number of the sample size decreases. To ensure good performance of linear model, we only consider the model fitting with bootstrapping. For each university, we bootstrapped the corresponding sub data for 1000 times and applied the linear regression. 
+
+
+**Sleep Measure Only Model**
+
+```{r}
+set.seed(100)
+
+boot_straps_cmu = 
+  sleep_df|> 
+  filter(university == "CMU") |> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result_cmu = 
+  boot_straps_cmu |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
+  mutate(term = reorder(term, estimate),
+         university = 'CMU')|>
+  filter(term != "(Intercept)") 
+
+
+boot_straps_ndu = 
+  sleep_df|> 
+  filter(university == "NDU") |> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result_ndu = 
+  boot_straps_ndu |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
+  mutate(term = reorder(term, estimate),
+         university = 'NDU')|>
+  filter(term != "(Intercept)") 
+
+
+boot_straps_uw = 
+  sleep_df|> 
+  filter(university == "UW") |> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result_uw = 
+  boot_straps_uw |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
+  mutate(term = reorder(term, estimate),
+         university = 'UW')|>
+  filter(term != "(Intercept)") 
+
+
+uni_coef = rbind(boot_result_cmu,
+                 boot_result_ndu,
+                 boot_result_uw) |> 
+  mutate(university = factor(university, levels = c("CMU", "NDU", "UW"))) 
+
+uni_coef |> 
+  ggplot(aes(x = term, y = estimate, color = university)) +
+  geom_point(position = position_dodge(width = 0.7)) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), 
+                width = 0.5, 
+                position = position_dodge(width = 0.7)) +
+  coord_flip() +
+  labs(
+    title = "Effect Sizes of Predictors on Cumulative GPA",
+    x = "Predictors",
+    y = "Coefficient Estimate"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom")
+
+```
+
+
+As we can see from the coefficient estimation result, there's different patterns of how sleeping measures affect the students' term GPA. `total_sleep_time` is significant for both NDU and UW. More detailed result can be found on our page [Statistical Analysis](statistic_analysis.html).
+
+
+**Characteristics-Included Model**
+
+```{r}
+set.seed(100)
+
+boot_straps_cmu = 
+  sleep_df|> 
+  filter(university == "CMU") |> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result_cmu = 
+  boot_straps_cmu |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
+  mutate(term = reorder(term, estimate),
+         university = 'CMU')|> 
+  filter(term != "(Intercept)")
+
+
+boot_straps_ndu = 
+  sleep_df|> 
+  filter(university == "NDU") |> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result_ndu = 
+  boot_straps_ndu |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
+  mutate(term = reorder(term, estimate),
+         university = 'NDU')|> 
+  filter(term != "(Intercept)")
+
+
+boot_straps_uw = 
+  sleep_df|> 
+  filter(university == "UW") |> 
+  modelr::bootstrap(1000) |> 
+  mutate(
+    strap = map(strap, as.tibble),
+    models = map(strap, \(df) lm(term_gpa ~ demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = df)),
+    results = map(models, broom::tidy)
+  ) |> 
+  select(.id, results) |> 
+  unnest(results)
+
+boot_result_uw = 
+  boot_straps_uw |> 
+  group_by(term) |> 
+  summarise(
+    boot_est = mean(estimate),
+    std.error = sd(estimate),
+    conf.low = quantile(estimate, .025),
+    conf.high = quantile(estimate, .975),
+  ) |> 
+  mutate(estimate = boot_est) |> 
+  select(term, estimate, std.error, conf.low, conf.high) |> 
+  mutate(term = reorder(term, estimate),
+         university = 'UW')|> 
+  filter(term != "(Intercept)")
+
+
+uni_coef = rbind(boot_result_cmu,
+                 boot_result_ndu,
+                 boot_result_uw) |> 
+  mutate(university = factor(university, levels = c("CMU", "NDU", "UW"))) 
+
+uni_coef |>
+  ggplot(aes(x = term, y = estimate, color = university)) +
+  geom_point(position = position_dodge(width = 0.7)) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), 
+                width = 0.5, 
+                position = position_dodge(width = 0.7)) +
+  coord_flip() +
+  labs(
+    title = "Effect Sizes of Predictors on Cumulative GPA",
+    x = "Predictors",
+    y = "Coefficient Estimate"
+  ) +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom")
+
+```
+
+`cum_gpa` is significant in all the university and `total_sleep_time` is still significant in NDU and UW. The impact of other variables shift between universities. More detailed result can be found on our page [Statistical Analysis](statistic_analysis.html).
 
 ---
 
 ## Discussion 
-What were your findings? Are they what you expect? What insights into the data can you make?
+
+**Exploratory Analysis Findings:**
+
+When exploring the student characteristics, we observed no significant differences in course load across various demographic groups, as measured by an independent t-test. However, we found both demographically underrepresented and first-generation groups are more likely to have lower GPA compared with their corresponding complement groups. Additionally, we found no significant relationship between the course load and GPA, no matter the relationship is overall or in a specific demographic sub-group. These finding answered Q1 and Q4 in *Initial Questions* portion.
+
+As for sleeping pattern exploration, we found the *Total Sleep Time* and *Sleeping Midpoint* are roughly normally distributed while *Variability in Sleep Time* and *Daytime Sleep* are both very right skewed distributions. Besides, *Total Sleep Time* showed a positive relationship with *GPA* while  *Sleeping Midpoint* are detected to be negative related to *GPA*. These relationship align with the result of our regression models, supporting the conclusion of our later statistical analysis. This part answered Q2 and Q5 in *Initial Questions* portion.
+
+**Statistical Analysis Findings**
+
+According to the linear regression model result based on the pooled data, we conclude that the `total_sleep_time` has the most important impact on `term_gpa` among all the four sleeping measures. It has significant positive coefficient in both the sleeping measure only model and the the characteristic-included model, which implies having more sleep can potentially improve students' academic performance. Additionally, `midpoint_sleep` is significant negative related to `term_gpa`, indicating that sleeping earlier is helpful to get better GPA if given the same total sleep time. 
+
+Besides, among the characteristic variables, `cum_gpa` is crucial to the `term_gpa`. And we also find the linear model shfits between universities, which means the impact of a specific predictors on the `term_gpa` varies from university to university.
+
+Findings in statistical analysis part responded to Q3 and Q6 in *Initial Questions* portion.
+
+**Suggestion**
+
+Since the characteristic variable is usually fixed, students should focus on adjusting their sleeping patterns to improve their academic performance. 
+
+Two useful suggestions we proposed based on our analysis are *sleep enough* and *sleep early*.
+
+
+
+
 

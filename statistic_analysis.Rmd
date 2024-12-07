@@ -18,21 +18,8 @@ library(knitr)
 library(patchwork)
 library(kableExtra)
 
-knitr::opts_chunk$set(
-  fig.width = 6,
-  fig.asp = .6,
-  out.width = "90%"
-)
-
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
-options(
-  ggplot2.continuous.colour = "viridis",
-  ggplot2.continuous.fill = "viridis"
-)
-
-scale_colour_discrete = scale_colour_viridis_d
-scale_fill_discrete = scale_fill_viridis_d
 ```
 
 In this page, we further explore the impact of students' sleeping patterns on their GPA by fitting GPA prediction models based on the predictors we're interested. We consider using linear regression model combined with bootstrapping method for model fitting. 
@@ -43,7 +30,7 @@ In this page, we further explore the impact of students' sleeping patterns on th
 
 To begin with, fit simple linear regression model to demonstrate the individual impact of each sleeping measure on students' term GPA. Each time we use one sleeping measure as the predictor to predict the `term_gpa`.
 
-The result shows that the `total_sleep_time` (see tab *Total Sleep Time*) variable has positive correlation with `term gpa` while the other three variables -- `bedtime_mssd`(see tab *Variability in Bed Times*), `midpoint_sleep`(see tab *Sleep Midpoint*) and `daytime_sleep`(see tab *Daytime Sleep*) are negative related with `term_gpa`. We also collect the p-value and the Mean Squared Error (MSE) from each simple linear regression model(see tab *Comparison*). All of the sleeping measures have significantly non-zero coefficient when used as the only predictor to predict term GPA. Among them, the simple linear regresison has the smallest MSE when using the variable `total_sleep_time`.
+The result shows that the `total_sleep_time` (see tab *Total Sleep Time*) variable has positive correlation with `term gpa` while the other three variables -- `bedtime_mssd`(see tab *Variability in Bed Times*), `midpoint_sleep`(see tab *Sleep Midpoint*) and `daytime_sleep`(see tab *Daytime Sleep*) are negative related with `term_gpa`. We also collect the p-value and the Mean Squared Error (MSE) from each simple linear regression model(see tab *Comparison*). All of the sleeping measures have significantly non-zero coefficient when used as the only predictor to predict term GPA. Among them, the simple linear regression has the smallest MSE when using the variable `total_sleep_time`.
 
 Below are detailed information about the simple linear regression models.
 
@@ -322,7 +309,7 @@ record_tab|>
 
 ## 2. Multiple Linear Regression
 
-In this section, we aim to leverage more predictor at a time for model fitting. The first part (**Sleeping Measures Only Model**) focus on linear model that includes all of the 4 sleeping measures as predictors without considering other factors that may have impact on term GPA. The second part (**Scharacteristic-Included Model**) is about the linear model that includes other informative characteristics of students as the predictors. For each part, we applied linear regression on the initial data set (labeled as *Initial*) and 1000 times boostrapped data set (labeled as *Bootstrap*). 
+In this section, we aim to leverage more predictor at a time for model fitting. The first part (**Sleeping Measures Only Model**) focus on linear model that includes all of the 4 sleeping measures as predictors without considering other factors that may have impact on term GPA. The second part (**Characteristic-Included Model**) is about the linear model that includes other informative characteristics of students as the predictors. For each part, we applied linear regression on the initial data set (labeled as *Initial*) and 1000 times bootstrapped data set (labeled as *Bootstrap*). 
 
 
 
@@ -390,7 +377,7 @@ plot_coef
 ```
 
 
-When including only 4 sleeping measure variables as the predictors, the linear regression model based either initial data or the boostrapped data have significant variables `total_sleep_time` and `midpoint_sleep`. However, for the model based on initial data, the coefficient of `daytime_sleep` is also significant non-zero. The detailed information of the estimated coefficient are listed below:
+When including only 4 sleeping measure variables as the predictors, the linear regression model based either initial data or the bootstrapped data have significant variables `total_sleep_time` and `midpoint_sleep`. However, for the model based on initial data, the coefficient of `daytime_sleep` is also significant non-zero. The detailed information of the estimated coefficient are listed below:
 
 #### Linear Regression{.tabset}
 
@@ -434,7 +421,7 @@ boot_result |>
 ### Characteristic-Included Model{.tabset}
 
 
-```{r,fig.width= 6, fig.height=10 }
+```{r}
 
 set.seed(100)
 lm_fit = lm(term_gpa ~ university + demo_race + demo_gender + demo_firstgen + bedtime_mssd + total_sleep_time + midpoint_sleep + daytime_sleep + cum_gpa, data = sleep_df)
@@ -497,9 +484,7 @@ plot_coef
 
 ```
 
-According to the regression result, the variable `cum_gpa`, `universityNDU`, `total_sleep_time` are significant non-zero, which means it has great impact on `term_gpa`. It make sense since the `cum_gpa` reflects the students academic background before the studied term, which is crucial to the students' performance in a new term. Additionally, different universities have different academic atmosphere and also follows different grading patterns for students' study performance, leading to distinct `term_gpa` even when other variables are the same. Besides, the larger `total_sleep_time` have potential to improve students' study performance, which implies getting a good sleep is helpful in increasing the GPA.
-
-The detailed information of the estimated coefficient are listed below:
+According to the regression result, the variable `cum_gpa`, `universityNDU`, `total_sleep_time` are significantly non-zero, which means it has great impact on `term_gpa`. It makes sense since the `cum_gpa` reflects the students academic background before the studied term, which is crucial to the students' performance in a new term. Additionally, different universities have different academic atmosphere and also follows different grading patterns for students' study performance, leading to distinct `term_gpa` even when other variables are the same. Besides, the larger `total_sleep_time` have potential to improve students' study performance, which implies getting a good sleep is helpful in increasing the GPA. The detailed information of the estimated coefficient are listed below:
 
 #### Linear Regression{.tabset}
 
@@ -552,7 +537,7 @@ The following figures show the individual impact of each sleeping measure within
 
 #### Total Sleep Time {.tabset}
 
-```{r,fig.width= 6, fig.height=10}
+```{r}
 plot_uni = 
   ggplot(sleep_df, aes(x = total_sleep_time, y = term_gpa)) +
   geom_point(alpha = 0.6, color = "#664785") +
@@ -632,14 +617,11 @@ plot_uni =
 ggplotly(plot_uni)
 ```
 
----
 
 
-### University Specific Model
+### Sleep Measure Only Model{.tabset}
 
-Now we fit the multiple linear regression model for each university and we also consider both the sleeping measure only model and characteristic-included model. Besides, since we need separate the data into three sub dataset by university for model fitting, the number of the sample size decreases. To ensure good performance of linear model, we only consider the the model fitting with bootstrapping. For each university, we bootstrap the corresponding sub data for 1000 times and apply the linear regression. 
-
-#### Sleep Measure Only{.tabset}
+Now we fit the multiple linear regression model for each university and we also consider both the sleeping measure only model and characteristic-included model. Besides, since we need separate the data into three sub dataset by university for model fitting, the number of the sample size decreases. To ensure good performance of linear model, we only consider the model fitting with bootstrapping. For each university, we bootstrap the corresponding sub data for 1000 times and apply the linear regression. 
 
 ```{r}
 set.seed(100)
@@ -753,7 +735,6 @@ uni_coef |>
 
 As we can see from the coefficient estimation result, there's different patterns of how sleeping measures affect the students' term GPA. `total_sleep_time` is significant for both NDU and UW. More detailed result are shown below:
 
-
 #### CMU{.tabset}
 
 
@@ -825,7 +806,7 @@ boot_result_uw |>
 
 
 
-### Students' Characteristics and Sleeping Measures{.tabset}
+### Characteristic-Included Model{.tabset}
 
 ```{r}
 set.seed(100)
@@ -984,8 +965,6 @@ boot_result_ndu |>
 
 ---
 
-
-
 #### UW{.tabset}
 
 
@@ -1008,5 +987,11 @@ boot_result_uw |>
 ---
 
 ## 4. Conclusion
+
+According to the linear regression model result based on the pooled data, we conclude that the `total_sleep_time` has the most important impact on `term_gpa` among all the four sleeping measures. It has significant positive coefficient in both the sleeping measure only model and the the characteristic-included model, which implies having more sleep can potentially improve students' academic performance. Additionally, `midpoint_sleep` is significant negative related to `term_gpa`, indicating that sleeping earlier is helpful to get better GPA if given the same total sleep time.
+
+Besides, among the characteristic variables, `cum_gpa` is crucial to the `term_gpa`. And we also find the linear model shfits between universities, which means the impact of a specific predictors on the `term_gpa` varies from university to university.
+
+However, the characteristic variable is usually fixed, students should focus on adjusting their sleeping patterns to improve their academic performance. Two useful suggestions we proposed based on our analysis are *sleep enough* and *sleep early*.
 
 
